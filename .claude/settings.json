@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(scripts/probe.sh:*)",
+      "Bash(./scripts/probe.sh:*)"
+    ],
+    "deny": [
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(http:*)",
+      "Bash(xh:*)",
+      "Bash(nc:*)"
+    ]
+  }
+}
