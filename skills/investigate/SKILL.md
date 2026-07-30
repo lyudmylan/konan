@@ -14,6 +14,11 @@ Prime directives, in force for every step:
 - **"No incident" is a legitimate conclusion** — reaching it requires evidence too.
 - **Correlated is not causal.** A suspicious signal near the failure is a hypothesis,
   not a cause, until its prediction checks out.
+- **Your probes are telemetry-visible.** Read-only probes still increment request and
+  exception counters, and can exercise latent defects. Your stamped request-id prefix
+  distinguishes your traffic from users' — when assessing user impact, count only
+  non-investigator traffic; a defect only your own probes have triggered is a **latent**
+  finding, not the active incident.
 
 ## 0. Setup
 
@@ -81,7 +86,8 @@ prevents narrative capture.
 
 ## Conclusion (interim shape — the full report contract is #10)
 
-- **Verdict**: root cause identified / no incident / inconclusive (ranked hypotheses).
+- **Verdict**: root cause identified / no active incident (latent findings noted) /
+  inconclusive (ranked hypotheses).
 - **Evidence**: every claim cited (log quote + timestamp, metric name + value, probe
   status + request id).
 - **Timeline** of key events, including any configuration/deploy/flag-change markers
