@@ -29,6 +29,10 @@ overrides them where they conflict.
   Until then: the repo-review lens before merge, and docs ship with the change.
 - Public-eventually: everything committed here — files, issue bodies, commit
   messages — must be publishable at the v0.1 flip.
+- Branch safety: platform branch protection is plan-gated while the repo is private, so
+  settings deny-rules block the habitual force-push and remote-branch-deletion forms as
+  a compensating belt (agent-side accidents, not adversaries). The real ruleset lands at
+  the public flip (#13).
 
 ## Commands
 
