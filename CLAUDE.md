@@ -1,5 +1,8 @@
 # Claude Code instructions
 
+Read `AGENTS.md` first — it is how to work in this repo (lab boundary, workflow,
+commands).
+
 `docs/product.md` is the product source of truth — ground planning and scope decisions
 in it. The shared AI-SDLC skills (`github-planning`, `github-shipping`, `repo-review`)
 apply here.
