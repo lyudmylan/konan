@@ -40,5 +40,6 @@ overrides them where they conflict.
   (`FAULTLINE_DIR` defaults to `../faultline`; logs land in `lab/logs/`, gitignored).
 - `scripts/probe.sh /path[?query]` — read-only probe; trailer line carries HTTP status,
   duration, and the stamped request id (grep it in the logs to correlate).
-- `scripts/scenario.sh chaos-on|chaos-off|chaos-status|sim|order` — eval-side scenario
-  triggers; prompts by design. Full lab contract: `docs/lab.md`.
+- `scripts/scenario.sh chaos-on|chaos-off|chaos-status|sim|order|get` — eval-side
+  scenario triggers and simulated user traffic; prompts by design. Full lab contract:
+  `docs/lab.md`.

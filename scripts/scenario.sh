@@ -5,7 +5,7 @@
 # scripts/probe.sh (see AGENTS.md).
 set -eu
 BASE="${KONAN_LAB_BASE:-http://127.0.0.1:8000}"
-usage="usage: scripts/scenario.sh chaos-on [rate] [status] [latency_ms] | chaos-off | chaos-status | sim <path> | order <product_id> [quantity]"
+usage="usage: scripts/scenario.sh chaos-on [rate] [status] [latency_ms] | chaos-off | chaos-status | sim <path> | order <product_id> [quantity] | get /path[?query]"
 cmd="${1:?$usage}"
 shift || true
 case "$cmd" in
@@ -23,6 +23,12 @@ case "$cmd" in
   order)
     curl -sS -X POST "$BASE/orders" -H 'content-type: application/json' \
       -d "{\"product_id\": ${1:?order needs a product_id}, \"quantity\": ${2:-1}}"; echo ;;
+  get)
+    # Simulated end-user traffic: no X-Request-ID stamp, so it reads as user
+    # traffic in telemetry — scenarios need user impact that is distinguishable
+    # from the investigator's own konan-* probes.
+    curl -sS --max-time "${KONAN_GET_TIMEOUT:-10}" "$BASE${1:?get needs a /path}"
+    echo ;;
   *)
     echo "scenario.sh: unknown command '$cmd'" >&2; echo "$usage" >&2; exit 2 ;;
 esac

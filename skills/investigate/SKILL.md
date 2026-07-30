@@ -94,17 +94,24 @@ prevents narrative capture.
 - Budget or evidence exhausted → conclude with the honest state: ranked hypotheses,
   verdicts, and gaps.
 
-## Conclusion (interim shape — the full report contract is #10)
+## Conclusion — write the journal
 
-- **Verdict**: root cause identified / no active incident (latent findings noted) /
-  inconclusive (ranked hypotheses).
-- **Evidence**: every claim cited (log quote + timestamp, metric name + value, probe
-  status + request id).
-- **Timeline** of key events, including any configuration/deploy/flag-change markers
-  found in logs — a behavior change right after a config-change marker is prime
-  timeline evidence.
+The investigation ends by writing exactly one file, the journal, per
+[report-contract.md](report-contract.md): `journals/<YYYY-MM-DD>-<slug>.md` — a YAML
+machine core (shape-enforced by [journal.schema.json](journal.schema.json)) over a
+human body. While writing it:
+
+- **Verdict**: root-cause-identified / no-active-incident (latent findings ride along)
+  / inconclusive. The machine core carries the complete tested-hypothesis list with
+  the judge's states — killed hypotheses are results too.
+- **Evidence ledger**: every quote verbatim; hypotheses cite by `E<n>` reference. No
+  citation, no claim — the schema rejects an uncited hypothesis.
+- **Timeline** anchored to evidence ids, including any configuration/deploy/flag-change
+  markers found in logs — a behavior change right after a config-change marker is
+  prime timeline evidence.
 - **Safe next steps** — read-only suggestions only; remediation is out of scope.
-- **Gaps**: what could not be checked, and why.
+- **Gaps**: what could not be checked, and why — an empty list is a deliberate claim
+  that nothing was out of reach.
 
 ## Rules that survive contact
 

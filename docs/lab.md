@@ -38,8 +38,10 @@ it mechanically (faultline serves mutating GETs there).
 ## Eval-side controls (not for the investigator)
 
 `scripts/scenario.sh` wraps the operator surface: `chaos-on [rate] [status] [latency_ms]`,
-`chaos-off`, `chaos-status`, `sim <path>` (e.g. `sim status/500`), and
-`order <product_id> [quantity]`. It is deliberately not pre-approved in settings — see
+`chaos-off`, `chaos-status`, `sim <path>` (e.g. `sim status/500`),
+`order <product_id> [quantity]`, and `get /path[?query]` — simulated end-user traffic,
+deliberately unstamped so scenarios produce user impact distinguishable from the
+investigator's `konan-*` probes. It is deliberately not pre-approved in settings — see
 the lab boundary in `AGENTS.md`.
 
 ## Known gaps of this lab
