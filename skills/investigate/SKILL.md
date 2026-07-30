@@ -39,10 +39,14 @@ validation probes that prediction.
 
 ## 2. Triage — discipline-parallel sweep (cheap; it gates everything after it)
 
-Spawn one subagent per lens file in `lenses/`, all in a single message so they run in
-parallel, each blind to the others. Each triage prompt contains exactly: the lens file
-path, the surface contract path, the complaint verbatim, and the baseline summary —
-nothing else. Each lens answers only:
+Fan out across every lens whose domain the complaint and baseline cannot already
+exclude with evidence — for a vague complaint that is all of them: complaint framing is
+untrusted (misattribution is normal, and secondary causes hide behind obvious ones). A
+lens you skip is a blind spot you accepted — record it under Gaps. Never spawn a lens as
+coverage theater. Spawn the chosen lenses in a single message so they run in parallel,
+each blind to the others. Each triage prompt contains exactly: the lens file path, the
+surface contract path, the complaint verbatim, and the baseline summary — nothing else.
+Each lens answers only:
 
 > "Anomalies in your domain? At most 3 findings, each with cited evidence. No deep
 > dives, no fixes, no speculation beyond your domain."
@@ -54,9 +58,14 @@ incident**, citing the checks performed.
 
 ## 3. Deep-dive — hypothesis-parallel
 
-Rank hypotheses by triage evidence strength; take at most the budgeted number. Spawn one
-subagent per hypothesis (parallel, single message), through the fitting lens, tasked to
-**confirm and refute**:
+**The orchestrator selects.** Rank hypotheses by: evidence strength from triage,
+explanatory power against the complaint, cost of the decisive test (prefer cheap tests
+that can kill a hypothesis), and severity if true. Take at most the budgeted number. A
+hypothesis whose triage evidence is already deterministic and complete skips deep-dive
+and goes straight to the judge — deep-dives exist to fill evidence gaps, not to
+re-prove. Spawn one subagent per selected hypothesis (parallel in a single message when
+there are several — one hypothesis is one agent, never ceremony), through the fitting
+lens, tasked to **confirm and refute**:
 
 > "Test this hypothesis with targeted queries only — probe what it predicts, and
 > actively seek disconfirming evidence. Never collect everything. Return: proposed
@@ -80,7 +89,8 @@ prevents narrative capture.
 - A **validated** hypothesis whose prediction was confirmed by probing → conclude.
 - **Inconclusive** verdicts with budget remaining → the judge's "what would settle it"
   items become the next round's targeted gathering; return to step 3 with the refined
-  list.
+  list. The judge names the missing evidence; the orchestrator still selects which
+  hypotheses proceed.
 - Budget or evidence exhausted → conclude with the honest state: ranked hypotheses,
   verdicts, and gaps.
 
