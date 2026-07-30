@@ -37,6 +37,11 @@ is the point.
   investigation report/journal contract.
 - **Evidence collection is not our code** — existing MCP servers (Grafana, Sentry,
   Datadog, Kubernetes) later; for the lab target, plain allowlisted Bash (curl + logs).
+- **faultline is a lab, not the architecture** — methodology skills, the report
+  contract, and the eval scorer never encode a target's endpoints or defects. A target
+  plugs in as a thin rim — probe allowlist, runner, scenario controls — plus a
+  surface-contract doc (faultline's is `docs/lab.md`). Swapping targets swaps the rim;
+  the methodology and scorer don't change.
 
 ## The lab: faultline
 
