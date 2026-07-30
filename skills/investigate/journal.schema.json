@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lyudmylan/konan/blob/main/skills/investigate/journal.schema.json",
+  "title": "konan investigation journal — machine core (v1)",
+  "description": "Validates the YAML frontmatter of an investigation journal. Shape only; referential integrity (evidence references resolve, root_cause points at a validated hypothesis, wall clock matches timestamps) is the scorer's layer. See report-contract.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["konan_journal", "investigation", "target", "verdict", "hypotheses", "evidence", "gaps", "usage"],
+  "properties": {
+    "konan_journal": { "const": 1 },
+    "investigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "trigger", "complaint", "started", "concluded"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9][a-z0-9-]*$" },
+        "trigger": { "type": "string", "minLength": 1 },
+        "complaint": { "type": "string", "minLength": 1 },
+        "started": { "type": "string", "format": "date-time" },
+        "concluded": { "type": "string", "format": "date-time" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "surface_contract"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "surface_contract": { "type": "string", "minLength": 1 }
+      }
+    },
+    "verdict": { "enum": ["root-cause-identified", "no-active-incident", "inconclusive"] },
+    "root_cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis", "statement", "incident_class"],
+      "properties": {
+        "hypothesis": { "$ref": "#/$defs/hypothesisId" },
+        "statement": { "type": "string", "minLength": 1 },
+        "incident_class": { "$ref": "#/$defs/incidentClass" }
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "incident_class", "state", "evidence_for", "evidence_against"],
+        "properties": {
+          "id": { "$ref": "#/$defs/hypothesisId" },
+          "statement": { "type": "string", "minLength": 1 },
+          "incident_class": { "$ref": "#/$defs/incidentClass" },
+          "state": { "enum": ["validated", "invalidated", "inconclusive"] },
+          "evidence_for": { "$ref": "#/$defs/evidenceRefs" },
+          "evidence_against": { "$ref": "#/$defs/evidenceRefs" }
+        },
+        "anyOf": [
+          { "properties": { "evidence_for": { "minItems": 1 } } },
+          { "properties": { "evidence_against": { "minItems": 1 } } }
+        ]
+      }
+    },
+    "latent_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "evidence"],
+        "properties": {
+          "statement": { "type": "string", "minLength": 1 },
+          "evidence": { "$ref": "#/$defs/evidenceRefs", "minItems": 1 }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "source", "quote"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^E[1-9][0-9]*$" },
+          "type": { "enum": ["log", "metric", "probe"] },
+          "source": { "type": "string", "minLength": 1 },
+          "quote": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "tokens", "wall_clock_seconds"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 },
+        "tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "wall_clock_seconds": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "if": { "properties": { "verdict": { "const": "root-cause-identified" } } },
+  "then": { "required": ["root_cause"] },
+  "else": { "not": { "required": ["root_cause"] } },
+  "$defs": {
+    "hypothesisId": { "type": "string", "pattern": "^H[1-9][0-9]*$" },
+    "incidentClass": { "type": "string", "minLength": 1 },
+    "evidenceRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^E[1-9][0-9]*$" }
+    }
+  }
+}
