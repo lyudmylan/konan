@@ -8,6 +8,11 @@ BASE="${KONAN_LAB_BASE:-http://127.0.0.1:8000}"
 raw="${1:?usage: scripts/probe.sh /path[?query]}"
 path="${raw%%\?*}"
 case "$path" in
+  *..*|*%*|*//*)
+    echo "probe.sh: refusing path with traversal or encoding tricks: '$path'" >&2
+    exit 2 ;;
+esac
+case "$path" in
   /health|/metrics|/openapi.json|/products|/products/*|/orders|/orders/*) ;;
   *) echo "probe.sh: '$path' is outside the read-only allowlist" >&2; exit 2 ;;
 esac
