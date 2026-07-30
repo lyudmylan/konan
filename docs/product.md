@@ -43,6 +43,35 @@ is the point.
   surface-contract doc (faultline's is `docs/lab.md`). Swapping targets swaps the rim;
   the methodology and scorer don't change.
 
+## Investigation model
+
+- **Taxonomy first, lab second.** Methodology derives from general incident classes —
+  software defects, load/saturation, infra/process, third-party dependencies,
+  interfaces/contracts, data/DB. faultline instantiates only the subset it can exercise;
+  its gaps are stated in `docs/lab.md`, so lab scores are never read as methodology
+  completeness.
+- **The loop:** triage → deep-dive → judge → iterate or conclude.
+  1. **Triage — discipline-parallel sweep.** A cheap pass where each lens answers
+     "anomalies in my domain?" over the same evidence, blind to the others (diverse
+     first looks are the point). Triage gates fan-out: it decides which hypotheses
+     deserve deeper spend — the quota ladder's cheap-triage-first rung.
+  2. **Deep-dive — hypothesis-parallel.** Each candidate cause becomes a focused
+     workstream through the fitting lens, tasked to confirm *and* refute with targeted
+     queries. Never summarize-everything.
+  3. **Judge — non-deterministic, adversarial.** Judges cited evidence only; verdicts
+     are validated / invalidated / inconclusive, plus "what evidence would settle it",
+     which seeds the next round. Its job is to refute, not to bless.
+  4. **Terminate** on confident conclusion, evidence exhausted, or budget hit.
+- **Lenses are data.** Discipline lenses (devops, DBA, software, …) ship as markdown
+  agent definitions; a team extends the taxonomy without touching konan.
+- **Baseline primitive.** Know normal before declaring abnormal: konan argues from the
+  diff against a healthy baseline, a hypothesis must predict observable state, and
+  validation probes the prediction. "No incident" is a legitimate conclusion.
+- **Judge ≠ scorer.** The in-loop judge is part of the system being measured; the eval
+  scorer stays deterministic, or the eval spine measures nothing.
+- Parallelism is harness-native: the orchestrator is the main session running the
+  investigate skill; fan-out is built-in subagents; no orchestration code.
+
 ## The lab: faultline
 
 [faultline](https://github.com/lyudmylan/faultline) is the controlled chaos target:

@@ -42,6 +42,13 @@ it mechanically (faultline serves mutating GETs there).
 `order <product_id> [quantity]`. It is deliberately not pre-approved in settings — see
 the lab boundary in `AGENTS.md`.
 
+## Known gaps of this lab
+
+faultline is one small service: no real database, no third-party dependency, no
+distributed topology. The incident taxonomy in `docs/product.md` is wider than this lab —
+the eval corpus (#11) records which classes faultline can and cannot exercise, so
+coverage is read honestly.
+
 ## Ground truth stays outside
 
 The defect catalog and scenario recipes live in the faultline repo (its SPEC) and,
