@@ -6,8 +6,7 @@ evidence, and delivers an investigation report in which every claim cites its ev
 running on the Claude Code harness and subscription you already have.
 
 Hebrew: כונן, the on-call engineer — the role that owns an incident end to end. (Bonus:
-Konan ≈ Conan, as in Doyle, the author behind the detective. With HolmesGPT in the field,
-konan is Doyle, not another Holmes.)
+Konan ≈ Conan, as in Doyle, the author behind the detective.
 
 ## The bet
 
