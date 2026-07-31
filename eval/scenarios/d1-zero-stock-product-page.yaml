@@ -1,0 +1,54 @@
+konan_fixture: 1
+scenario:
+  id: d1-zero-stock-product-page
+  title: Seeded defect D1 — product detail page 500s on the zero-stock row (GET path)
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 2
+    - scripts/scenario.sh order 1 2
+    - sleep 2
+    - scripts/scenario.sh get /products/3
+    - sleep 1
+    - scripts/scenario.sh get /products/3
+    - sleep 2
+    - scripts/scenario.sh get /products/2
+    - sleep 1
+    - scripts/scenario.sh get /products/3
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 1
+    - scripts/scenario.sh get /products/3
+  notes: >-
+    Healthy browse-and-order traffic first, then repeated user hits on the failing
+    product page with successes interleaved on the same route — the data-dependent
+    signature. User impact is asserted, so traffic MUST be seeded (unstamped ids).
+complaint: >-
+  Support reports: several customers say a product page errors out with 'Internal
+  Server Error' when they open it — started within the last hour, still happening
+  when they refresh. Other pages load fine for them. No deploys that we know of.
+expected:
+  verdict: root-cause-identified
+  incident_class: software-defect
+  must_claim:
+    - id: mechanism
+      all_of: ["(?i)zero.?division|divi\\w*\\s+by\\s+zero"]
+    - id: location
+      all_of: ["(?i)/products/3|product\\s*3\\b"]
+    - id: data-condition
+      all_of: ["(?i)units_in_stock\\s*=?\\s*0|zero[\\s-]stock|stock\\s+(is\\s+)?0\\b"]
+  must_not_claim:
+    - id: not-chaos
+      any_of: ["(?i)chaos", "(?i)inject"]
+    - id: not-infra
+      any_of: ["(?i)crash", "(?i)restart\\s+loop", "(?i)saturat", "(?i)overload"]
+scoring_notes: >-
+  Probe-reproducible read-only (the failing route is inside the probe allowlist), so
+  a full chain — mechanism, data condition, determinism — is reachable. The committed
+  sample journal (journals/2026-07-30-products-3-500s.md) is a known-good report for
+  this scenario; fixture matchers are calibrated against it.

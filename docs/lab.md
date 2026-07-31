@@ -48,11 +48,12 @@ the lab boundary in `AGENTS.md`.
 
 faultline is one small service: no real database, no third-party dependency, no
 distributed topology. The incident taxonomy in `docs/product.md` is wider than this lab —
-the eval corpus (#11) records which classes faultline can and cannot exercise, so
-coverage is read honestly.
+the eval corpus records which classes faultline can and cannot exercise (coverage table
+in `eval/README.md`), so coverage is read honestly.
 
 ## Ground truth stays outside
 
-The defect catalog and scenario recipes live in the faultline repo (its SPEC) and,
-starting with #11, in eval fixtures — deliberately outside the investigator's reach.
-Investigations argue from the surface above, nothing else.
+The defect catalog and scenario recipes live in the faultline repo (its SPEC) and in
+the eval fixtures (`eval/scenarios/`) — deliberately outside the investigator's reach;
+the blinding contract is in `eval/README.md`. Investigations argue from the surface
+above, nothing else.

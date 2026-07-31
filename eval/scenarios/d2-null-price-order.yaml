@@ -1,0 +1,55 @@
+konan_fixture: 1
+scenario:
+  id: d2-null-price-order
+  title: Seeded defect D2 — order creation 500s for the null-price product (write path)
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 2
+    - scripts/scenario.sh order 1 2
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 2
+    - scripts/scenario.sh order 4 1
+    - sleep 1
+    - scripts/scenario.sh order 4 1
+    - sleep 2
+    - scripts/scenario.sh order 1 1
+    - sleep 1
+    - scripts/scenario.sh order 4 2
+    - sleep 1
+    - scripts/scenario.sh get /orders
+  notes: >-
+    Successful orders around repeated failures for one product — retries included,
+    plus a success after the failures so the write path is provably alive. The
+    failing operation is a POST: outside the probe allowlist by design.
+complaint: >-
+  Support: multiple customers report that placing an order fails with 'Internal
+  Server Error', and it keeps failing when they retry. Other customers' orders are
+  going through fine.
+expected:
+  verdict: root-cause-identified
+  incident_class: software-defect
+  must_claim:
+    - id: mechanism
+      all_of: ["(?i)type.?error|nonetype"]
+    - id: operation
+      all_of: ["(?i)total_price|order"]
+    - id: data-condition
+      all_of: ["(?i)price\\W{0,5}(is\\s+|=\\s*)?(null|none)|null\\s+price|product\\s*4\\b"]
+  must_not_claim:
+    - id: not-chaos
+      any_of: ["(?i)chaos", "(?i)inject"]
+    - id: not-infra
+      any_of: ["(?i)crash", "(?i)restart\\s+loop", "(?i)saturat", "(?i)overload"]
+    - id: not-d1-misattribution
+      any_of: ["(?i)zero.?division", "(?i)units_in_stock"]
+scoring_notes: >-
+  NOT probe-reproducible: the failing operation is a POST and konan's surface is
+  GET-only, so the root cause must be assembled from logs (TypeError stacks on the
+  order path) plus catalog reads (the null-price row is visible on the product
+  detail/list routes). Latent discovery of D1 while browsing is possible and
+  unpenalized — the claim surface excludes latent findings.

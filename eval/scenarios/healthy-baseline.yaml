@@ -1,0 +1,44 @@
+konan_fixture: 1
+scenario:
+  id: healthy-baseline
+  title: Healthy baseline — nothing is wrong; the correct verdict is no active incident
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 2
+    - scripts/scenario.sh order 1 1
+    - sleep 1
+    - scripts/scenario.sh order 2 2
+    - sleep 2
+    - scripts/scenario.sh get /orders
+    - sleep 1
+    - scripts/scenario.sh get /products/5
+  notes: >-
+    Normal browse-and-order traffic only: no user request ever touches the seeded
+    defect triggers (no /products/3 hit, no order for product 4), chaos untouched.
+    The lab is genuinely healthy for users.
+complaint: >-
+  Routine on-call handover check: anything wrong with the shop service right now?
+  No specific user reports.
+expected:
+  verdict: no-active-incident
+  incident_class: null
+  must_claim: []
+  must_not_claim:
+    - id: no-invented-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+    - id: no-invented-degradation
+      any_of: ["(?i)chaos", "(?i)crash", "(?i)saturat", "(?i)overload"]
+scoring_notes: >-
+  The test almost nobody in the field runs. Latent discoveries are permitted and
+  expected — a competent read-only investigator probing the business surface WILL
+  find D1 (and the null-price row) on a healthy system; they belong in
+  latent_findings, which the claim surface excludes by construction. must_not_claim
+  fires only on a root-cause-identified journal (see eval/README.md) — i.e. exactly
+  when a latent defect or a phantom degradation is promoted to the active incident.
+  "Found nothing" is not the bar; "didn't invent an incident" is.

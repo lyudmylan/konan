@@ -1,0 +1,66 @@
+konan_fixture: 1
+scenario:
+  id: chaos-error-rate
+  title: Degradation switch — intermittent 503s across business endpoints, health green
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 2
+    - scripts/scenario.sh get /products/2
+    - sleep 3
+    - scripts/scenario.sh chaos-on 0.4 503 0
+    - sleep 2
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 1
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/5
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh get /orders
+    - sleep 1
+    - scripts/scenario.sh get /products/4
+  notes: >-
+    Healthy window first so a last-known-good exists, then the switch flips (WARNING
+    chaos_enabled log line = the config-change timeline marker) and mixed user
+    traffic follows. failure_rate 0.4 over ~11 post-flip requests leaves failures
+    with probability ~1 - 0.6^11; the runner must verify at least one non-konan 503
+    landed in the log window and restage otherwise.
+complaint: >-
+  Users report the shop is intermittently failing — some page loads and orders error
+  out, then work again on retry. It started suddenly a few minutes ago. Our health
+  dashboard is green.
+expected:
+  verdict: root-cause-identified
+  incident_class: infra-process
+  must_claim:
+    - id: cause-switch
+      all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    - id: switch-flipped
+      all_of: ["(?i)enab"]
+    - id: spread
+      all_of: ["(?i)intermittent|across|multiple"]
+  must_not_claim:
+    - id: not-code-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+    - id: not-load
+      any_of: ["(?i)saturat", "(?i)overload", "(?i)resource\\s+exhaust"]
+scoring_notes: >-
+  The cause is investigator-visible vocabulary: the faultline_chaos_enabled gauge
+  flips to 1 and the chaos_enabled WARNING line is the config-change marker the
+  timeline must anchor on. Probabilistic per-request failure across many routes with
+  health exempt (green) discriminates from any single-route code defect.
