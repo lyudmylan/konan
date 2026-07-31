@@ -1,0 +1,54 @@
+konan_fixture: 1
+scenario:
+  id: chaos-latency
+  title: Degradation switch, latency-only — everything slow, nothing errors
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 3
+    - scripts/scenario.sh chaos-on 0 503 1500
+    - sleep 2
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 1
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /orders
+  notes: >-
+    failure_rate 0 with extra_latency_ms 1500: latency drawn uniformly per request,
+    zero errors anywhere. Healthy fast window first so duration metrics show the
+    step change after the chaos_enabled marker.
+complaint: >-
+  Users say every page in the shop got painfully slow in the last few minutes —
+  nothing errors out, it just takes forever. Health checks are green and fast.
+expected:
+  verdict: root-cause-identified
+  incident_class: infra-process
+  must_claim:
+    - id: cause-switch
+      all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    - id: switch-flipped
+      all_of: ["(?i)enab"]
+    - id: symptom-latency
+      all_of: ["(?i)laten|slow|delay"]
+  must_not_claim:
+    - id: not-code-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+    - id: not-load
+      any_of: ["(?i)saturat", "(?i)overload", "(?i)cpu\\s+(spin|burn)", "(?i)resource\\s+exhaust"]
+scoring_notes: >-
+  The all-business-routes latency step with zero 5xx growth, while /health and
+  /metrics stay fast (chaos-exempt paths), points at the injected switch: the gauge
+  reads 1 and the WARNING marker bounds the onset. Duration summaries
+  (http_request_duration_seconds_sum/_count deltas) are the load-bearing metric —
+  konan must reason about latency without any error signal at all.

@@ -18,8 +18,10 @@ overrides them where they conflict.
   pre-approved — it must permission-prompt in an interactive session.
 - Never "fix" the lab: faultline's defects are its contract; its repo governs itself.
 - Eval integrity: ground-truth defect details and scenario recipes stay out of
-  investigator-readable docs in this repo (they live in faultline's SPEC and in eval
-  fixtures). Investigations argue from telemetry only.
+  investigator-readable docs in this repo — they live in faultline's SPEC and in the
+  eval fixtures under `eval/`. Investigations argue from telemetry only; the blinding
+  contract (what an investigation session must never read: `eval/`, the issue
+  tracker, the faultline checkout) is in `eval/README.md`.
 
 ## Workflow
 
