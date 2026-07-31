@@ -21,10 +21,10 @@ investigation:
   not).
 
 Today this contract is enforced by the investigate skill's setup rule ("touch nothing
-outside the surface contract"). The eval runner makes it mechanical: an eval
-investigation runs in a session whose permissions deny `gh` and reads outside the
-repo, with a hook rejecting reads under `eval/` — that enforcement lands with the
-runner alongside the scorer.
+outside the surface contract") and by session discipline during manual runs. The eval
+runner makes it mechanical: an eval investigation runs in a session whose permissions
+deny `gh` and reads outside the repo, with a hook rejecting reads under `eval/` —
+that enforcement lands with runner automation (post-v0.1, with the CI gate).
 
 ## Fixture format
 
@@ -78,6 +78,32 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
 - Regexes are Python-flavored, applied with `re.search`; case-insensitivity is spelled
   in the pattern (`(?i)`), never assumed. Matchers live in fixtures so the scorer stays
   target-generic — no target string ever appears in scorer code.
+
+## Scoring a run
+
+```sh
+uv run eval/score.py --pair eval/scenarios/<id>.yaml journals/<id>.md [--pair ...] \
+  [-o eval/scorecard.md]
+```
+
+- Pairs are explicit: journals are blind to scenarios (blinding contract), so the
+  journal→fixture mapping is the run's knowledge, never the journal's.
+- Exit codes: `0` all scenarios passed; `1` scored, with failures — the CI-gate
+  signal; `2` broken input, refused. The line matters: an invalid **fixture** or an
+  unreadable/unknown-version journal is a broken harness (refused, nothing rendered);
+  a schema-invalid **journal** is a failing report (scored, citation-noncompliant).
+- A scenario passes when the verdict matches, the class matches (when one is
+  expected), every `must_claim` entry hits, no `must_not_claim` fires, and the
+  journal is citation-compliant (contract schema + referential integrity: references
+  resolve, the root cause names a validated hypothesis, wall clock matches the
+  timestamps).
+- The scorer's semantics are pinned by `uv run eval/tests.py` — run it after any
+  change to the scorer, either schema, or the semantics in this README.
+
+**Running the corpus, v0.1 (manual):** per fixture — restart the lab, execute the
+`stage` list (`scenario.sh` prompts by design), run the investigate skill in a fresh
+session handing it the fixture's `complaint` verbatim (blinding contract in force),
+then score all pairs into `eval/scorecard.md`. Runner automation is post-v0.1.
 
 **The healthy-baseline nuance** (discovered in #9's smoke runs): on faultline the
 seeded defects are permanently latent — a competent read-only investigator will find

@@ -27,8 +27,11 @@ overrides them where they conflict.
 
 - Issue-driven: one branch per issue; the PR body links `Closes #N`. Trivial
   non-behavioral fixes may go direct to main.
-- Quality gates: none automated yet — the eval harness (#11/#12) becomes the gate.
-  Until then: the repo-review lens before merge, and docs ship with the change.
+- Quality gates: `uv run eval/tests.py` (scorer semantics pins) must pass, the
+  repo-review lens before merge, and docs ship with the change. The full corpus-in-CI
+  gate (re-run scenarios on skill changes) lands with runner automation, post-v0.1;
+  until then skill changes are validated by scoring real journals
+  (`eval/README.md` → Scoring a run).
 - Public-eventually: everything committed here — files, issue bodies, commit
   messages — must be publishable at the v0.1 flip.
 - Branch safety: platform branch protection is plan-gated while the repo is private, so
