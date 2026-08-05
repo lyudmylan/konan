@@ -32,6 +32,10 @@ is the point.
   (validated / invalidated / inconclusive), evidence rules, report format.
 - **The harness carries the loop** — triggers are harness primitives (slash command,
   Monitor, webhook/channel, routine). No custom loop or orchestration code, ever.
+- **Triggers are detector / adapter / profile** — detection lives in the observability
+  stack (or a human); one adapter normalizes every delivery to the complaint contract
+  (`docs/triggers.md`); adding a stack costs a configuration profile, never code.
+  Delivery is push or event, never poll.
 - **Code is allowed only for**: trigger plumbing, the read-only permission boundary
   (allowlists/hooks — a security boundary is never a prompt), the eval scorer, and the
   investigation report/journal contract.
