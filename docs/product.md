@@ -129,10 +129,12 @@ automation, real observability-stack integrations (MCP), enterprise distribution
 - **Subscription, not API**: everything runs on Claude Code auth the user already has.
   Stay indifferent to Anthropic's interactive-vs-programmatic billing split (announced,
   then paused).
-- **Artifact-first publishing**: never announce intentions. The repo stays private until
-  v0.1; every public post ships same-day with its artifact. Each epic's definition of
-  done includes a publishable artifact.
+- **Artifact-first publishing**: a version is not announced; it flips public together
+  with its scorecard. Every public post ships same-day with its artifact. Each epic's
+  definition of done includes a publishable artifact.
 - **Prior art** (researched 2026-07-29): closest cousin is HolmesGPT (agentic loop,
-  per-source toolsets, own eval harness). Field gaps konan targets: evals in CI,
-  healthy-baseline testing, published cost-per-investigation, schema-enforced evidence
-  citation.
+  per-source toolsets, own eval harness). Field gaps konan ships against, receipts
+  committed: healthy-baseline testing (a corpus scenario whose correct verdict is "no
+  incident"), schema-enforced evidence citation (journal schema + deterministic
+  scorer), a seeded-fault eval corpus with a committed scorecard. Cost-per-investigation
+  numbers and the corpus-in-CI gate land with runner automation.
