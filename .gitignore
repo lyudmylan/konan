@@ -2,3 +2,4 @@
 lab/
 .claude/settings.local.json
 __pycache__/
+alerts/

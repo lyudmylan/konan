@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(scripts/probe.sh:*)",
-      "Bash(./scripts/probe.sh:*)"
+      "Bash(./scripts/probe.sh:*)",
+      "Bash(git add journals/:*)",
+      "Bash(git commit -m:*)"
     ],
     "deny": [
       "Bash(curl:*)",
