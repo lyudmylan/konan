@@ -27,6 +27,10 @@ overrides them where they conflict.
 
 - Issue-driven: one branch per issue; the PR body links `Closes #N`. Trivial
   non-behavioral fixes may go direct to main.
+- Unattended shift writes: an on-call session (`/oncall`) may write `journals/` and
+  git-commit them on the current branch — those two forms are narrowly allowlisted in
+  settings so an unattended investigation never blocks on a prompt. Pushing stays
+  human. Widening either entry is SPEC-grade, like the probe allowlist.
 - Quality gates: `uv run eval/tests.py` (scorer semantics pins) must pass, the
   repo-review lens before merge, and docs ship with the change. The full corpus-in-CI
   gate (re-run scenarios on skill changes) lands with runner automation, post-v0.1;
@@ -48,3 +52,6 @@ overrides them where they conflict.
 - `scripts/scenario.sh chaos-on|chaos-off|chaos-status|sim|order|get` — eval-side
   scenario triggers and simulated user traffic; prompts by design. Full lab contract:
   `docs/lab.md`.
+- `scripts/alert.sh "<summary>" [alertname] [severity]` — eval-side alert emitter:
+  appends one contract-shaped complaint line to `alerts/inbox.jsonl` (the lab trigger
+  profile, `docs/triggers.md`); prompts by design, like every operator action.

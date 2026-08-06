@@ -60,8 +60,9 @@ The contract adopts it verbatim, plus one konan field, `source`:
 
 - **human** — `/konan <complaint text>` (`skills/konan`): synthesizes the object
   and starts the loop. Ships with this contract.
-- **lab** — an eval-side emitter appends complaint lines to a local inbox file
-  watched by the on-call shift (#40). The lab stand-in for a webhook.
+- **lab** — `scripts/alert.sh` appends contract-shaped lines to `alerts/inbox.jsonl`;
+  the `/oncall` shift (`skills/oncall`) catches up on waiting lines, then watches via
+  Monitor and investigates each alert. The lab stand-in for a webhook.
 - **native stacks** — Alertmanager: `webhook_config` + outbound payload
   templating (v0.32+) emits the contract shape sender-side. Grafana: contact
   point + custom payload (12.x). Sentry: the sender is not shapeable — the
