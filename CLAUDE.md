@@ -13,4 +13,5 @@ Rules that matter in this repo:
   scenarios (see the lab boundary in product.md).
 - No custom loop or orchestration code — harness primitives only (architecture stance in
   product.md).
-- The repo is private until v0.1; artifact-first publishing policy applies (product.md).
+- Artifact-first publishing applies (product.md): a version flips public together with
+  its scorecard; posts ship same-day with their artifact.
