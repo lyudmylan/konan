@@ -15,4 +15,5 @@ Konan ≈ Conan, as in Doyle, the author behind the detective.)
 the first eval scorecard.
 
 - Product contract: [docs/product.md](docs/product.md)
+- Architecture & flows: [docs/architecture.md](docs/architecture.md)
 - Lab target: [faultline](https://github.com/lyudmylan/faultline)
