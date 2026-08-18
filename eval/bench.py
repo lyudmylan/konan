@@ -67,14 +67,17 @@ def collect(run_dirs, fixtures, jv):
                        if meta.get("duration_ms") is not None else None,
                        "cost_usd": meta.get("total_cost_usd"),
                        "denials": len(meta.get("permission_denials") or []),
-                       "passed": False, "rc_hit": None, "false_attr": 0, "citations_ok": False,
+                       "passed": False, "passed_class_agnostic": False, "rc_hit": None, "false_attr": 0, "citations_ok": False,
                        "verdict_got": None, "verdict_expected": fx["expected"]["verdict"] if fx else None}
                 journal = meta_path.with_name(meta_path.name.replace(".meta.json", ".md"))
                 if fx and meta.get("status") == "ok" and journal.exists():
                     try:
                         core = score.load_journal(str(journal))
                         r = score.score_pair(fx, core, jv)
-                        row.update({"passed": r["passed"], "rc_hit": r["rc_hit"],
+                        class_agnostic = (r["verdict_ok"] and r["citations_ok"] and not r["claim_misses"]
+                                          and not r["false_attributions"] and (r["rc_hit"] in (True, None)))
+                        row.update({"passed": r["passed"], "passed_class_agnostic": bool(class_agnostic),
+                                    "rc_hit": r["rc_hit"],
                                     "false_attr": len(r["false_attributions"]),
                                     "citations_ok": r["citations_ok"], "verdict_got": r["verdict_got"]})
                     except score.InputError as e:
@@ -105,6 +108,7 @@ def aggregate(rows):
             "tier": tier, "model": model, "runs": n,
             "failed_runs": sum(1 for r in rs if r["status"] != "ok"),
             "pass_rate": sum(r["passed"] for r in rs) / n if n else None,
+            "pass_rate_class_agnostic": sum(r["passed_class_agnostic"] for r in rs) / n if n else None,
             "rc_accuracy": (sum(r["rc_hit"] for r in rc_rows) / len(rc_rows)) if rc_rows else None,
             "false_attributions": sum(r["false_attr"] for r in rs),
             "citation_rate": sum(r["citations_ok"] for r in rs) / n if n else None,
@@ -127,13 +131,14 @@ def _num(v, fmt="{:.0f}"):
 def render(rows, table, run_names):
     out = ["# konan benchmark — results", "",
            f"Runs: {', '.join(run_names)}. {len(rows)} investigations. Protocol and limits: `eval/BENCHMARK.md`.",
-           "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.", "",
+           "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.",
+           "Pass rate is the pre-registered metric; the class-agnostic column ignores only the incident-class label (taxonomy issue tracked separately).", "",
            "## Per tier × model", "",
-           "| Tier | Model | Runs | Failed | Pass rate | Root-cause acc. | False attr. | Citations | Tokens (median) | Wall s (median) | Cost $ (median) | Denials (median) |",
-           "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+           "| Tier | Model | Runs | Failed | Pass rate | Pass (class-agnostic) | Root-cause acc. | False attr. | Citations | Tokens (median) | Wall s (median) | Cost $ (median) | Denials (median) |",
+           "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for t in table:
         out.append(f"| {t['tier']} | {t['model']} | {t['runs']} | {t['failed_runs']} | {_pct(t['pass_rate'])} | "
-                   f"{_pct(t['rc_accuracy'])} | {t['false_attributions']} | {_pct(t['citation_rate'])} | "
+                   f"{_pct(t['pass_rate_class_agnostic'])} | {_pct(t['rc_accuracy'])} | {t['false_attributions']} | {_pct(t['citation_rate'])} | "
                    f"{_num(t['tokens_median'])} | {_num(t['duration_median_s'])} | "
                    f"{_num(t['cost_median_usd'], '{:.2f}')} | {_num(t['denials_median'], '{:.1f}')} |")
     out += ["", "## Every run", "",
