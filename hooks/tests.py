@@ -182,8 +182,73 @@ def test_process_tripwire_persists_across_calls():
     assert frozen and frozen["permissionDecision"] == "deny" and "frozen" in frozen["permissionDecisionReason"]
 
 
+# --- eval-blind mode (KONAN_EVAL_BLIND=1): the blinding contract, mechanical --------------
+BLIND_PINS = [
+    # denied in blind mode
+    ("gh issue view 12", DENY),
+    ("cat eval/scenarios/d1-zero-stock-product-page.yaml", DENY),
+    ("ls eval/", DENY),
+    ("grep -r zero eval/scenarios", DENY),
+    ("cat ../faultline/SPEC.md", DENY),
+    ("ls /Users/x/Projects/faultline/", DENY),
+    ("FAULTLINE_DIR=../faultline scripts/lab.sh status", DENY),
+    ("git show HEAD:eval/scenarios/x.yaml", DENY),
+    ("git log -- eval", DENY),
+    # still fine in blind mode
+    ("scripts/probe.sh /health", ALLOW),
+    ("tail -n 50 lab/logs/app.log", FLOW),
+    ("grep -c evaluated lab/logs/app.log", FLOW),          # the word, not the directory
+    ("git status", FLOW),
+    ("ls journals/", FLOW),
+]
+
+
+def test_blind_mode_decision_table():
+    failures = []
+    for cmd, expected in BLIND_PINS:
+        got, _ = boundary.decide(cmd, blind=True)
+        if got != expected:
+            failures.append(f"  {cmd!r}: expected {expected}, got {got}")
+    for cmd, expected in BLIND_PINS:          # outside blind mode these are not specially denied
+        if expected == DENY:
+            got, _ = boundary.decide(cmd, blind=False)
+            if got == DENY:
+                failures.append(f"  {cmd!r}: denied outside blind mode (should be flow/allow)")
+    assert not failures, "blind decision table drift:\n" + "\n".join(failures)
+
+
+def test_blind_mode_file_tools():
+    ev = lambda tool, inp: {"session_id": "s-b", "tool_name": tool, "tool_input": inp}
+    st = {"denials": 0, "frozen": False}
+    d, r, st = boundary.evaluate(ev("Read", {"file_path": "eval/scenarios/x.yaml"}), st, 2, blind=True)
+    assert d == "deny" and "eval-blind" in r and st["denials"] == 1
+    d, _, st = boundary.evaluate(ev("Read", {"file_path": "/abs/konan/eval/fixture.schema.json"}), st, 2, blind=True)
+    assert d == "deny" and st["frozen"]                       # second denial freezes, file tools too
+    st = {"denials": 0, "frozen": False}
+    d, _, _ = boundary.evaluate(ev("Grep", {"pattern": "eval", "path": "lab/logs"}), st, 2, blind=True)
+    assert d is None                                          # Grep pattern is text, path is fine
+    d, _, _ = boundary.evaluate(ev("Glob", {"pattern": "eval/**/*.yaml"}), st, 2, blind=True)
+    assert d == "deny"
+    d, _, _ = boundary.evaluate(ev("Read", {"file_path": "../faultline/SPEC.md"}), st, 2, blind=True)
+    assert d == "deny"
+    d, _, _ = boundary.evaluate(ev("Read", {"file_path": "docs/lab.md"}), st, 2, blind=True)
+    assert d is None
+    d, _, _ = boundary.evaluate(ev("Read", {"file_path": "eval/scenarios/x.yaml"}), st, 2, blind=False)
+    assert d is None                                          # outside blind mode: not the hook's business
+
+
+def test_process_blind_env():
+    rc, out, _ = _run_hook(json.dumps(_event("gh issue list")), {"KONAN_EVAL_BLIND": "1"})
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+    rc, out, _ = _run_hook(json.dumps(_event("gh issue list")))
+    assert rc == 0 and out == ""                              # no env → normal flow
+    ev = {"session_id": "s-e", "tool_name": "Read", "tool_input": {"file_path": "eval/README.md"}}
+    rc, out, _ = _run_hook(json.dumps(ev), {"KONAN_EVAL_BLIND": "1"})
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for t in tests:
         t()
-    print(f"OK: {len(tests)} boundary pins hold ({len(PINS)} decision-table rows)")
+    print(f"OK: {len(tests)} boundary pins hold ({len(PINS)} decision-table rows + {len(BLIND_PINS)} blind rows)")

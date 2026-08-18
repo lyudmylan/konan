@@ -14,6 +14,7 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
+import run as runner
 import score
 
 EVAL = Path(__file__).resolve().parent
@@ -179,5 +180,39 @@ def run():
     print("OK: 13 semantics pins hold")
 
 
+# --- runner (eval/run.py) — the pure pieces ---------------------------------------------
+def test_runner_envelope_meta_sums_whole_run_tokens():
+    env = {"session_id": "s1", "is_error": False, "num_turns": 7, "duration_ms": 1234,
+           "total_cost_usd": 1.5,
+           "modelUsage": {"claude-x": {"inputTokens": 10, "outputTokens": 20,
+                                       "cacheReadInputTokens": 30, "cacheCreationInputTokens": 40,
+                                       "costUSD": 1.5}},
+           "permission_denials": [{"tool_name": "Bash", "tool_input": {"command": "ls; curl x"}}],
+           "result": "done"}
+    m = runner.envelope_meta(env)
+    assert m["tokens_total"] == 100 and m["model_usage"]["claude-x"]["costUSD"] == 1.5
+    assert m["permission_denials"] == [{"tool": "Bash", "command": "ls; curl x"}]
+    assert runner.envelope_meta({"is_error": True, "result": "x"})["tokens_total"] is None
+
+
+def test_runner_stamps_tokens_once_in_the_machine_core_only():
+    j = "---\nusage:\n  model: m\n  tokens: null\n  wall_clock_seconds: 5\n---\n\nBody says tokens: null too.\n"
+    out, ok = runner.stamp_tokens(j, 12345)
+    assert ok and "  tokens: 12345\n" in out and out.endswith("Body says tokens: null too.\n")
+    assert runner.stamp_tokens(j, None) == (j, False)
+    assert runner.stamp_tokens("---\nusage:\n  tokens: 7\n---\nx", 1) == ("---\nusage:\n  tokens: 7\n---\nx", False)
+
+
+def test_runner_recognizes_quota_errors():
+    assert runner.looks_like_quota_error({"is_error": True, "result": "You've hit your session limit"})
+    assert runner.looks_like_quota_error({"api_error_status": 429})
+    assert not runner.looks_like_quota_error({"is_error": True, "result": "journal schema invalid"})
+
+
 if __name__ == "__main__":
     run()
+    for t in (test_runner_envelope_meta_sums_whole_run_tokens,
+              test_runner_stamps_tokens_once_in_the_machine_core_only,
+              test_runner_recognizes_quota_errors):
+        t()
+    print("OK: 3 runner pins hold")
