@@ -123,6 +123,10 @@ worktree, copies the journal to `eval/runs/<run-id>/<model>/<scenario>-r<n>.md`,
 permission denials), appends a line to `results.jsonl`, and finally scores every pair of
 the run into `eval/runs/<run-id>/scorecard.md`. Runs already present are skipped
 (resume with the same `--run-id`); the batch stops on a quota / rate-limit error.
+Probabilistic fixtures (`--restage-check`, default: `chaos-error-rate`,
+`t3-chaos-low-rate-intermittent`) must land at least one user-visible 5xx in the log
+before the investigation starts — the runner restages up to three times and records the
+count in the sidecar (`restages`).
 
 **Tokens, defined:** the runner stamps the journal's `usage.tokens: null` with the
 run's total tokens = input + output + cache-read + cache-creation across every model

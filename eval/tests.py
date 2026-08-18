@@ -219,6 +219,14 @@ def test_runner_stamps_tokens_once_in_the_machine_core_only():
     assert runner.stamp_tokens("---\nusage:\n  tokens: 7\n---\nx", 1) == ("---\nusage:\n  tokens: 7\n---\nx", False)
 
 
+def test_runner_user_error_detection_ignores_investigator_probes():
+    log = ('{"event": "request", "path": "/products/3", "status": 500, "request_id": "konan-1-2"}\n'
+           '{"event": "request", "path": "/products", "status": 200, "request_id": "abc"}\n')
+    assert not runner.user_error_landed(log)
+    log += '{"event": "request", "path": "/products", "status": 503, "request_id": "u-9"}\n'
+    assert runner.user_error_landed(log)
+
+
 def test_runner_recognizes_quota_errors():
     assert runner.looks_like_quota_error({"is_error": True, "result": "You've hit your session limit"})
     assert runner.looks_like_quota_error({"api_error_status": 429})
@@ -229,6 +237,7 @@ if __name__ == "__main__":
     run()
     for t in (test_runner_envelope_meta_sums_whole_run_tokens,
               test_runner_stamps_tokens_once_in_the_machine_core_only,
+              test_runner_user_error_detection_ignores_investigator_probes,
               test_runner_recognizes_quota_errors):
         t()
-    print("OK: 3 runner pins hold")
+    print("OK: 4 runner pins hold")

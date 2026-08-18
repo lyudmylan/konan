@@ -125,6 +125,17 @@ def looks_like_quota_error(env_json):
 
 
 TOKENS_LINE = re.compile(r"^(\s*tokens:\s*)null(\s*(#.*)?)$", re.M)
+USER_5XX = re.compile(r'"event": "request".*?"status": 5\d\d')
+
+
+def user_error_landed(log_text):
+    """Pure: did any NON-investigator request (no konan- request id) end in a 5xx?
+    Probabilistic fixtures assert user impact; without it the honest verdict differs
+    from the fixture's, so the runner restages instead of scoring a coin flip."""
+    for line in log_text.splitlines():
+        if USER_5XX.search(line) and "konan-" not in line:
+            return True
+    return False
 
 
 def stamp_tokens(journal_text, tokens):
@@ -160,6 +171,9 @@ def main():
     ap.add_argument("--timeout-min", type=int, default=30)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--keep-worktree", action="store_true")
+    ap.add_argument("--restage-check", default="chaos-error-rate,t3-chaos-low-rate-intermittent",
+                    help="comma-separated scenario ids whose staging must land a user-visible 5xx "
+                         "(restaged up to 3 times; empty string disables)")
     a = ap.parse_args()
 
     faultline = os.environ.get("FAULTLINE_DIR", str((REPO / ".." / "faultline").resolve()))
@@ -207,8 +221,22 @@ def main():
                 lab_stop(wt, env)
                 lab_start(wt, env, base)
                 lab_up = True
-            for cmd in setup.get("stage", []) or []:
-                sh(cmd, wt, timeout=180, env=env)
+            needs_user_error = sid in {x.strip() for x in a.restage_check.split(",") if x.strip()}
+            restages = 0
+            while True:
+                for cmd in setup.get("stage", []) or []:
+                    sh(cmd, wt, timeout=180, env=env)
+                if not needs_user_error:
+                    break
+                log = wt / "lab" / "logs" / "app.log"
+                if log.exists() and user_error_landed(log.read_text()):
+                    break
+                restages += 1
+                if restages > 3:
+                    raise RuntimeError(f"{tag}: no user-visible 5xx after 3 restages — fixture staging is off")
+                print(f"   restage {restages}: no user-visible 5xx landed yet", flush=True)
+                lab_stop(wt, env)
+                lab_start(wt, env, base)
             for j in (wt / "journals").glob("*.md"):
                 j.unlink()
             prompt = f"/konan {fx['complaint']}"
@@ -227,6 +255,7 @@ def main():
             meta = envelope_meta(envelope)
             meta.update({"run_id": a.run_id, "model": a.model, "scenario": sid, "rep": r,
                          "fixture": str(fp.relative_to(REPO)), "started_at": started, "ended_at": ended,
+                         "restages": restages,
                          "wall_seconds_runner": round(time.time() - t0)})
             journals = list((wt / "journals").glob("*.md"))
             status = "ok"
