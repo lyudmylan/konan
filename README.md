@@ -52,12 +52,14 @@ boundaries, the investigation loop, the on-call trigger path.
   complaint; a trigger is an adapter, and adding a stack costs a configuration
   profile, never code ([docs/triggers.md](docs/triggers.md)).
 - **Read-only, mechanically** — the investigator touches a target only through an
-  allowlisted probe; the boundary is settings, not prompts. A security boundary is
-  never a prompt. Precisely: only the probe script and the journal-commit forms are
-  pre-approved; every other command prompts, and an unattended shift treats a prompt
-  as fail-closed. The deny list on raw HTTP clients is a belt for the habitual forms,
-  not the boundary itself — a content-based hook port is tracked in
-  [#44](https://github.com/lyudmylan/konan/issues/44).
+  allowlisted probe, and the boundary is code, not prompts: a `PreToolUse` hook
+  ([hooks/boundary.py](hooks/boundary.py)) reads every shell command whole and denies
+  raw network clients, operator surfaces, and destructive git forms by content;
+  only the probe and the journal-commit shapes are pre-approved; everything else
+  prompts, and an unattended shift fails closed on a prompt. A second denial freezes
+  the session — a denied action is a signal to stop, never a puzzle to solve. The
+  decisions are pinned by tests ([hooks/tests.py](hooks/tests.py)). A security
+  boundary is never a prompt.
 
 ## The eval spine (triple duty)
 

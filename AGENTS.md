@@ -7,13 +7,20 @@ overrides them where they conflict.
 ## Lab boundary (hard rule)
 
 - The investigator touches a target only through `scripts/probe.sh` — GET-only,
-  path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). Raw
-  `curl`/`wget`/`http`/`xh`/`nc` are deny-listed in `.claude/settings.json` on purpose:
-  the boundary is mechanical, not prompted. Precisely: the allowlist is the boundary
-  (probe + journal-commit forms); everything else prompts, and an unattended shift
-  fails closed on a prompt; the deny list is a belt for the habitual raw-HTTP forms
-  (content-based hook port: #44). Changing either list is a SPEC-grade change
-  (PR with rationale, never casual).
+  path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). The
+  boundary is mechanical, not prompted, and it is enforced by content: a `PreToolUse`
+  hook (`hooks/boundary.py`, registered in `.claude/settings.json`) reads every Bash
+  command whole and **denies** raw network clients anywhere in it (`curl`, `wget`,
+  `http`, `xh`, `nc`, …, inline python/node network calls, `/dev/tcp`), the operator
+  surfaces `/simulate` and `/chaos` by any route, and destructive `git push` forms;
+  it **allows** exactly the shapes an unattended shift needs (one `scripts/probe.sh`
+  call, `git add journals/…`, `git commit -m "…"`); everything else takes the normal
+  permission flow — settings rules, then a prompt — and an unattended shift fails
+  closed on a prompt. The settings `allow`/`deny` lists stay as the belt (deny rules
+  win over any hook allow). Tripwire: the second denial in a session freezes it —
+  every further Bash call is denied and the agent is told to stop and page; a denied
+  action is a signal to stop, never a puzzle to solve. Changing the hook, its pins, or
+  either settings list is a SPEC-grade change (PR with rationale, never casual).
 - `/simulate` and `/chaos` are outside the probe allowlist even though they are GETs:
   faultline serves mutating GETs there (crash, hang, ballast), and chaos state is
   operator surface, not telemetry.
@@ -34,8 +41,9 @@ overrides them where they conflict.
   git-commit them on the current branch — those two forms are narrowly allowlisted in
   settings so an unattended investigation never blocks on a prompt. Pushing stays
   human. Widening either entry is SPEC-grade, like the probe allowlist.
-- Quality gates: `uv run eval/tests.py` (scorer semantics pins) must pass, the
-  repo-review lens before merge, and docs ship with the change. The full corpus-in-CI
+- Quality gates: `uv run eval/tests.py` (scorer semantics pins) and
+  `python3 hooks/tests.py` (boundary decision pins) must pass, the repo-review lens
+  before merge, and docs ship with the change. The full corpus-in-CI
   gate (re-run scenarios on skill changes) lands with runner automation, post-v0.1;
   until then skill changes are validated by scoring real journals
   (`eval/README.md` → Scoring a run).
