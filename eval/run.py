@@ -184,8 +184,21 @@ def main():
     model_dir = out / re.sub(r"[^A-Za-z0-9._-]", "_", a.model)
 
     plan = [(fp, fx, r) for fp, fx in fixtures for r in range(1, a.repeat + 1)]
-    todo = [(fp, fx, r) for fp, fx, r in plan
-            if not (model_dir / f"{fx['scenario']['id']}-r{r}.md").exists()]
+    def already_done(fx, r):
+        """Resume rule (protocol): a run with a journal is done; a failed run is done too
+        (it counts as failed) — only quota / rate-limit stops are retried."""
+        tag = f"{fx['scenario']['id']}-r{r}"
+        if (model_dir / f"{tag}.md").exists():
+            return True
+        meta_path = model_dir / f"{tag}.meta.json"
+        if meta_path.exists():
+            try:
+                return not json.loads(meta_path.read_text()).get("quota_error", False)
+            except ValueError:
+                return False
+        return False
+
+    todo = [(fp, fx, r) for fp, fx, r in plan if not already_done(fx, r)]
     print(f"run {a.run_id}: model={a.model} fixtures={len(fixtures)} repeat={a.repeat} "
           f"planned={len(plan)} todo={len(todo)} out={out}")
     if a.dry_run:
@@ -270,6 +283,7 @@ def main():
                 meta["tokens_stamped"] = stamped
                 (model_dir / f"{tag}.md").write_text(text)
             meta["status"] = status
+            meta["quota_error"] = bool(meta["is_error"] and looks_like_quota_error(envelope))
             (model_dir / f"{tag}.meta.json").write_text(json.dumps(meta, indent=2) + "\n")
             with results.open("a") as f:
                 f.write(json.dumps({k: meta[k] for k in ("run_id", "model", "scenario", "rep", "status",
@@ -279,7 +293,7 @@ def main():
                   f"tokens={meta['tokens_total']} cost=${meta['total_cost_usd']} "
                   f"denials={len(meta['permission_denials'])}", flush=True)
             done += 1
-            if meta["is_error"] and looks_like_quota_error(envelope):
+            if meta["quota_error"]:
                 print("STOP: quota / rate-limit error — resume with the same --run-id after the window resets.")
                 break
             if a.max_runs and done >= a.max_runs:
