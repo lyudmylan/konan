@@ -126,7 +126,8 @@ the run into `eval/runs/<run-id>/scorecard.md`. Runs already present are skipped
 Probabilistic fixtures (`--restage-check`, default: `chaos-error-rate`,
 `t3-chaos-low-rate-intermittent`) must land at least one user-visible 5xx in the log
 before the investigation starts — the runner restages up to three times and records the
-count in the sidecar (`restages`).
+count in the sidecar (`restages`). A run that exceeds `--timeout-min` is killed and
+recorded as `timeout` (a failed run, not retried); two consecutive timeouts stop the batch.
 
 **Tokens, defined:** the runner stamps the journal's `usage.tokens: null` with the
 run's total tokens = input + output + cache-read + cache-creation across every model

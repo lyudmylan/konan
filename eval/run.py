@@ -223,6 +223,7 @@ def main():
     model_dir.mkdir(parents=True, exist_ok=True)
     results = out / "results.jsonl"
     done = 0
+    consecutive_timeouts = 0
     lab_up = False
     try:
         for fp, fx, r in todo:
@@ -255,16 +256,27 @@ def main():
             prompt = f"/konan {fx['complaint']}"
             started = now_iso()
             t0 = time.time()
-            p = subprocess.run([claude, "-p", "--model", a.model, "--permission-mode", "acceptEdits",
-                                "--output-format", "json", prompt],
-                               cwd=wt, env=env, stdin=subprocess.DEVNULL, capture_output=True,
-                               text=True, timeout=a.timeout_min * 60)
-            ended = now_iso()
+            timed_out = False
             try:
-                envelope = json.loads(p.stdout)
-            except ValueError:
-                envelope = {"is_error": True, "result": f"non-JSON output (rc={p.returncode}): "
-                            f"{p.stdout[-800:]}\n{p.stderr[-800:]}"}
+                p = subprocess.run([claude, "-p", "--model", a.model, "--permission-mode", "acceptEdits",
+                                    "--output-format", "json", prompt],
+                                   cwd=wt, env=env, stdin=subprocess.DEVNULL, capture_output=True,
+                                   text=True, timeout=a.timeout_min * 60)
+                out_text, rc_code, err_text = p.stdout, p.returncode, p.stderr
+            except subprocess.TimeoutExpired as e:   # the child is killed by run(); record, continue
+                timed_out = True
+                out_text, rc_code = "", None
+                err_text = (e.stderr.decode() if isinstance(e.stderr, bytes) else (e.stderr or ""))
+            ended = now_iso()
+            if timed_out:
+                envelope = {"is_error": True, "subtype": "timeout",
+                            "result": f"runner timeout after {a.timeout_min} min (killed)"}
+            else:
+                try:
+                    envelope = json.loads(out_text)
+                except ValueError:
+                    envelope = {"is_error": True, "result": f"non-JSON output (rc={rc_code}): "
+                                f"{out_text[-800:]}\n{err_text[-800:]}"}
             meta = envelope_meta(envelope)
             meta.update({"run_id": a.run_id, "model": a.model, "scenario": sid, "rep": r,
                          "fixture": str(fp.relative_to(REPO)), "started_at": started, "ended_at": ended,
@@ -272,7 +284,9 @@ def main():
                          "wall_seconds_runner": round(time.time() - t0)})
             journals = list((wt / "journals").glob("*.md"))
             status = "ok"
-            if meta["is_error"]:
+            if timed_out:
+                status = "timeout"
+            elif meta["is_error"]:
                 status = "error"
             elif len(journals) != 1:
                 status = f"no-journal" if not journals else f"{len(journals)}-journals"
@@ -293,8 +307,13 @@ def main():
                   f"tokens={meta['tokens_total']} cost=${meta['total_cost_usd']} "
                   f"denials={len(meta['permission_denials'])}", flush=True)
             done += 1
+            consecutive_timeouts = consecutive_timeouts + 1 if timed_out else 0
             if meta["quota_error"]:
                 print("STOP: quota / rate-limit error — resume with the same --run-id after the window resets.")
+                break
+            if consecutive_timeouts >= 2:
+                print("STOP: two consecutive timeouts — likely a stalled harness or rate-limit backoff; "
+                      "resume with the same --run-id later (timeouts count as failed runs).")
                 break
             if a.max_runs and done >= a.max_runs:
                 print(f"stopping after --max-runs={a.max_runs}; resume with the same --run-id")
