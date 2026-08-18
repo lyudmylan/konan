@@ -63,9 +63,9 @@ boundaries, the investigation loop, the on-call trigger path.
 
 ## The eval spine (triple duty)
 
-1. **Quality gate** — skill changes are validated by re-scoring investigations against
-   the seeded-fault corpus (the automated corpus-in-CI gate lands with runner
-   automation).
+1. **Quality gate** — skill changes are validated by re-running the seeded-fault corpus
+   through the eval runner (blinded, headless, tokens and wall clock captured); the CI
+   wiring is the remaining step.
 2. **Model benchmark** — skills constant, model swapped; the scorecard grows a
    per-model dimension on each model release.
 3. **Forward-compat instrument** — when a new model absorbs part of the methodology,

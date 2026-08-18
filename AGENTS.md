@@ -14,7 +14,8 @@ overrides them where they conflict.
   `http`, `xh`, `nc`, …, inline python/node network calls, `/dev/tcp`), the operator
   surfaces `/simulate` and `/chaos` by any route, and destructive `git push` forms;
   it **allows** exactly the shapes an unattended shift needs (one `scripts/probe.sh`
-  call, `git add journals/…`, `git commit -m "…"`); everything else takes the normal
+  call, `git add journals/…`, `git commit -m "…"`; a `cd <session cwd> &&` prefix is
+  transparent — same surface, the harness's subagent idiom); everything else takes the normal
   permission flow — settings rules, then a prompt — and an unattended shift fails
   closed on a prompt. The settings `allow`/`deny` lists stay as the belt (deny rules
   win over any hook allow). Tripwire: the second denial in a session freezes it —
@@ -41,12 +42,11 @@ overrides them where they conflict.
   git-commit them on the current branch — those two forms are narrowly allowlisted in
   settings so an unattended investigation never blocks on a prompt. Pushing stays
   human. Widening either entry is SPEC-grade, like the probe allowlist.
-- Quality gates: `uv run eval/tests.py` (scorer semantics pins) and
-  `python3 hooks/tests.py` (boundary decision pins) must pass, the repo-review lens
-  before merge, and docs ship with the change. The full corpus-in-CI
-  gate (re-run scenarios on skill changes) lands with runner automation, post-v0.1;
-  until then skill changes are validated by scoring real journals
-  (`eval/README.md` → Scoring a run).
+- Quality gates: `uv run eval/tests.py` (scorer + runner pins) and
+  `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) must pass,
+  the repo-review lens before merge, and docs ship with the change. Skill changes are
+  validated by re-running scenarios with the eval runner (`eval/README.md` → Running
+  the corpus with the runner); wiring that into CI is still open (#34).
 - Public-eventually: everything committed here — files, issue bodies, commit
   messages — must be publishable at the v0.1 flip.
 - Branch safety: platform branch protection is plan-gated while the repo is private, so
@@ -63,6 +63,10 @@ overrides them where they conflict.
 - `scripts/scenario.sh chaos-on|chaos-off|chaos-status|sim|order|get` — eval-side
   scenario triggers and simulated user traffic; prompts by design. Full lab contract:
   `docs/lab.md`.
+- `uv run eval/run.py --run-id <id> --model <m> [--repeat N] [--fixtures …]` — the eval
+  runner: staged, blinded, headless investigations per fixture; journals + sidecars under
+  `eval/runs/<id>/`, scored into `eval/runs/<id>/scorecard.md`. Operator side; it draws
+  from the same subscription pool as everything else — batch with `--max-runs`.
 - `scripts/alert.sh "<summary>" [alertname] [severity]` — eval-side alert emitter:
   appends one contract-shaped complaint line to `alerts/inbox.jsonl` (the lab trigger
   profile, `docs/triggers.md`); prompts by design, like every operator action.

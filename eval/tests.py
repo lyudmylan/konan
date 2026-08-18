@@ -14,6 +14,7 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
+import run as runner
 import score
 
 EVAL = Path(__file__).resolve().parent
@@ -176,8 +177,67 @@ def run():
     r = score.score_pair(fx, core, JV)
     assert not r["passed"], r
 
-    print("OK: 13 semantics pins hold")
+    # 14. Unquoted RFC3339 stamps in the frontmatter stay strings (the contract's own
+    #     example writes them unquoted; a model that follows it must not fail citation
+    #     compliance on a YAML parsing accident).
+    import tempfile
+    core = base_core()
+    text = "---\n" + yaml.safe_dump(core, sort_keys=False).replace(
+        "started: '2026-07-31T10:00:00+03:00'", "started: 2026-07-31T10:00:00+03:00").replace(
+        "concluded: '2026-07-31T10:10:00+03:00'", "concluded: 2026-07-31T10:10:00+03:00") + "---\n\nbody\n"
+    assert "started: 2026-07-31T10:00:00+03:00\n" in text, text[:400]   # the pin exercises the unquoted form
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        f.write(text)
+    loaded = score.load_journal(f.name)
+    assert isinstance(loaded["investigation"]["started"], str)
+    check_valid(loaded, base_fx())
+    assert score.score_pair(base_fx(), loaded, JV)["citations_ok"]
+
+    print("OK: 14 semantics pins hold")
+
+
+# --- runner (eval/run.py) — the pure pieces ---------------------------------------------
+def test_runner_envelope_meta_sums_whole_run_tokens():
+    env = {"session_id": "s1", "is_error": False, "num_turns": 7, "duration_ms": 1234,
+           "total_cost_usd": 1.5,
+           "modelUsage": {"claude-x": {"inputTokens": 10, "outputTokens": 20,
+                                       "cacheReadInputTokens": 30, "cacheCreationInputTokens": 40,
+                                       "costUSD": 1.5}},
+           "permission_denials": [{"tool_name": "Bash", "tool_input": {"command": "ls; curl x"}}],
+           "result": "done"}
+    m = runner.envelope_meta(env)
+    assert m["tokens_total"] == 100 and m["model_usage"]["claude-x"]["costUSD"] == 1.5
+    assert m["permission_denials"] == [{"tool": "Bash", "command": "ls; curl x"}]
+    assert runner.envelope_meta({"is_error": True, "result": "x"})["tokens_total"] is None
+
+
+def test_runner_stamps_tokens_once_in_the_machine_core_only():
+    j = "---\nusage:\n  model: m\n  tokens: null\n  wall_clock_seconds: 5\n---\n\nBody says tokens: null too.\n"
+    out, ok = runner.stamp_tokens(j, 12345)
+    assert ok and "  tokens: 12345\n" in out and out.endswith("Body says tokens: null too.\n")
+    assert runner.stamp_tokens(j, None) == (j, False)
+    assert runner.stamp_tokens("---\nusage:\n  tokens: 7\n---\nx", 1) == ("---\nusage:\n  tokens: 7\n---\nx", False)
+
+
+def test_runner_user_error_detection_ignores_investigator_probes():
+    log = ('{"event": "request", "path": "/products/3", "status": 500, "request_id": "konan-1-2"}\n'
+           '{"event": "request", "path": "/products", "status": 200, "request_id": "abc"}\n')
+    assert not runner.user_error_landed(log)
+    log += '{"event": "request", "path": "/products", "status": 503, "request_id": "u-9"}\n'
+    assert runner.user_error_landed(log)
+
+
+def test_runner_recognizes_quota_errors():
+    assert runner.looks_like_quota_error({"is_error": True, "result": "You've hit your session limit"})
+    assert runner.looks_like_quota_error({"api_error_status": 429})
+    assert not runner.looks_like_quota_error({"is_error": True, "result": "journal schema invalid"})
 
 
 if __name__ == "__main__":
     run()
+    for t in (test_runner_envelope_meta_sums_whole_run_tokens,
+              test_runner_stamps_tokens_once_in_the_machine_core_only,
+              test_runner_user_error_detection_ignores_investigator_probes,
+              test_runner_recognizes_quota_errors):
+        t()
+    print("OK: 4 runner pins hold")

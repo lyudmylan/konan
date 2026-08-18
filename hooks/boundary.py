@@ -14,6 +14,12 @@ one of three decisions:
   (none) — everything else takes the normal permission flow: settings rules, then a
           prompt; an unattended shift fails closed on a prompt (docs: AGENTS.md).
 
+Eval-blind mode (`KONAN_EVAL_BLIND=1`, set by eval/run.py): the blinding contract of
+eval/README.md becomes mechanical — Bash commands that call `gh`, mention `eval/` paths,
+the faultline checkout, or run git against eval are denied; Read/Grep/Glob/Edit/Write
+calls whose path fields point under `eval/` or into faultline are denied. Outside eval
+mode those tools get no decision from this hook.
+
 Tripwire: the second denial in one session freezes the session — every further Bash
 call is denied with a reason telling the agent to stop and page a human. A denied
 action is a signal to stop, never a puzzle to solve. Threshold: KONAN_BOUNDARY_TRIP
@@ -54,6 +60,34 @@ RE_GIT_PUSH_DESTRUCTIVE = re.compile(
     r"\bgit\s+push\b[^;&|]*?"
     r"(?:\s--force(?:-with-lease)?\b|\s-f\b|\s--delete\b|\s--prune\b|\s--mirror\b|\s\+\S+|\s:\S+)"
 )
+# --- eval-blind mode: the blinding contract, mechanical ------------------------------------
+RE_BLIND_BASH = re.compile(
+    r"(?:(?:^|[\s;&|(){}`\"'])gh(?=$|[\s;&|)}`\"'])"          # the issue tracker
+    r"|(?:^|[\s\"'=:(<])(?:\./)?eval/"                        # ground truth on disk
+    r"|\.\./faultline|(?:^|[\s\"'=:(</])faultline/|FAULTLINE_DIR"  # the lab's own checkout
+    r"|\bgit\b[^;&|]*\beval\b)"                                # git against eval
+)
+BLIND_TOOLS = {"Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"}
+PATH_FIELDS = ("file_path", "path", "notebook_path", "glob", "pattern")
+
+
+def blind_path_violation(tool_name: str, tool_input: dict) -> bool:
+    """Pure: does a file-tool call reach into eval/ or the faultline checkout?"""
+    if tool_name not in BLIND_TOOLS:
+        return False
+    for f in PATH_FIELDS:
+        if f == "pattern" and tool_name != "Glob":
+            continue  # Grep's pattern is text, not a path
+        v = (tool_input or {}).get(f)
+        if not isinstance(v, str) or not v:
+            continue
+        norm = v.replace("\\", "/")
+        if norm.startswith("eval/") or norm == "eval" or "/eval/" in norm or norm.endswith("/eval") \
+                or "faultline/" in norm or norm.endswith("/faultline") or norm.startswith("../faultline"):
+            return True
+    return False
+
+
 # --- allow: exact pre-approved shapes (no chaining, no subshells) --------------------
 RE_ALLOW_PROBE = re.compile(r"^\s*(?:\./)?scripts/probe\.sh\s+/[^\s;&|<>`$()]*\s*$")
 RE_ALLOW_GIT_ADD = re.compile(r"^\s*git\s+add\s+(?:journals/[^\s;&|<>`$()]+\s*)+$")
@@ -62,7 +96,7 @@ RE_ALLOW_GIT_COMMIT = re.compile(
 )
 
 
-def decide(command: str) -> tuple[str | None, str]:
+def decide(command: str, blind: bool = False) -> tuple[str | None, str]:
     """Return (decision, reason). decision is 'deny', 'allow', or None (normal flow).
 
     Order matters: operator surfaces are denied even in a pre-approved shape; the
@@ -74,6 +108,9 @@ def decide(command: str) -> tuple[str | None, str]:
     if RE_OPERATOR_SURFACE.search(cmd):
         return "deny", ("boundary: /simulate and /chaos are operator surface, not telemetry — "
                         "eval-side only via scripts/scenario.sh (prompts by design)")
+    if blind and RE_BLIND_BASH.search(cmd):
+        return "deny", ("boundary (eval-blind): the tracker, eval/ fixtures, and the lab checkout are "
+                        "out of bounds for an evaluated investigation (eval/README.md, blinding contract)")
     if RE_ALLOW_PROBE.match(cmd) or RE_ALLOW_GIT_ADD.match(cmd) or RE_ALLOW_GIT_COMMIT.match(cmd):
         return "allow", "boundary: pre-approved shape"
     if RE_DEV_TCP.search(cmd):
@@ -107,17 +144,47 @@ def _save(path: str, state: dict) -> None:
     os.replace(tmp, path)
 
 
-def evaluate(event: dict, state: dict, trip: int) -> tuple[str | None, str, dict]:
+RE_CD_PREFIX = re.compile(r'^\s*cd\s+(?:"([^"]+)"|\'([^\']+)\'|(\S+))\s*&&\s*(.*)$', re.S)
+
+
+def strip_cd_to_cwd(command: str, cwd: str | None) -> str:
+    """Pure: `cd <dir> && rest` → `rest` when <dir> is the session's own cwd — the
+    harness idiom for subagents; same surface, different syntax. Any other target
+    leaves the command untouched (and thus outside the pre-approved shapes)."""
+    if not cwd:
+        return command
+    m = RE_CD_PREFIX.match(command or "")
+    if not m:
+        return command
+    target = next(g for g in m.groups()[:3] if g is not None)
+    try:
+        same = os.path.realpath(target) == os.path.realpath(cwd)
+    except (OSError, ValueError):
+        same = False
+    return m.group(4) if same else command
+
+
+def evaluate(event: dict, state: dict, trip: int, blind: bool = False) -> tuple[str | None, str, dict]:
     """Pure decision over (event, state) → (decision, reason, new_state)."""
-    if event.get("tool_name") != "Bash":
+    tool = event.get("tool_name")
+    if tool != "Bash":
+        if blind and blind_path_violation(tool, event.get("tool_input") or {}):
+            state = dict(state)
+            state["denials"] = int(state.get("denials", 0)) + 1
+            reason = ("boundary (eval-blind): eval/ and the lab checkout are out of bounds for an "
+                      "evaluated investigation (eval/README.md, blinding contract)")
+            if state["denials"] >= trip:
+                state["frozen"] = True
+                reason += f" — {state['denials']} denials in this session: the session is now frozen; stop"
+            return "deny", reason, state
         return None, "", state
     if state.get("frozen"):
         return ("deny",
                 "boundary: session frozen after repeated denials — stop, record the wall in "
                 "your report, and page a human; a fresh session is required",
                 state)
-    command = (event.get("tool_input") or {}).get("command", "")
-    decision, reason = decide(command)
+    command = strip_cd_to_cwd((event.get("tool_input") or {}).get("command", ""), event.get("cwd"))
+    decision, reason = decide(command, blind)
     if decision == "deny":
         state = dict(state)
         state["denials"] = int(state.get("denials", 0)) + 1
@@ -153,8 +220,9 @@ def main() -> int:
         return 0
     try:
         trip = max(1, int(os.environ.get("KONAN_BOUNDARY_TRIP", "2")))
+        blind = os.environ.get("KONAN_EVAL_BLIND") == "1"
         path = _state_path(str(event.get("session_id", "")))
-        decision, reason, new_state = evaluate(event, _load(path), trip)
+        decision, reason, new_state = evaluate(event, _load(path), trip, blind)
         if new_state is not None and decision == "deny":
             _save(path, new_state)
         _emit(decision, reason)
