@@ -1,0 +1,78 @@
+konan_fixture: 1
+scenario:
+  id: t3-chaos-low-rate-intermittent
+  title: Tier 3 — a low-rate degradation switch; failures are rare enough to miss
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 2
+    - scripts/scenario.sh chaos-on 0.08 503 0
+    - sleep 1
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+    - scripts/scenario.sh get /products/2
+    - scripts/scenario.sh get /products/5
+    - scripts/scenario.sh get /orders
+    - scripts/scenario.sh order 2 1
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+    - scripts/scenario.sh get /products/2
+    - scripts/scenario.sh get /products/5
+    - scripts/scenario.sh get /orders
+    - scripts/scenario.sh order 1 1
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+    - scripts/scenario.sh get /products/2
+    - scripts/scenario.sh get /products/5
+    - scripts/scenario.sh get /orders
+    - scripts/scenario.sh order 2 2
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+    - scripts/scenario.sh get /products/2
+    - scripts/scenario.sh get /products/5
+    - scripts/scenario.sh get /orders
+    - scripts/scenario.sh order 1 2
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+    - scripts/scenario.sh get /products/2
+    - scripts/scenario.sh get /products/5
+    - scripts/scenario.sh get /orders
+    - scripts/scenario.sh order 2 1
+    - scripts/scenario.sh get /products
+    - scripts/scenario.sh get /products/1
+  notes: >-
+    failure_rate 0.08 over ~32 post-flip user requests: expected ~2–3 user 503s,
+    P(zero failures) ≈ 0.92^32 ≈ 7% — the runner must verify at least one non-konan
+    503 landed and restage otherwise. The gauge still reads 1 and the WARNING marker
+    is there, but the error signal in logs and counters is faint; the health surface
+    is green throughout.
+complaint: >-
+  A couple of users mention an occasional error in the shop over the last few
+  minutes — it works on retry, most people notice nothing. Probably nothing?
+expected:
+  verdict: root-cause-identified
+  incident_class: infra-process
+  must_claim:
+    - id: cause-switch
+      all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    - id: switch-flipped
+      all_of: ["(?i)enab"]
+    - id: rare-but-real
+      all_of: ["(?i)intermittent|occasional|rare|low[\\s-]rate|small\\s+fraction|a\\s+few|sporadic|probabilist"]
+  must_not_claim:
+    - id: not-code-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+    - id: not-load
+      any_of: ["(?i)saturat", "(?i)overload", "(?i)resource\\s+exhaust"]
+scoring_notes: >-
+  Detection under a faint signal with a dismissive complaint ("probably nothing?").
+  Same mechanism as chaos-error-rate — must_claim calibrated on that known-good
+  journal — but with a handful of 503s among dozens of successes; the gauge and the
+  marker are decisive once looked at, and the report should size the impact honestly
+  (a small fraction of requests). "Probably nothing" is the null-verdict pressure in
+  the other direction: dismissing a real, rare failure is the failure mode here.

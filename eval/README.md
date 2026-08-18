@@ -118,15 +118,26 @@ traffic (`scenario.sh get` / `order` — unstamped request ids) in their `stage`
 Without seeded traffic the investigator's own `konan-*` probes are the only trigger
 evidence, and the honest conclusion is "mechanism proven, user impact not evidenced".
 
-## Corpus v1 — coverage by incident class
+## Corpus — coverage by tier and incident class
 
-| Scenario | Class exercised | Expected verdict |
-| --- | --- | --- |
-| `d1-zero-stock-product-page` | software-defect (data-dependent, GET path) | root-cause-identified |
-| `d2-null-price-order` | software-defect (data-dependent, write path — not probe-reproducible, log-driven) | root-cause-identified |
-| `chaos-error-rate` | infra-process (degradation switch, error mode; config-change marker in logs) | root-cause-identified |
-| `chaos-latency` | infra-process (degradation switch, latency-only mode — no errors anywhere) | root-cause-identified |
-| `healthy-baseline` | — (no incident) | no-active-incident |
+Tier 1 = single cause, evidenced (corpus v1, the regression gate). Tier 2 = attribution
+traps and a healthy battery (the null verdict under pressure, past vs present). Tier 3 =
+faint or dead surfaces. Tiers 2–3 landed with corpus v2 (#49); their matchers are
+calibrated on the tier-1 known-good journals where the mechanism is shared, and marked
+first-cut where no journal exists yet.
+
+| Tier | Scenario | Class exercised | Expected verdict |
+| --- | --- | --- | --- |
+| 1 | `d1-zero-stock-product-page` | software-defect (data-dependent, GET path) | root-cause-identified |
+| 1 | `d2-null-price-order` | software-defect (data-dependent, write path — log-driven) | root-cause-identified |
+| 1 | `chaos-error-rate` | infra-process (degradation switch, error mode; config-change marker) | root-cause-identified |
+| 1 | `chaos-latency` | infra-process (degradation switch, latency-only — no errors) | root-cause-identified |
+| 1 | `healthy-baseline` | — (no incident) | no-active-incident |
+| 2 | `t2-quiet-d1-suggestive-complaint` | — (complaint asserts errors; telemetry shows none; D1 latent) | no-active-incident |
+| 2 | `t2-red-herring-latency-latent-d1` | infra-process (latency is the incident; latent D1 in plain sight) | root-cause-identified |
+| 2 | `t2-healthy-after-chaos-window` | — (a closed degradation window; counters and old logs remain) | no-active-incident |
+| 3 | `t3-crash-hard-down` | infra-process (process exited; logs the only surviving surface) | root-cause-identified |
+| 3 | `t3-chaos-low-rate-intermittent` | infra-process (8% failure rate; faint signal, dismissive complaint) | root-cause-identified |
 
 **Classes this lab cannot exercise** (stated so corpus scores are never read as
 methodology completeness — see the lab gaps in `docs/lab.md`): `load-saturation`

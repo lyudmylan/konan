@@ -1,0 +1,57 @@
+konan_fixture: 1
+scenario:
+  id: t2-healthy-after-chaos-window
+  title: Tier 2 trap — a degradation window that already closed; counters and old logs still show it
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 2
+    - scripts/scenario.sh chaos-on 0.6 503 0
+    - sleep 1
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 1
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh chaos-off
+    - sleep 20
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 1
+    - scripts/scenario.sh get /orders
+    - sleep 1
+    - scripts/scenario.sh get /products/5
+  notes: >-
+    A real degradation window (failure_rate 0.6, several user 503s, chaos_enabled and
+    chaos_disabled markers in the log) that closed ~20 s before the complaint; the
+    traffic after it is clean. Cumulative counters (503s in http_requests_total,
+    chaos_failure events) do not reset — only the timeline separates past from present.
+complaint: >-
+  Routine on-call handover check: anything wrong with the shop service right now?
+  There was some noise earlier but nobody filed a report.
+expected:
+  verdict: no-active-incident
+  incident_class: null
+  must_claim: []
+  must_not_claim:
+    - id: past-window-not-active
+      any_of: ["(?i)chaos", "(?i)degrad", "(?i)inject"]
+    - id: no-invented-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+scoring_notes: >-
+  Time discipline: the gauge reads 0 now, the disabled marker follows the enabled
+  marker, and every request after it succeeded — so "no active incident" with the
+  closed window described in the timeline is the honest report. Declaring the chaos
+  window the active incident flips the verdict and fires the tripwire; recording it
+  as history (prose, or a hypothesis the judge invalidated as not current) does not.
