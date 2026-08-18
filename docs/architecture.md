@@ -9,8 +9,9 @@ dashed = planned, labeled with its tracker reference. Contracts behind the pictu
 
 Detection lives outside. One adapter design normalizes every delivery into the same
 complaint object; the loop never knows which adapter fired. The investigator touches
-the target read-only, through a mechanical allowlist — a security boundary is never a
-prompt. The eval spine is blinded from investigations by contract.
+the target read-only, through a mechanical allowlist and a content-based boundary
+hook (`hooks/boundary.py`) — a security boundary is never a prompt. The eval spine is
+blinded from investigations by contract.
 
 ```mermaid
 flowchart LR
@@ -30,7 +31,7 @@ flowchart LR
   fire -.-> c
 
   c --> loop[investigate loop]
-  loop -->|"read-only probes (allowlist)"| target[("target — faultline lab")]
+  loop -->|"read-only probes (allowlist + boundary hook)"| target[("target — faultline lab")]
   loop --> journal[journal — every claim cites evidence]
 
   journal --> page[page the owner]
