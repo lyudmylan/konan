@@ -1,0 +1,73 @@
+{
+  "session_id": "6716ac1e-0b4e-468c-ab07-38a8cb5148e7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 417690,
+  "duration_api_ms": 596962,
+  "total_cost_usd": 1.2741258,
+  "tokens_total": 1525216,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 78,
+      "outputTokens": 19919,
+      "cacheReadInputTokens": 1383796,
+      "cacheCreationInputTokens": 121423,
+      "costUSD": 1.2741258
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1; echo \"---\"; ls scripts/; echo \"---lenses---\"; find . -iname \"*lens*\" -not -path \"*/node_modules/*\" 2>/dev/null"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /products/4"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /products"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /products/4"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E \"exceptions_total|chaos_enabled\""
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /health && echo \"---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-2026-08-18-smoke-w04qlops/wt\" && scripts/probe.sh /metrics"
+    }
+  ],
+  "result_tail": " mode is off, and uptime/memory are monotonic with no resets. All three triage lenses (infra-process, interfaces, software-defect) ran in parallel and came back clean, so per the investigate skill's rules this concluded straight from triage \u2014 no hypotheses needed deep-diving.\n\nOne caveat for the next shift: the log history only covers this process's ~5.5-minute lifetime (no rotated backups), so nothing is known about behavior before it started \u2014 noted in the journal's Gaps.\n\nJournal written to `journals/2026-08-18-handover-no-incident.md` (not committed \u2014 let me know if you want it committed).",
+  "run_id": "2026-08-18-smoke",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 1,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-18T16:15:35Z",
+  "ended_at": "2026-08-18T16:22:36Z",
+  "wall_seconds_runner": 421,
+  "journal_source_name": "2026-08-18-handover-no-incident.md",
+  "tokens_stamped": true,
+  "status": "ok"
+}

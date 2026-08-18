@@ -177,7 +177,23 @@ def run():
     r = score.score_pair(fx, core, JV)
     assert not r["passed"], r
 
-    print("OK: 13 semantics pins hold")
+    # 14. Unquoted RFC3339 stamps in the frontmatter stay strings (the contract's own
+    #     example writes them unquoted; a model that follows it must not fail citation
+    #     compliance on a YAML parsing accident).
+    import tempfile
+    core = base_core()
+    text = "---\n" + yaml.safe_dump(core, sort_keys=False).replace(
+        "started: '2026-07-31T10:00:00+03:00'", "started: 2026-07-31T10:00:00+03:00").replace(
+        "concluded: '2026-07-31T10:10:00+03:00'", "concluded: 2026-07-31T10:10:00+03:00") + "---\n\nbody\n"
+    assert "started: 2026-07-31T10:00:00+03:00\n" in text, text[:400]   # the pin exercises the unquoted form
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        f.write(text)
+    loaded = score.load_journal(f.name)
+    assert isinstance(loaded["investigation"]["started"], str)
+    check_valid(loaded, base_fx())
+    assert score.score_pair(base_fx(), loaded, JV)["citations_ok"]
+
+    print("OK: 14 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------

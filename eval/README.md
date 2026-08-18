@@ -20,11 +20,15 @@ investigation:
   one deliberate exception (incident memory is legitimate practice — ground truth is
   not).
 
-Today this contract is enforced by the investigate skill's setup rule ("touch nothing
-outside the surface contract") and by session discipline during manual runs. The eval
-runner makes it mechanical: an eval investigation runs in a session whose permissions
-deny `gh` and reads outside the repo, with a hook rejecting reads under `eval/` —
-that enforcement lands with runner automation (post-v0.1, with the CI gate).
+In manual runs this contract is held by the investigate skill's setup rule ("touch
+nothing outside the surface contract") and by session discipline. Runner runs make it
+mechanical: `eval/run.py` starts each investigation in a detached git worktree of HEAD
+with `journals/` emptied (no incident memory) and sets `KONAN_EVAL_BLIND=1`, which
+switches the boundary hook (`hooks/boundary.py`) into eval-blind mode — Bash commands
+that call `gh`, mention `eval/`, touch the faultline checkout, or run git against eval
+are denied by content; Read/Grep/Glob/Edit/Write calls whose paths reach under `eval/`
+or into faultline are denied too; a second denial freezes the session. The pins are in
+`hooks/tests.py` (blind rows).
 
 ## Fixture format
 
@@ -74,7 +78,9 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   flips the verdict, and the tripwires fire on the root cause it then has to state.)
 - **Citation compliance** is fixture-independent: schema validity of the journal plus
   referential integrity (every cited `E<n>` resolves; `root_cause.hypothesis` names a
-  validated hypothesis) — per the report contract's enforcement layers.
+  validated hypothesis) — per the report contract's enforcement layers. The loader
+  keeps YAML timestamps as the RFC3339 strings written, quoted or not — a model that
+  copies the contract's unquoted example must not fail on a parsing accident.
 - Regexes are Python-flavored, applied with `re.search`; case-insensitivity is spelled
   in the pattern (`(?i)`), never assumed. Matchers live in fixtures so the scorer stays
   target-generic — no target string ever appears in scorer code.
@@ -100,10 +106,36 @@ uv run eval/score.py --pair eval/scenarios/<id>.yaml journals/<id>.md [--pair ..
 - The scorer's semantics are pinned by `uv run eval/tests.py` — run it after any
   change to the scorer, either schema, or the semantics in this README.
 
-**Running the corpus, v0.1 (manual):** per fixture — restart the lab, execute the
-`stage` list (`scenario.sh` prompts by design), run the investigate skill in a fresh
-session handing it the fixture's `complaint` verbatim (blinding contract in force),
-then score all pairs into `eval/scorecard.md`. Runner automation is post-v0.1.
+**Running the corpus with the runner:**
+
+```sh
+uv run eval/run.py --run-id 2026-08-19-bench --model claude-sonnet-5 --repeat 3 \
+  [--fixtures eval/scenarios/*.yaml] [--max-runs 5] [--timeout-min 30] [--dry-run]
+```
+
+Per (fixture, repetition) the runner restarts the lab when the fixture says
+`setup.lab: fresh`, executes the `stage` list (operator side — the runner may use curl,
+the investigator may not), runs `/konan <complaint verbatim>` in a fresh headless
+session (`claude -p --model <m> --permission-mode acceptEdits`) inside a blinded
+worktree, copies the journal to `eval/runs/<run-id>/<model>/<scenario>-r<n>.md`, writes
+`<scenario>-r<n>.meta.json` from the run's JSON envelope (session id, turns, duration,
+`modelUsage` = tokens for the whole run including subagents, API-equivalent cost,
+permission denials), appends a line to `results.jsonl`, and finally scores every pair of
+the run into `eval/runs/<run-id>/scorecard.md`. Runs already present are skipped
+(resume with the same `--run-id`); the batch stops on a quota / rate-limit error.
+
+**Tokens, defined:** the runner stamps the journal's `usage.tokens: null` with the
+run's total tokens = input + output + cache-read + cache-creation across every model
+call of the session, subagents included (from the envelope's `modelUsage`; the per-
+category breakdown and the cost stay in the sidecar). Manual runs keep `null` honestly.
+Wall clock in headless runs is clean (no human pauses); `duration_ms` in the sidecar is
+the harness's own measurement.
+
+**Manual runs** remain valid for exploration: restart the lab, execute the `stage` list
+(`scenario.sh` prompts by design), run the investigate skill in a fresh session with
+the fixture's `complaint` verbatim (blinding contract in force), score the pairs.
+`eval/scorecard.md` stays the committed corpus-v1 scorecard (regression gate); benchmark
+runs live under `eval/runs/`.
 
 **The healthy-baseline nuance** (discovered in #9's smoke runs): on faultline the
 seeded defects are permanently latent — a competent read-only investigator will find

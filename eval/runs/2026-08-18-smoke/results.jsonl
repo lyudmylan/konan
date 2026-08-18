@@ -1,0 +1,1 @@
+{"run_id": "2026-08-18-smoke", "model": "claude-sonnet-5", "scenario": "healthy-baseline", "rep": 1, "status": "ok", "session_id": "6716ac1e-0b4e-468c-ab07-38a8cb5148e7", "num_turns": 30, "duration_ms": 417690, "tokens_total": 1525216, "total_cost_usd": 1.2741258}

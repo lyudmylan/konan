@@ -247,6 +247,21 @@ def test_process_blind_env():
     assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
 
 
+def test_cd_prefix_to_session_cwd_is_transparent():
+    ev = lambda cmd, cwd: {"session_id": "s-cd", "tool_name": "Bash", "cwd": cwd, "tool_input": {"command": cmd}}
+    st = {"denials": 0, "frozen": False}
+    d, _, _ = boundary.evaluate(ev('cd "/tmp" && scripts/probe.sh /health', "/tmp"), st, 2)
+    assert d == "allow"                                       # same dir: pre-approved shape survives
+    d, _, _ = boundary.evaluate(ev("cd /tmp && scripts/probe.sh /health", "/tmp"), st, 2)
+    assert d == "allow"
+    d, _, _ = boundary.evaluate(ev('cd "/tmp/elsewhere" && scripts/probe.sh /health', "/tmp"), st, 2)
+    assert d is None                                          # another dir: not pre-approved
+    d, _, _ = boundary.evaluate(ev('cd "/tmp" && curl http://127.0.0.1:8000/health', "/tmp"), st, 2)
+    assert d == "deny"                                        # deny by content still applies
+    d, _, _ = boundary.evaluate(ev("scripts/probe.sh /health", None), st, 2)
+    assert d == "allow"                                       # no cwd in the event: nothing stripped
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for t in tests:

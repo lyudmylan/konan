@@ -144,6 +144,26 @@ def _save(path: str, state: dict) -> None:
     os.replace(tmp, path)
 
 
+RE_CD_PREFIX = re.compile(r'^\s*cd\s+(?:"([^"]+)"|\'([^\']+)\'|(\S+))\s*&&\s*(.*)$', re.S)
+
+
+def strip_cd_to_cwd(command: str, cwd: str | None) -> str:
+    """Pure: `cd <dir> && rest` → `rest` when <dir> is the session's own cwd — the
+    harness idiom for subagents; same surface, different syntax. Any other target
+    leaves the command untouched (and thus outside the pre-approved shapes)."""
+    if not cwd:
+        return command
+    m = RE_CD_PREFIX.match(command or "")
+    if not m:
+        return command
+    target = next(g for g in m.groups()[:3] if g is not None)
+    try:
+        same = os.path.realpath(target) == os.path.realpath(cwd)
+    except (OSError, ValueError):
+        same = False
+    return m.group(4) if same else command
+
+
 def evaluate(event: dict, state: dict, trip: int, blind: bool = False) -> tuple[str | None, str, dict]:
     """Pure decision over (event, state) → (decision, reason, new_state)."""
     tool = event.get("tool_name")
@@ -163,7 +183,7 @@ def evaluate(event: dict, state: dict, trip: int, blind: bool = False) -> tuple[
                 "boundary: session frozen after repeated denials — stop, record the wall in "
                 "your report, and page a human; a fresh session is required",
                 state)
-    command = (event.get("tool_input") or {}).get("command", "")
+    command = strip_cd_to_cwd((event.get("tool_input") or {}).get("command", ""), event.get("cwd"))
     decision, reason = decide(command, blind)
     if decision == "deny":
         state = dict(state)

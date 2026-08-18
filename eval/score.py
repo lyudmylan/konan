@@ -54,6 +54,19 @@ def load_fixture(path, validator):
     return fx
 
 
+class _StrTimestampLoader(yaml.SafeLoader):
+    """SafeLoader minus the implicit timestamp resolver: an RFC3339 stamp written
+    unquoted (as the contract's own example does) stays the string it is, so the
+    schema's `type: string, format: date-time` judges the text — not PyYAML's
+    datetime conversion. Quoted stamps were always strings; now both forms are."""
+
+
+_StrTimestampLoader.yaml_implicit_resolvers = {
+    first: [(tag, rx) for tag, rx in resolvers if tag != "tag:yaml.org,2002:timestamp"]
+    for first, resolvers in yaml.SafeLoader.yaml_implicit_resolvers.items()
+}
+
+
 def load_journal(path):
     """Parse frontmatter into the machine core. Raises InputError only when the
     file cannot be read as a journal at all, or its contract version is unknown
@@ -65,7 +78,7 @@ def load_journal(path):
     if not text.startswith("---\n") or "\n---\n" not in text:
         raise InputError(f"journal {path}: no frontmatter fences")
     try:
-        core = yaml.safe_load(text.split("\n---\n", 1)[0][4:])
+        core = yaml.load(text.split("\n---\n", 1)[0][4:], Loader=_StrTimestampLoader)
     except yaml.YAMLError as e:
         raise InputError(f"journal {path}: frontmatter is not YAML ({e})")
     if not isinstance(core, dict):
