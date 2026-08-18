@@ -1,0 +1,173 @@
+#!/usr/bin/env -S uv run --quiet
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["pyyaml>=6", "jsonschema>=4.21"]
+# ///
+"""konan benchmark aggregator — turns eval runner output into the tier × model table.
+
+    uv run eval/bench.py --runs eval/runs/<run-id> [eval/runs/<other-run-id> ...] \
+        [-o eval/BENCHMARK-results.md] [--json results.json]
+
+Reads every `<run>/<model>/<scenario>-r<n>.md` journal with its `.meta.json` sidecar,
+re-scores each (fixture, journal) pair with eval/score.py (deterministic — the same
+verdict the runner recorded), and aggregates per tier and model:
+
+  pass rate (passed / runs), root-cause accuracy (hits / runs expecting a root cause),
+  false attributions (count), citation compliance, tokens median (whole run, from the
+  sidecar's modelUsage — the journal's stamped value), wall-clock median (harness
+  duration_ms from the sidecar; the journal's wall clock is the investigator's own),
+  API-equivalent cost median, headless permission denials median.
+
+Runs whose sidecar says status != ok (error, no journal) count as failed runs — a
+benchmark never drops its failures. Tier comes from the scenario id prefix
+(`t2-`, `t3-`; everything else is tier 1), see eval/BENCHMARK.md.
+"""
+import argparse
+import json
+import statistics as st
+import sys
+from pathlib import Path
+
+import yaml
+from jsonschema import Draft202012Validator
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import score  # noqa: E402
+
+REPO = Path(__file__).resolve().parent.parent
+SCEN = REPO / "eval" / "scenarios"
+
+
+def tier_of(scenario_id):
+    return 2 if scenario_id.startswith("t2-") else 3 if scenario_id.startswith("t3-") else 1
+
+
+def load_fixtures():
+    fv = Draft202012Validator(json.loads((REPO / "eval/fixture.schema.json").read_text()))
+    out = {}
+    for f in sorted(SCEN.glob("*.yaml")):
+        fx = score.load_fixture(str(f), fv)
+        out[fx["scenario"]["id"]] = fx
+    return out
+
+
+def collect(run_dirs, fixtures, jv):
+    """Every (run, model, scenario, rep) → a row; failed runs included."""
+    rows = []
+    for rd in run_dirs:
+        rd = Path(rd)
+        for model_dir in sorted(p for p in rd.iterdir() if p.is_dir()):
+            for meta_path in sorted(model_dir.glob("*.meta.json")):
+                meta = json.loads(meta_path.read_text())
+                sid, rep = meta.get("scenario"), meta.get("rep")
+                fx = fixtures.get(sid)
+                row = {"run": rd.name, "model": meta.get("model", model_dir.name), "scenario": sid,
+                       "tier": tier_of(sid or ""), "rep": rep, "status": meta.get("status"),
+                       "tokens": meta.get("tokens_total"), "duration_s": (meta.get("duration_ms") or 0) / 1000
+                       if meta.get("duration_ms") is not None else None,
+                       "cost_usd": meta.get("total_cost_usd"),
+                       "denials": len(meta.get("permission_denials") or []),
+                       "passed": False, "rc_hit": None, "false_attr": 0, "citations_ok": False,
+                       "verdict_got": None, "verdict_expected": fx["expected"]["verdict"] if fx else None}
+                journal = meta_path.with_name(meta_path.name.replace(".meta.json", ".md"))
+                if fx and meta.get("status") == "ok" and journal.exists():
+                    try:
+                        core = score.load_journal(str(journal))
+                        r = score.score_pair(fx, core, jv)
+                        row.update({"passed": r["passed"], "rc_hit": r["rc_hit"],
+                                    "false_attr": len(r["false_attributions"]),
+                                    "citations_ok": r["citations_ok"], "verdict_got": r["verdict_got"]})
+                    except score.InputError as e:
+                        row["status"] = f"unscorable: {e}"
+                elif not fx:
+                    row["status"] = f"unknown scenario {sid!r}"
+                rows.append(row)
+    return rows
+
+
+def _med(vals):
+    vals = [v for v in vals if isinstance(v, (int, float))]
+    return st.median(vals) if vals else None
+
+
+def aggregate(rows):
+    """Group by (tier, model) and by (model) overall."""
+    groups = {}
+    for r in rows:
+        for key in ((r["tier"], r["model"]), ("all", r["model"])):
+            g = groups.setdefault(key, [])
+            g.append(r)
+    table = []
+    for (tier, model), rs in sorted(groups.items(), key=lambda kv: (str(kv[0][0]), kv[0][1])):
+        n = len(rs)
+        rc_rows = [r for r in rs if r["rc_hit"] is not None]
+        table.append({
+            "tier": tier, "model": model, "runs": n,
+            "failed_runs": sum(1 for r in rs if r["status"] != "ok"),
+            "pass_rate": sum(r["passed"] for r in rs) / n if n else None,
+            "rc_accuracy": (sum(r["rc_hit"] for r in rc_rows) / len(rc_rows)) if rc_rows else None,
+            "false_attributions": sum(r["false_attr"] for r in rs),
+            "citation_rate": sum(r["citations_ok"] for r in rs) / n if n else None,
+            "tokens_median": _med([r["tokens"] for r in rs]),
+            "duration_median_s": _med([r["duration_s"] for r in rs]),
+            "cost_median_usd": _med([r["cost_usd"] for r in rs]),
+            "denials_median": _med([r["denials"] for r in rs]),
+        })
+    return table
+
+
+def _pct(v):
+    return "—" if v is None else f"{100 * v:.0f}%"
+
+
+def _num(v, fmt="{:.0f}"):
+    return "—" if v is None else fmt.format(v)
+
+
+def render(rows, table, run_names):
+    out = ["# konan benchmark — results", "",
+           f"Runs: {', '.join(run_names)}. {len(rows)} investigations. Protocol and limits: `eval/BENCHMARK.md`.",
+           "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.", "",
+           "## Per tier × model", "",
+           "| Tier | Model | Runs | Failed | Pass rate | Root-cause acc. | False attr. | Citations | Tokens (median) | Wall s (median) | Cost $ (median) | Denials (median) |",
+           "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+    for t in table:
+        out.append(f"| {t['tier']} | {t['model']} | {t['runs']} | {t['failed_runs']} | {_pct(t['pass_rate'])} | "
+                   f"{_pct(t['rc_accuracy'])} | {t['false_attributions']} | {_pct(t['citation_rate'])} | "
+                   f"{_num(t['tokens_median'])} | {_num(t['duration_median_s'])} | "
+                   f"{_num(t['cost_median_usd'], '{:.2f}')} | {_num(t['denials_median'], '{:.1f}')} |")
+    out += ["", "## Every run", "",
+            "| Run | Model | Scenario | Tier | Rep | Status | Verdict | Expected | Passed | RC | False attr | Citations | Tokens | Wall s | Cost $ | Denials |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+    for r in sorted(rows, key=lambda r: (r["tier"], r["scenario"] or "", r["model"], r["rep"] or 0)):
+        out.append(f"| {r['run']} | {r['model']} | {r['scenario']} | {r['tier']} | {r['rep']} | {r['status']} | "
+                   f"{r['verdict_got'] or '—'} | {r['verdict_expected'] or '—'} | {'✓' if r['passed'] else '✗'} | "
+                   f"{'—' if r['rc_hit'] is None else ('✓' if r['rc_hit'] else '✗')} | {r['false_attr']} | "
+                   f"{'✓' if r['citations_ok'] else '✗'} | {_num(r['tokens'])} | {_num(r['duration_s'])} | "
+                   f"{_num(r['cost_usd'], '{:.2f}')} | {r['denials']} |")
+    return "\n".join(out) + "\n"
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--runs", nargs="+", required=True, help="eval/runs/<run-id> directories")
+    ap.add_argument("-o", "--output", help="write the markdown table here (default: stdout)")
+    ap.add_argument("--json", help="also write rows + table as JSON here")
+    a = ap.parse_args()
+    fixtures = load_fixtures()
+    jv = Draft202012Validator(json.loads((REPO / "skills/investigate/journal.schema.json").read_text()))
+    rows = collect(a.runs, fixtures, jv)
+    table = aggregate(rows)
+    md = render(rows, table, [Path(r).name for r in a.runs])
+    if a.output:
+        Path(a.output).write_text(md)
+        print(f"bench.py: wrote {a.output} ({len(rows)} runs)")
+    else:
+        sys.stdout.write(md)
+    if a.json:
+        Path(a.json).write_text(json.dumps({"rows": rows, "table": table}, indent=2) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
