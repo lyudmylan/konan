@@ -1,0 +1,55 @@
+konan_fixture: 1
+scenario:
+  id: t2-red-herring-latency-latent-d1
+  title: Tier 2 trap — injected latency is the incident; a latent code defect sits in plain sight
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 3
+    - scripts/scenario.sh chaos-on 0 503 1500
+    - sleep 2
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/2
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 2 1
+    - sleep 1
+    - scripts/scenario.sh get /orders
+  notes: >-
+    Same shape as chaos-latency (failure_rate 0, extra_latency_ms 1500 — slow
+    everywhere, no errors), and deliberately NO user request to /products/3: the
+    investigator's own probes will surface D1's 500. The active incident is the
+    latency; D1 is a latent finding, not a validated hypothesis about this complaint.
+complaint: >-
+  Users say the whole shop got painfully slow in the last few minutes; some also
+  mention seeing an error page once. Health checks are green and fast.
+expected:
+  verdict: root-cause-identified
+  incident_class: infra-process
+  must_claim:
+    - id: cause-switch
+      all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    - id: switch-flipped
+      all_of: ["(?i)enab"]
+    - id: symptom-latency
+      all_of: ["(?i)laten|slow|delay"]
+  must_not_claim:
+    - id: latent-defect-not-promoted
+      any_of: ["(?i)zero.?division", "(?i)divi\\w*\\s+by\\s+zero", "(?i)type.?error"]
+    - id: not-load
+      any_of: ["(?i)saturat", "(?i)overload", "(?i)cpu\\s+(spin|burn)", "(?i)resource\\s+exhaust"]
+scoring_notes: >-
+  Attribution discipline under a mixed complaint ("slow" + "an error page once").
+  The latency step across all business routes with the gauge at 1 and the WARNING
+  marker is the cause; the only 500s in the window carry konan-stamped request ids
+  (observer effect) — a validated hypothesis blaming the code defect for the
+  complaint puts defect vocabulary on the claim surface and fires the tripwire, while
+  a latent_findings entry does not. must_claim regexes are calibrated on the
+  chaos-latency known-good journal (same mechanism).

@@ -1,0 +1,48 @@
+konan_fixture: 1
+scenario:
+  id: t3-crash-hard-down
+  title: Tier 3 — the process crashed; probes fail, logs are the only surviving surface
+setup:
+  lab: fresh
+  stage:
+    - scripts/scenario.sh get /products
+    - sleep 1
+    - scripts/scenario.sh get /products/1
+    - sleep 1
+    - scripts/scenario.sh order 1 1
+    - sleep 1
+    - scripts/scenario.sh get /orders
+    - sleep 2
+    - scripts/scenario.sh sim crash?delay=0.5
+    - sleep 3
+  notes: >-
+    Healthy traffic, then /simulate/crash: the service answers 200, logs at CRITICAL,
+    and exits with code 1 half a second later. From then on every probe fails at the
+    connection level; /metrics is gone; the log tail carries the crash line and no
+    startup after it. The runner restarts the lab for the next fixture (setup.lab:
+    fresh) — this scenario ends with the lab down by design.
+complaint: >-
+  The shop is completely down for everyone — pages do not load at all, not even an
+  error page. It was fine ten minutes ago.
+expected:
+  verdict: root-cause-identified
+  incident_class: infra-process
+  must_claim:
+    - id: process-died
+      all_of: ["(?i)crash|exit(ed)?|died|terminat|not\\s+running|process\\s+(is\\s+)?(down|gone)"]
+    - id: no-restart-after
+      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|has\\s+not\\s+restarted"]
+  must_not_claim:
+    - id: not-code-defect
+      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+    - id: not-chaos
+      any_of: ["(?i)chaos", "(?i)inject"]
+    - id: not-network-guess
+      any_of: ["(?i)firewall", "(?i)dns"]
+scoring_notes: >-
+  Evidence-collection under a dead surface: probes return connection errors (still
+  evidence — cite the trailer), the last log lines carry the CRITICAL crash marker
+  (SPEC I7) and no startup follows, the pid is gone. The report must state that the
+  process exited and did not restart, from log evidence — not guess at network or
+  code causes it cannot see. Matchers are first-cut (no known-good journal yet);
+  calibrate on the first run and record the change.
