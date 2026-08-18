@@ -108,6 +108,33 @@ Exit criteria:
 Out of scope for v0.1: remediation, the quota-resilience ladder, multi-model benchmark
 automation, real observability-stack integrations (MCP), enterprise distribution.
 
+Status: v0.1 closed 2026-08-18 — met, privately (both investigation criteria; the flip
+moved to v0.2 by decision the same day: a first public version must be credible, which
+means benchmarked, installable by a stranger, and proven on a real telemetry plane).
+
+## v0.2 — credible public flip
+
+Goal: the first public version — benchmarked, installable, and proven on real pipes.
+
+Exit criteria:
+
+- **Benchmark v1 published.** Corpus v2 on the lab's existing controls (difficulty tiers,
+  attribution traps, a healthy battery), repeated runs, at least three models with the
+  skills held constant, tokens and wall clock captured by the eval runner, protocol and
+  limits documented (`eval/BENCHMARK.md`), results table in the README.
+- **Onboarding is agent-run.** `/setup` runs the lab quickstart end to end (the human
+  installs Claude Code, clones, trusts the workspace, approves operator prompts —
+  nothing else); the plugin installs the methodology with the boundary hook; `/rim`
+  onboards a real target by interview (surface contract + permission profile + smoke
+  run). Verified by a stranger test on a fresh clone.
+- **One real-stack rim proof.** An evidence plane outside the lab's files — Grafana Cloud
+  through the official MCP server — one blind investigation, journal committed and
+  scored. Proves "swapping targets swaps the rim" on real pipes.
+- The repo flips public together with the benchmark and the origin post.
+
+Out of scope for v0.2: remediation, the quota-resilience ladder, report contract v2,
+the cloud on-call routine, external benchmarks, team-designated safe checks.
+
 ## Roadmap (deliberately unexpanded until close)
 
 - **Quota-exhaustion resilience** (must-solve, post-v0.1): prevent (per-investigation
@@ -117,10 +144,12 @@ automation, real observability-stack integrations (MCP), enterprise distribution
 - **Remediation** (deliberate later phase): draft-only plans, then approval-gated
   execution; inherits ai-incident-investigator's safety schema (approval quorum, exact
   allowlists, audit trail).
-- **Model-comparison content engine**: re-run the benchmark on each model release;
-  publish the scorecard.
-- **Real-stack integrations**: MCP evidence layer, alert-webhook triggers.
-- **Enterprise distribution**: Team/Enterprise seats (verified: full parity for skills,
+- **Model-comparison content engine**: benchmark v1 lands in v0.2; re-run it on each
+  model release; publish the scorecard.
+- **Real-stack integrations**: the first rim proof (Grafana Cloud via MCP) lands in v0.2;
+  team-designated checks, change-context sources, and alert-webhook triggers follow.
+- **Enterprise distribution**: the plugin lands in v0.2 (methodology + boundary hook; the
+  rim stays per-target). Team/Enterprise seats (verified: full parity for skills,
   plugins, hooks, routines; org-managed policies make guardrails admin-enforced). Not
   Bedrock/Vertex — no skills/plugins/routines there per the current feature matrix.
 

@@ -32,6 +32,7 @@ flowchart LR
 
   c --> loop[investigate loop]
   loop -->|"read-only probes (allowlist + boundary hook)"| target[("target — faultline lab")]
+  loop -.->|"read-only MCP tools, planned v0.2 rim proof"| obs[("observability plane — Grafana Cloud")]
   loop --> journal[journal — every claim cites evidence]
 
   journal --> page[page the owner]
@@ -39,7 +40,7 @@ flowchart LR
   journal -.->|planned #23| tracker[team tracker]
 
   classDef planned stroke-dasharray: 5 5
-  class fire,tracker planned
+  class fire,tracker,obs planned
 ```
 
 ## The investigation loop
