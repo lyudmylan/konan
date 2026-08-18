@@ -1,0 +1,79 @@
+{
+  "session_id": "b5f5756b-09cf-498a-afee-5c8b85b478ca",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 392732,
+  "duration_api_ms": 491255,
+  "total_cost_usd": 1.9909810499999994,
+  "tokens_total": 2167451,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 84,
+      "outputTokens": 46370,
+      "cacheReadInputTokens": 1967936,
+      "cacheCreationInputTokens": 153061,
+      "costUSD": 1.9909810499999994
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---METRICS---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | head -c 4000"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re, sys\n\nwith open('journals/2026-08-18-chaos-enabled-intermittent-503s.md') as f:\n    content = f.read()\n\nparts = content.split('---\\n')\nfm = yaml.safe_load(parts[1])\n\ntry:\n    import jsonschema\n    with open('.claude/skills/investigate/journal.schema.json') as f:\n        schema = json.load(f)\n    jsonschema.validate(fm, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('jsonschema not installed, doing manual checks')\n\n# referential integrity checks\nev_ids = {e['id'] for e in fm['evidence']}\nprint('evidence ids:', sorted(ev_ids, key=lambda x: int(x[1:])))\nfor h in fm['hypotheses']:\n    for ref in h['evidence_for'] + h['evidence_against']:\n        assert ref in ev_ids, f'missing {ref} in {h[\\\"id\\\"]}'\nprint('all hypothesis evidence refs resolve OK')\n\nassert fm['root_cause']['hypothesis'] in [h['id'] for h in fm['hypotheses'] if h['state']=='validated'], 'root_cause must point at validated hyp'\nprint('root_cause points at validated hypothesis OK')\n\nfrom datetime import datetime\nstarted = datetime.fromisoformat(fm['investigation']['started'].replace('Z','+00:00'))\nconcluded = datetime.fromisoformat(fm['investigation']['concluded'].replace('Z','+00:00'))\ndelta = (concluded-started).total_seconds()\nprint('computed wall_clock_seconds:', delta, 'stated:', fm['usage']['wall_clock_seconds'])\nassert delta == fm['usage']['wall_clock_seconds']\nprint('wall_clock_seconds OK')\n\"\n"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 validate_journal.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 validate_journal.py"
+    }
+  ],
+  "result_tail": "t evidence: only one restart (not a loop, no failures for 8 seconds after it), and zero exceptions or stack traces in the logs \u2014 every 503 is self-labeled by the app as a chaos-injected failure.\n\nThe adversarial judge validated the chaos-flag hypothesis and invalidated the other two, using only the cited evidence.\n\nFull record, with all evidence quotes and hypothesis states: `journals/2026-08-18-chaos-enabled-intermittent-503s.md`.\n\n**Gap noted:** the investigation could not confirm who or what triggered the chaos flag \u2014 that endpoint sits outside the investigator's read-only surface contract.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-18T17:21:33Z",
+  "ended_at": "2026-08-18T17:28:08Z",
+  "restages": 0,
+  "wall_seconds_runner": 395,
+  "journal_source_name": "2026-08-18-chaos-enabled-intermittent-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

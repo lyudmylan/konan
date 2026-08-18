@@ -38,7 +38,7 @@ scenario:
   id: d1-zero-stock-product-page
   title: ...                    # one line, human
 setup:
-  lab: fresh                    # fresh = restart the lab (clean logs/counters) before staging
+  lab: fresh                    # fresh = stop the lab, delete lab/logs, start it — clean counters AND logs
   stage:                        # eval-side staging, in order; investigator never sees this
     - scripts/scenario.sh get /products     # `get` = seeded user traffic (unstamped ids)
     - sleep 1                               #   — scenarios asserting user impact MUST
@@ -113,8 +113,9 @@ uv run eval/run.py --run-id 2026-08-19-bench --model claude-sonnet-5 --repeat 3 
   [--fixtures eval/scenarios/*.yaml] [--max-runs 5] [--timeout-min 30] [--dry-run]
 ```
 
-Per (fixture, repetition) the runner restarts the lab when the fixture says
-`setup.lab: fresh`, executes the `stage` list (operator side — the runner may use curl,
+Per (fixture, repetition) the runner gives the fixture a clean lab when it says
+`setup.lab: fresh` (process restarted **and** `lab/logs` deleted — counters reset with
+the process, log files do not), executes the `stage` list (operator side — the runner may use curl,
 the investigator may not), runs `/konan <complaint verbatim>` in a fresh headless
 session (`claude -p --model <m> --permission-mode acceptEdits`) inside a blinded
 worktree, copies the journal to `eval/runs/<run-id>/<model>/<scenario>-r<n>.md`, writes

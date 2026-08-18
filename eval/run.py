@@ -76,6 +76,22 @@ def lab_stop(wt, env):
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
 
 
+def lab_fresh(wt, env, base):
+    """`setup.lab: fresh` = a clean lab: stop the process, DELETE its logs, start again.
+    Counters reset with the process; log files do not — without this, every later run
+    in a batch reads the earlier runs' traffic and incidents (found in bench-v1's first
+    batch: a crash journal that described the runner's own restarts)."""
+    lab_stop(wt, env)
+    logs = wt / "lab" / "logs"
+    if logs.exists():
+        for f in logs.iterdir():
+            if f.is_file():
+                f.unlink()
+    for f in (wt / "lab").glob("server.out*"):
+        f.unlink()
+    lab_start(wt, env, base)
+
+
 def lab_start(wt, env, base):
     # lab.sh backgrounds the server itself; keep every fd away from our pipes.
     subprocess.Popen(["scripts/lab.sh", "start"], cwd=wt, env=env, stdin=subprocess.DEVNULL,
@@ -232,8 +248,7 @@ def main():
             print(f"\n== {tag} ({a.model}) ==", flush=True)
             setup = fx.get("setup", {}) or {}
             if setup.get("lab") == "fresh" or not lab_up:
-                lab_stop(wt, env)
-                lab_start(wt, env, base)
+                lab_fresh(wt, env, base)
                 lab_up = True
             needs_user_error = sid in {x.strip() for x in a.restage_check.split(",") if x.strip()}
             restages = 0
@@ -249,8 +264,7 @@ def main():
                 if restages > 3:
                     raise RuntimeError(f"{tag}: no user-visible 5xx after 3 restages — fixture staging is off")
                 print(f"   restage {restages}: no user-visible 5xx landed yet", flush=True)
-                lab_stop(wt, env)
-                lab_start(wt, env, base)
+                lab_fresh(wt, env, base)
             for j in (wt / "journals").glob("*.md"):
                 j.unlink()
             prompt = f"/konan {fx['complaint']}"

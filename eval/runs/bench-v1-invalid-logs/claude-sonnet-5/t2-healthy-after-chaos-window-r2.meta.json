@@ -1,0 +1,59 @@
+{
+  "session_id": "f719303e-5b6b-457f-9282-9d61e09db6f9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 583729,
+  "duration_api_ms": 936604,
+  "total_cost_usd": 3.82447935,
+  "tokens_total": 5641951,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 156,
+      "outputTokens": 71320,
+      "cacheReadInputTokens": 5328182,
+      "cacheCreationInputTokens": 242293,
+      "costUSD": 3.82447935
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "grep -c \"unhandled_exception\" lab/logs/app.log; echo \"---products/3 access lines---\"; grep '\"path\": \"/products/3\"' lab/logs/app.log; echo \"---units_in_stock for product 3---\"; scripts/probe.sh \"/products\" 2>&1 | head -5"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print('jsonschema not installed, trying to install briefly')\n    sys.exit(2)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport re, yaml, json\n\nwith open(\"journals/2026-08-18-shop-handover-check.md\") as f:\n    content = f.read()\n\nm = re.match(r\"^---\\n(.*?)\\n---\\n\", content, re.DOTALL)\nfm_text = m.group(1)\ndata = yaml.safe_load(fm_text)\n\nwith open(\".claude/skills/investigate/journal.schema.json\") as f:\n    schema = json.load(f)\n\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print(\"VALID against schema\")\nexcept ImportError:\n    print(\"no jsonschema lib; doing manual checks\")\n    # manual minimal checks\n    required = schema[\"required\"]\n    for r in required:\n        assert r in data, f\"missing {r}\"\n    print(\"required top-level keys present:\", required)\n    # evidence refs resolve\n    eids = {e[\"id\"] for e in data[\"evidence\"]}\n    for h in data[\"hypotheses\"]:\n        for ref in h[\"evidence_for\"] + h[\"evidence_against\"]:\n            assert ref in eids, f\"dangling ref {ref} in {h['id']}\"\n    for lf in data.get(\"latent_findings\", []):\n        for ref in lf[\"evidence\"]:\n            assert ref in eids, f\"dangling ref {ref} in latent_findings\"\n    print(\"all evidence refs resolve\")\n    # root_cause consistency\n    if data[\"verdict\"] == \"root-cause-identified\":\n        assert \"root_cause\" in data\n    else:\n        assert \"root_cause\" not in data\n    print(\"root_cause/verdict consistent\")\nexcept Exception as e:\n    print(\"INVALID:\", e)\nEOF\n"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 validate_journal_scratch.py"
+    }
+  ],
+  "result_tail": "vestigator probes have ever hit that route \u2014 no real user has triggered it yet. Flagged as a latent defect, worth a fix ticket, but not an active incident.\n\nAlso noted: 5 process restarts in ~19 minutes (the last two line up suspiciously with the chaos toggles, the earlier three are unexplained from available telemetry \u2014 a genuine gap, not resolvable from this surface), and a list/detail field-shape difference on product 4 that turned out to be permitted by the service's own OpenAPI schema, not a violation.\n\nFull evidence-cited writeup committed to `journals/2026-08-18-shop-handover-check.md`.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-18T20:08:53Z",
+  "ended_at": "2026-08-18T20:21:57Z",
+  "restages": 0,
+  "wall_seconds_runner": 784,
+  "journal_source_name": "2026-08-18-shop-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

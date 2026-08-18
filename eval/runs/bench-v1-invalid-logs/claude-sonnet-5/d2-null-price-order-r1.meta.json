@@ -1,0 +1,45 @@
+{
+  "session_id": "2e06ae80-78ba-47ae-b769-91fcfc837c53",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 10,
+  "duration_ms": 25008,
+  "duration_api_ms": 24575,
+  "total_cost_usd": 0.222411,
+  "tokens_total": 382976,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 18,
+      "outputTokens": 1467,
+      "cacheReadInputTokens": 366420,
+      "cacheCreationInputTokens": 15071,
+      "costUSD": 0.222411
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "This needs your approval to run \u2014 please allow the `scripts/lab.sh status` command so I can check whether the lab service is up before probing it.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 1,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-08-18T19:03:57Z",
+  "ended_at": "2026-08-18T19:04:24Z",
+  "restages": 0,
+  "wall_seconds_runner": 27,
+  "status": "no-journal",
+  "quota_error": false
+}

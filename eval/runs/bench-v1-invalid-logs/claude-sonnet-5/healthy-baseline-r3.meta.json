@@ -1,0 +1,47 @@
+{
+  "session_id": "c54ad902-6536-4b71-a904-25f37dcc844d",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 17,
+  "duration_ms": 223865,
+  "duration_api_ms": 444451,
+  "total_cost_usd": 2.01987,
+  "tokens_total": 2676519,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 104,
+      "outputTokens": 38811,
+      "cacheReadInputTokens": 2491930,
+      "cacheCreationInputTokens": 145674,
+      "costUSD": 2.01987
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re\ntext = open('journals/2026-08-18-shop-handover-no-incident.md').read()\nfm = text.split('---')[1]\ndata = yaml.safe_load(fm)\nprint('parsed OK, keys:', list(data.keys()))\nprint('verdict:', data['verdict'])\nprint('hyp count:', len(data['hypotheses']))\nprint('evidence count:', len(data['evidence']))\nids = {e['id'] for e in data['evidence']}\nprint('evidence ids:', sorted(ids))\nfor h in data['hypotheses']:\n    refs = set(h['evidence_for']) | set(h['evidence_against'])\n    missing = refs - ids\n    print(h['id'], 'refs missing:', missing)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "git add journals/2026-08-18-shop-handover-no-incident.md && git commit -m \"Journal: routine on-call handover check \u2014 shop service, no active incident\""
+    }
+  ],
+  "result_tail": "ere, only expected 200/201s and two 404s from my own probes of nonexistent ids.\n\nThe one thing triage surfaced \u2014 two clean process restarts about 10 minutes apart \u2014 was tested as a hypothesis and invalidated: no crash markers, no further restart since, stable RSS, no latency degradation, no error signal on any axis. It reads as an intentional cycle (e.g. the lab harness), not instability, though I couldn't independently confirm the trigger since that lives outside this investigator's read-only surface \u2014 logged as a gap, not a claim.\n\nJournal: `journals/2026-08-18-shop-handover-no-incident.md`.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 3,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-18T20:01:19Z",
+  "ended_at": "2026-08-18T20:07:15Z",
+  "restages": 0,
+  "wall_seconds_runner": 356,
+  "journal_source_name": "2026-08-18-shop-handover-no-incident.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

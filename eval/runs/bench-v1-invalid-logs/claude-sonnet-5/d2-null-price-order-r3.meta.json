@@ -1,0 +1,111 @@
+{
+  "session_id": "ac41696d-725a-4afd-af7d-e83fcbe6bfc9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 47,
+  "duration_ms": 705187,
+  "duration_api_ms": 832591,
+  "total_cost_usd": 3.2649535500000004,
+  "tokens_total": 3943750,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 140,
+      "outputTokens": 74222,
+      "cacheReadInputTokens": 3644461,
+      "cacheCreationInputTokens": 224927,
+      "costUSD": 3.2649535500000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -E '\"event\": \"(request|unhandled_exception|startup|order_created)\"' lab/logs/app.log | python3 -c \"\nimport sys, json\nfor line in sys.stdin:\n    d = json.loads(line)\n    d.pop('stack', None)\n    print(json.dumps(d))\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "awk '/\"ts\": \"2026-08-18T19:14:34.514Z\"/{found=1} found' lab/logs/app.log | grep -oE '\"ts\": \"[^\"]*\"|\"event\": \"[^\"]*\"|\"method\": \"[^\"]*\"|\"path\": \"[^\"]*\"|\"status\": [0-9]*|\"request_id\": \"[^\"]*\"|\"exception_type\": \"[^\"]*\"|\"message\": \"[^\"]*\"' | paste -sd' ' -"
+    },
+    {
+      "tool": "Bash",
+      "command": "wc -l lab/logs/app.log; sed -n '233,$p' lab/logs/app.log | grep -oE '\"ts\": \"[^\"]*\"|\"event\": \"[^\"]*\"|\"method\": \"[^\"]*\"|\"path\": \"[^\"]*\"|\"status\": [0-9]*|\"request_id\": \"[^\"]*\"|\"exception_type\": \"[^\"]*\"|\"message\": \"[^\"]*\"' | paste -sd' ' -"
+    },
+    {
+      "tool": "Bash",
+      "command": "wc -l lab/logs/app.log && echo \"---\" && python3 -c \"\nimport json\nstart='2026-08-18T19:14:34.514Z'\nwith open('lab/logs/app.log') as f:\n    lines = f.readlines()\nprint(len(lines))\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json\nstart='2026-08-18T19:14:34.514Z'\nwith open('lab/logs/app.log') as f:\n    for line in f:\n        try:\n            d = json.loads(line)\n        except Exception:\n            continue\n        if d.get('ts','') >= start:\n            print(line.strip())\n\" > /tmp/current_process.log\nwc -l /tmp/current_process.log\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---METRICS---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "sed -n '233,257p' lab/logs/app.log | head -3\necho \"...\"\nwc -l < <(sed -n '233,257p' lab/logs/app.log)"
+    },
+    {
+      "tool": "Bash",
+      "command": "wc -l lab/logs/app.log && echo \"---\" && awk -F'\"ts\": \"' '{print $2}' lab/logs/app.log | cut -d'\"' -f1 | sort -u | head -5"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json\nwith open('lab/logs/app.log') as f:\n    lines = f.readlines()\nprint('total lines', len(lines))\ncur = []\nfor l in lines:\n    try:\n        d = json.loads(l)\n    except:\n        continue\n    if d.get('ts','') >= '2026-08-18T19:14:34.514Z':\n        cur.append(d)\nprint('current process lines:', len(cur))\nfor d in cur:\n    print(d)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json\nwith open('lab/logs/app.log') as f:\n    lines = f.readlines()\nprint('total lines', len(lines))\ncur = []\nfor l in lines:\n    try:\n        d = json.loads(l)\n    except:\n        continue\n    if d.get('ts','') >= '2026-08-18T19:14:34.514Z':\n        cur.append(d)\nprint('current process lines:', len(cur))\nfor d in cur:\n    print(json.dumps(d))\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": *\"request\"' lab/logs/app.log | awk -F'\"ts\": \"' '{print $2}' | awk -F'\"' '{print $1}' | awk '$1 >= \"2026-08-18T19:14:34.514Z\"' | wc -l\necho \"---orders POST entries current process---\"\ngrep '\"path\": *\"/orders\"' lab/logs/app.log | grep '\"method\": *\"POST\"' > /tmp/orders_posts.txt\nwc -l /tmp/orders_posts.txt\ncat /tmp/orders_posts.txt"
+    },
+    {
+      "tool": "Bash",
+      "command": "awk '/2026-08-18T19:14:34.514Z/{f=1} f' lab/logs/app.log | wc -l"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": *\"unhandled_exception\"' lab/logs/app.log | python3 -c \"\nimport sys,json\nfor line in sys.stdin:\n    d = json.loads(line)\n    if d['ts'] >= '2026-08-18T19:14:34.514Z':\n        print(d['ts'], d.get('exception_type'), d.get('request_id'))\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json | python3 -m json.tool 2>/dev/null | grep -A 20 '\"OrderRequest\"' || scripts/probe.sh /openapi.json"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'PYEOF'\nimport re, yaml, json, sys\n\npath = \"journals/2026-08-18-orders-null-price-500.md\"\ntext = open(path, encoding=\"utf-8\").read()\nm = re.match(r\"^---\\n(.*?)\\n---\\n(.*)$\", text, re.DOTALL)\nif not m:\n    print(\"NO FRONTMATTER MATCH\")\n    sys.exit(1)\nfm_text, body = m.groups()\ndata = yaml.safe_load(fm_text)\nprint(\"YAML parsed OK\")\nprint(json.dumps(data, indent=2)[:2000])\nPYEOF"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'PYEOF'\nimport re, yaml, json, sys\n\npath = \"journals/2026-08-18-orders-null-price-500.md\"\ntext = open(path, encoding=\"utf-8\").read()\nm = re.match(r\"^---\\n(.*?)\\n---\\n(.*)$\", text, re.DOTALL)\nif not m:\n    print(\"NO FRONTMATTER MATCH\")\n    sys.exit(1)\nfm_text, body = m.groups()\ndata = yaml.safe_load(fm_text)\nprint(\"YAML parsed OK\")\nprint(json.dumps(data, indent=2)[:2000])\nPYEOF"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'PYEOF'\nimport re, yaml, json, sys\n\npath = \"journals/2026-08-18-orders-null-price-500.md\"\ntext = open(path, encoding=\"utf-8\").read()\nm = re.match(r\"^---\\n(.*?)\\n---\\n(.*)$\", text, re.DOTALL)\nif not m:\n    print(\"NO FRONTMATTER MATCH\")\n    sys.exit(1)\nfm_text, body = m.groups()\ndata = yaml.safe_load(fm_text)\nprint(\"YAML parsed OK\")\nprint(json.dumps(data, indent=2)[:2000])\nPYEOF"
+    }
+  ],
+  "result_tail": "try,\" \"other customers... going through fine\").\n\nRuled out: chaos injection (disabled), gateway/infra degradation (failures confined to `/orders`, no 502/503/504), and any recent config/deploy change (the same error signature predates this process restart).\n\nOne honest gap: request bodies aren't logged, so the product-4 attribution is by elimination (it's the only null-price product, and the catalog has no write path to mutate it) rather than a literal body capture \u2014 flagged in the journal, doesn't change the verdict.\n\nFull evidence-cited report: `journals/2026-08-18-orders-null-price-500.md`.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 3,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-08-18T19:14:46Z",
+  "ended_at": "2026-08-18T19:26:33Z",
+  "restages": 0,
+  "wall_seconds_runner": 706,
+  "journal_source_name": "2026-08-18-orders-null-price-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

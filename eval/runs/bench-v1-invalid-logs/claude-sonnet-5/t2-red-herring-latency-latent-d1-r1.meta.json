@@ -1,0 +1,55 @@
+{
+  "session_id": "abd98616-28f5-4042-a1a1-1ad12a021474",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 19,
+  "duration_ms": 382984,
+  "duration_api_ms": 763415,
+  "total_cost_usd": 2.9923935000000004,
+  "tokens_total": 3887163,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 140,
+      "outputTokens": 65965,
+      "cacheReadInputTokens": 3621830,
+      "cacheCreationInputTokens": 199228,
+      "costUSD": 2.9923935000000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "grep -n '\"event\": \"chaos_enabled\"\\|\"event\": \"chaos_disabled\"' lab/logs/app.log | tail -5\necho \"---\"\nscripts/probe.sh /health\necho \"---\"\nscripts/probe.sh /metrics | grep -E 'faultline_chaos_enabled|http_exceptions_total|process_uptime_seconds'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re, sys\ntext = open('journals/2026-08-18-shop-slowness-chaos-latency.md').read()\nfm = text.split('---\\n',2)[1]\ndata = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('jsonschema not installed, doing manual checks')\n    print(json.dumps(data, indent=2)[:200])\nexcept Exception as e:\n    print('SCHEMA FAIL', e)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json\ntext = open('journals/2026-08-18-shop-slowness-chaos-latency.md').read()\nfm = text.split('---\\n',2)[1]\ndata = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('NO_JSONSCHEMA')\nexcept Exception as e:\n    print('SCHEMA FAIL', e)\n\""
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 validate_journal.py"
+    }
+  ],
+  "result_tail": "sh probe 9 minutes later was still slow, 1.14s). `/health` stayed fast throughout because it isn't gated by the same latency path \u2014 a textbook healthy-monitoring blind spot, explaining \"health checks are green and fast.\"\n\nThe \"error page once\" detail is **not corroborated**: there's a real, reproducible defect (`GET /products/3` throws an unhandled `ZeroDivisionError`, product 3 has zero stock), but every single occurrence in the logs came from investigator probes only \u2014 no organic traffic has hit it. That's logged as a latent finding plus an inconclusive hypothesis, not asserted as the cause.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-18T20:57:24Z",
+  "ended_at": "2026-08-18T21:08:30Z",
+  "restages": 0,
+  "wall_seconds_runner": 666,
+  "journal_source_name": "2026-08-18-shop-slowness-chaos-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

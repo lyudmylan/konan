@@ -1,0 +1,79 @@
+{
+  "session_id": "42d7cd5e-1044-4fc5-8106-cf846ab4cdaa",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 39,
+  "duration_ms": 593395,
+  "duration_api_ms": 662227,
+  "total_cost_usd": 2.5718329499999992,
+  "tokens_total": 2997684,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 114,
+      "outputTokens": 58619,
+      "cacheReadInputTokens": 2762959,
+      "cacheCreationInputTokens": 175992,
+      "costUSD": 2.5718329499999992
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -i -E \"exception|http_requests_total\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /products; scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, re, sys\nimport yaml\n\" 2>&1 | head -5\npython3 -c \"import yaml\" 2>&1 | head -5"
+    }
+  ],
+  "result_tail": "as already deterministic) \u2192 judge came back inconclusive on two fair points (no health sample *inside* the incident window; latencies didn't match a naive flat-1500ms reading) \u2192 one targeted round closed both gaps with a live health/business/health bracket 5+ minutes into the incident \u2192 judge validated.\n\nTwo competing hypotheses (process-level trouble, a data-dependent code defect) were explicitly tested and invalidated. The incident is still active as of the journal's close (`faultline_chaos_enabled 1`); who toggled it is outside the read-only surface and is recorded as a gap, not guessed at.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-18T18:29:35Z",
+  "ended_at": "2026-08-18T18:39:31Z",
+  "restages": 0,
+  "wall_seconds_runner": 596,
+  "journal_source_name": "2026-08-18-shop-latency-chaos-flag.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

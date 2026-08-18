@@ -1,0 +1,67 @@
+{
+  "session_id": "358d3888-0e08-48a3-9fcb-0c40b2b4db6e",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 536063,
+  "duration_api_ms": 662094,
+  "total_cost_usd": 2.463267300000001,
+  "tokens_total": 2710850,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 106,
+      "outputTokens": 60149,
+      "cacheReadInputTokens": 2479066,
+      "cacheCreationInputTokens": 171529,
+      "costUSD": 2.463267300000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -i 'rss\\|uptime\\|chaos_enabled\\|duration_seconds_sum\\|duration_seconds_count'"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n '\"event\": \"request\"' lab/logs/app.log | awk -F'\"ts\": \"' '{print $2}' | cut -d'\"' -f1 | sort | tail -1\necho \"---503s after 20:57---\"\ngrep -n '\"status\": 503' lab/logs/app.log | grep -oE '\"ts\": \"[^\"]+\"' \necho \"---restarts---\"\ngrep -n '\"event\": \"startup\"\\|Shutting down\\|Started server' lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'http_exceptions_total|faultline_chaos_enabled|process_uptime_seconds'"
+    },
+    {
+      "tool": "Bash",
+      "command": "awk '/\"ts\": \"2026-08-18T21:18:0[5-9]|\"ts\": \"2026-08-18T21:1[9]|\"ts\": \"2026-08-18T21:2/' lab/logs/app.log | grep '\"event\": \"request\"' | grep -v 'konan-' | grep -oE '\"ts\": \"[^\"]+\".*\"method\": \"[^\"]+\", \"path\": \"[^\"]+\", \"status\": [0-9]+, \"duration_ms\": [0-9.]+'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    jsonschema = None\ntext = open('journals/2026-08-18-shop-slow-chaos-latency.md').read()\nfm = text.split('---\\n',2)[1]\ndata = yaml.safe_load(fm)\nprint('YAML parses OK')\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\nif jsonschema:\n    jsonschema.validate(data, schema)\n    print('Schema valid')\nelse:\n    print('jsonschema module not available, skipping strict validation')\nprint('verdict:', data['verdict'])\nprint('hyp ids:', [h['id'] for h in data['hypotheses']])\nprint('evidence ids:', [e['id'] for e in data['evidence']])\n\"\n"
+    }
+  ],
+  "result_tail": "d two candidate explanations and the judge invalidated both: (H2) a latent `ZeroDivisionError` on `GET /products/3` \u2014 real bug, but only ever triggered by investigator probes, never real traffic; (H3) an earlier chaos episode that did inject real 503s \u2014 but it ended 56 minutes before this report, too stale to be \"the last few minutes.\" This is logged as an open gap, not fabricated as resolved.\n- Three lenses (infra-process, interfaces, software-defect) ran in parallel and converged independently; evidence was deterministic enough that no deep-dive round was needed before the adversarial judge.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-18T21:18:23Z",
+  "ended_at": "2026-08-18T21:27:22Z",
+  "restages": 0,
+  "wall_seconds_runner": 539,
+  "journal_source_name": "2026-08-18-shop-slow-chaos-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

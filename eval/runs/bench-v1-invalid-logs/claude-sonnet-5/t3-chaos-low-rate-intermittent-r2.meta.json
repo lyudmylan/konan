@@ -1,0 +1,55 @@
+{
+  "session_id": "a9b98fdc-528c-493f-baea-b20ace8ab065",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 26,
+  "duration_ms": 419439,
+  "duration_api_ms": 782316,
+  "total_cost_usd": 3.49897695,
+  "tokens_total": 4921562,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 160,
+      "outputTokens": 67447,
+      "cacheReadInputTokens": 4613734,
+      "cacheCreationInputTokens": 240221,
+      "costUSD": 3.49897695
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'products.*(50[0-9]|status=)|chaos_enabled|exceptions'"
+    },
+    {
+      "tool": "Bash",
+      "command": "awk -v start=\"2026-08-18T21:27:59\" 'index($0,\"\\\"ts\\\": \\\"2026-08-18T21:2\")||index($0,\"\\\"ts\\\": \\\"2026-08-18T21:3\") {print}' lab/logs/app.log | grep '\"status\": 503'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    jsonschema = None\n\nwith open('journals/2026-08-18-shop-occasional-errors.md') as f:\n    content = f.read()\nparts = content.split('---\\n')\n# frontmatter is between first and second '---'\nfm = content.split('---\\n',1)[1].split('\\n---\\n',1)[0]\ndata = yaml.safe_load(fm)\nprint('YAML parsed OK')\nprint(json.dumps({k: (v if k!='evidence' else len(v)) for k,v in data.items()}, indent=2, default=str))\n\nwith open('.claude/skills/investigate/journal.schema.json') as f:\n    schema = json.load(f)\n\nif jsonschema:\n    jsonschema.validate(data, schema)\n    print('Schema validation OK')\nelse:\n    print('jsonschema module not available, skipping validation')\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/_validate_journal.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/_validate_journal.py"
+    }
+  ],
+  "result_tail": "s on `/products/1` right around the complaint window are the likely direct hit.\n\nAlong the way I ruled out a separate, unrelated bug: `/products/3` always throws a `ZeroDivisionError` (500), but it's deterministic on every request and every occurrence in the log is from investigator probes \u2014 no real user has ever hit it, so it doesn't match \"occasional/retry\" and isn't the cause. It's noted in the journal as a latent finding for awareness, not the incident.\n\nSince chaos is still armed, more occasional 503s should be expected until someone disables it (out of scope for me to touch \u2014 read-only).",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-18T21:28:01Z",
+  "ended_at": "2026-08-18T21:37:57Z",
+  "restages": 0,
+  "wall_seconds_runner": 597,
+  "journal_source_name": "2026-08-18-shop-occasional-errors.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

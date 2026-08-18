@@ -1,0 +1,43 @@
+{
+  "session_id": "e4625329-0a9b-4a03-852f-a6e44240e98c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 142446,
+  "duration_api_ms": 536010,
+  "total_cost_usd": 2.6530575000000005,
+  "tokens_total": 3832755,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 138,
+      "outputTokens": 45676,
+      "cacheReadInputTokens": 3594925,
+      "cacheCreationInputTokens": 192016,
+      "costUSD": 2.6530575000000005
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "grep -rl \"journal.schema\" eval/ scripts/ 2>/dev/null | head -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, re\nwith open('journals/2026-08-18-products-3-500s.md') as f:\n    content = f.read()\nparts = content.split('---')\nfm = yaml.safe_load(parts[1])\nprint('verdict:', fm['verdict'])\nprint('hyp ids:', [h['id'] for h in fm['hypotheses']])\nprint('evidence ids:', [e['id'] for e in fm['evidence']])\nrefs = set()\nfor h in fm['hypotheses']:\n    refs.update(h['evidence_for'])\n    refs.update(h['evidence_against'])\nfor lf in fm.get('latent_findings', []):\n    refs.update(lf['evidence'])\nev_ids = set(e['id'] for e in fm['evidence'])\nprint('unresolved refs:', refs - ev_ids)\nprint('root_cause hyp state:', [h['state'] for h in fm['hypotheses'] if h['id']==fm['root_cause']['hypothesis']])\nstarted = fm['investigation']['started']\nconcluded = fm['investigation']['concluded']\nprint('started/concluded:', started, concluded)\n\"\n"
+    }
+  ],
+  "result_tail": "es track product id, not restart timing. Invalidated (its root cause is outside the read-only surface, flagged as a gap).\n- **Chaos/config toggle** \u2014 the only chaos event in the logs was configured with `failure_rate: 0.0` and status 503 (not the observed 500s), and predates the first failure by ~19 minutes. Invalidated.\n\nA latent finding rides along: product 4 (\"Mystery Box\") has `price: null` in the catalog \u2014 no failure yet, but worth watching.\n\nSafe next step: watch `/products` for other catalog entries drifting to `units_in_stock: 0`, since any such product would hit the same defect shape.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 2,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-08-18T18:55:52Z",
+  "ended_at": "2026-08-18T19:02:56Z",
+  "restages": 0,
+  "wall_seconds_runner": 424,
+  "journal_source_name": "2026-08-18-products-3-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

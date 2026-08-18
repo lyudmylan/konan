@@ -1,0 +1,71 @@
+{
+  "session_id": "369580b1-d4c7-4ff2-854e-7db9c30f579a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 41,
+  "duration_ms": 489392,
+  "duration_api_ms": 566983,
+  "total_cost_usd": 2.1615341999999997,
+  "tokens_total": 2441519,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 86,
+      "outputTokens": 53493,
+      "cacheReadInputTokens": 2246439,
+      "cacheCreationInputTokens": 141501,
+      "costUSD": 2.1615341999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "for p in /health /products /products/1 /orders; do scripts/probe.sh \"$p\"; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /products; scripts/probe.sh /products/1; scripts/probe.sh /orders"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, yaml, re, sys\npath = 'journals/2026-08-18-shop-latency-injection.md'\ntext = open(path).read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', text, re.S)\nfm = yaml.safe_load(m.group(1))\ntry:\n    import jsonschema\n    schema = json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.validate(fm, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('jsonschema not installed, skipping strict validation')\n    print(json.dumps(fm, indent=2, default=str)[:500])\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, yaml, re, sys\npath = 'journals/2026-08-18-shop-latency-injection.md'\ntext = open(path).read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', text, re.S)\nfm = yaml.safe_load(m.group(1))\ntry:\n    import jsonschema\n    schema = json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.validate(fm, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('jsonschema not installed, skipping strict validation')\n    print(json.dumps(fm, indent=2, default=str)[:500])\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"print('hello')\""
+    }
+  ],
+  "result_tail": "the log precedes and is decoupled from the slow window, gauges stable) and a data-dependent code defect (two different product ids both slow-but-succeeding, zero exception count). An adversarial judge validated the hypothesis, flagged two gaps (latency magnitude, thin sampling), and both were closed with a cheap confirmatory probe round.\n\nGaps recorded honestly: the exact injected-latency distribution isn't confirmed (only inferred from scatter), sampling covers two windows ~4.5 min apart rather than continuously, and true end-user count can't be confirmed (only loopback client ports visible).",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-18T18:39:50Z",
+  "ended_at": "2026-08-18T18:48:02Z",
+  "restages": 0,
+  "wall_seconds_runner": 492,
+  "journal_source_name": "2026-08-18-shop-latency-injection.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

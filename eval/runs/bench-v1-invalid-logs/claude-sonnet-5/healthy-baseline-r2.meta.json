@@ -1,0 +1,47 @@
+{
+  "session_id": "36870e43-527a-4ba1-b9d6-ccf9c7ccdf63",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 15,
+  "duration_ms": 112568,
+  "duration_api_ms": 395688,
+  "total_cost_usd": 1.87582935,
+  "tokens_total": 2788863,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 114,
+      "outputTokens": 32474,
+      "cacheReadInputTokens": 2633492,
+      "cacheCreationInputTokens": 122783,
+      "costUSD": 1.87582935
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "grep -E 'Shutting down|Finished server process|Started server process|\"event\": \"startup\"' lab/logs/app.log\necho \"---404s---\"\ngrep '404' lab/logs/app.log\necho \"---exceptions header---\"\ngrep -A1 'http_exceptions_total' <(scripts/probe.sh /metrics 2>&1)\necho \"---chaos---\"\nscripts/probe.sh /metrics 2>&1 | grep -E 'chaos_enabled|http_requests_total'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, re\nwith open('journals/2026-08-18-routine-handover-check.md') as f:\n    content = f.read()\nparts = content.split('---')\nfm = parts[1]\ntry:\n    data = yaml.safe_load(fm)\n    print('VALID YAML')\nexcept Exception as e:\n    print('ERROR:', e)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml\nwith open('journals/2026-08-18-routine-handover-check.md') as f:\n    content = f.read()\nparts = content.split('---')\nfm = parts[1]\ndata = yaml.safe_load(fm)\nprint('VALID YAML')\nprint('keys:', list(data.keys()))\nprint('evidence ids:', [e['id'] for e in data['evidence']])\n\"\n"
+    }
+  ],
+  "result_tail": " exceptions. Chaos injection is off.\n- The process restarted once, about 20 seconds before I started. The restart was clean. No error caused it. Behavior did not change before or after the restart.\n- Order prices stay consistent across repeat orders. This shows no logic bug.\n\nTwo known gaps:\n- No older log files exist yet. I could only check logs since the last process start.\n- I could not learn why the process restarted. The read-only surface does not show this. It looks routine, not a fault.\n\nNo action is needed. The journal file is not committed to git \u2014 tell me if you want me to commit it.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-18T19:56:08Z",
+  "ended_at": "2026-08-18T20:01:08Z",
+  "restages": 0,
+  "wall_seconds_runner": 300,
+  "journal_source_name": "2026-08-18-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

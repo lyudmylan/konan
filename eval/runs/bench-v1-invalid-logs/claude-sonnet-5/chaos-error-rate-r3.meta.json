@@ -1,0 +1,41 @@
+{
+  "session_id": "8d285081-bf68-4b02-86f7-c2429839635a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 8,
+  "duration_ms": 20287,
+  "duration_api_ms": 19922,
+  "total_cost_usd": 0.19003710000000001,
+  "tokens_total": 294052,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 14,
+      "outputTokens": 1188,
+      "cacheReadInputTokens": 278057,
+      "cacheCreationInputTokens": 14793,
+      "costUSD": 0.19003710000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "This command needs your approval to run \u2014 the sandbox is blocking it either way. Can you approve `scripts/lab.sh status`, or should I proceed differently?",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-18T17:28:29Z",
+  "ended_at": "2026-08-18T17:28:51Z",
+  "restages": 0,
+  "wall_seconds_runner": 21,
+  "status": "no-journal",
+  "quota_error": false
+}

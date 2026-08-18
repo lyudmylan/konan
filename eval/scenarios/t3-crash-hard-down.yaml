@@ -31,7 +31,7 @@ expected:
     - id: process-died
       all_of: ["(?i)crash|exit(ed)?|died|terminat|not\\s+running|process\\s+(is\\s+)?(down|gone)"]
     - id: no-restart-after
-      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|has\\s+not\\s+restarted"]
+      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening"]
   must_not_claim:
     - id: not-code-defect
       any_of: ["(?i)zero.?division", "(?i)type.?error"]

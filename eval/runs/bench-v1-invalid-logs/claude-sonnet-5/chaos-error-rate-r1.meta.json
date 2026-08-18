@@ -1,0 +1,51 @@
+{
+  "session_id": "6e994ccf-2a8e-47b5-9b7b-65ca15d9dded",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 15,
+  "duration_ms": 332678,
+  "duration_api_ms": 573489,
+  "total_cost_usd": 2.4522664499999998,
+  "tokens_total": 3094328,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 120,
+      "outputTokens": 51285,
+      "cacheReadInputTokens": 2870899,
+      "cacheCreationInputTokens": 172024,
+      "costUSD": 2.4522664499999998
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "cat /private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-smxyd9ur/wt/lab/faultline.pid; echo '---'; ps -p $(cat /private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-smxyd9ur/wt/lab/faultline.pid) 2>&1; echo '---'; curl -s -m 3 http://127.0.0.1:8000/health; echo; curl -s -m 3 http://127.0.0.1:8000/metrics | head -50"
+    },
+    {
+      "tool": "Bash",
+      "command": "for id in 1787073226 1787073300 1787073316 1787073321 1787073325; do echo -n \"$id -> \"; date -u -r $id +%Y-%m-%dT%H:%M:%SZ; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "for id in 1787073226 1787073300 1787073316 1787073321 1787073325; do date -u -r \"$id\" +%Y-%m-%dT%H:%M:%SZ; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport re, json, sys\ntry:\n    import yaml\nexcept ImportError:\n    print('NO_YAML'); sys.exit(0)\ncontent = open('journals/2026-08-18-shop-503-chaos-switch.md').read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', content, re.S)\ndata = yaml.safe_load(m.group(1))\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print('SCHEMA_OK')\nexcept ImportError:\n    print('NO_JSONSCHEMA')\n    print(json.dumps(data, indent=2)[:500])\nexcept Exception as e:\n    print('SCHEMA_FAIL', e)\n\"\n"
+    }
+  ],
+  "result_tail": "code bug \u2014 a code bug would fail the same way every time. No crash events and no memory growth. This rules out a server problem.\n\nThree lenses (interfaces, software-defect, infra-process) checked the system in parallel. A fourth, independent check (the judge) reviewed only the evidence and confirmed the finding.\n\nI wrote the full record to `journals/2026-08-18-shop-503-chaos-switch.md`. It has the verdict, all evidence with quotes, and open gaps (for example: I cannot see who flipped the switch, only that a local client did it).\n\nI did not commit this file. Tell me if you want me to commit it.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-18T17:13:05Z",
+  "ended_at": "2026-08-18T17:21:12Z",
+  "restages": 0,
+  "wall_seconds_runner": 487,
+  "journal_source_name": "2026-08-18-shop-503-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

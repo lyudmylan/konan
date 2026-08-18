@@ -1,0 +1,45 @@
+{
+  "session_id": "52dd24b2-e0e6-48f6-b2b0-a8df1fdac216",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 20434,
+  "duration_api_ms": 20009,
+  "total_cost_usd": 0.1942059,
+  "tokens_total": 332347,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 16,
+      "outputTokens": 1288,
+      "cacheReadInputTokens": 317793,
+      "cacheCreationInputTokens": 13250,
+      "costUSD": 0.1942059
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "I need your approval to proceed. I want to run `scripts/lab.sh status` to check whether the faultline lab service is up before probing it. Can you approve this command (or let me know if the harness needs a different permission setting)?",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-18T21:27:30Z",
+  "ended_at": "2026-08-18T21:27:53Z",
+  "restages": 0,
+  "wall_seconds_runner": 23,
+  "status": "no-journal",
+  "quota_error": false
+}
