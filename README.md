@@ -53,7 +53,11 @@ boundaries, the investigation loop, the on-call trigger path.
   profile, never code ([docs/triggers.md](docs/triggers.md)).
 - **Read-only, mechanically** — the investigator touches a target only through an
   allowlisted probe; the boundary is settings, not prompts. A security boundary is
-  never a prompt.
+  never a prompt. Precisely: only the probe script and the journal-commit forms are
+  pre-approved; every other command prompts, and an unattended shift treats a prompt
+  as fail-closed. The deny list on raw HTTP clients is a belt for the habitual forms,
+  not the boundary itself — a content-based hook port is tracked in
+  [#44](https://github.com/lyudmylan/konan/issues/44).
 
 ## The eval spine (triple duty)
 
@@ -86,3 +90,7 @@ controls — is in [docs/lab.md](docs/lab.md).
 - Trigger contract: [docs/triggers.md](docs/triggers.md)
 - The lab: [docs/lab.md](docs/lab.md)
 - Eval semantics & blinding contract: [eval/README.md](eval/README.md)
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE).

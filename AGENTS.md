@@ -9,7 +9,10 @@ overrides them where they conflict.
 - The investigator touches a target only through `scripts/probe.sh` — GET-only,
   path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). Raw
   `curl`/`wget`/`http`/`xh`/`nc` are deny-listed in `.claude/settings.json` on purpose:
-  the boundary is mechanical, not prompted. Changing either list is a SPEC-grade change
+  the boundary is mechanical, not prompted. Precisely: the allowlist is the boundary
+  (probe + journal-commit forms); everything else prompts, and an unattended shift
+  fails closed on a prompt; the deny list is a belt for the habitual raw-HTTP forms
+  (content-based hook port: #44). Changing either list is a SPEC-grade change
   (PR with rationale, never casual).
 - `/simulate` and `/chaos` are outside the probe allowlist even though they are GETs:
   faultline serves mutating GETs there (crash, hang, ballast), and chaos state is
