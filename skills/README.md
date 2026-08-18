@@ -19,4 +19,5 @@ mkdir -p .claude/skills
 ln -s ../../skills/<name> .claude/skills/<name>
 ```
 
-Plugin packaging comes later (see the roadmap in `docs/product.md`).
+Plugin packaging is the post-flip fast-follow, tracked in #44 — a hook port of the
+read-only boundary comes first, because plugins cannot ship permission lists.

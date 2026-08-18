@@ -27,7 +27,8 @@ content, not the location.
 konan_journal: 1                # contract version; scorers refuse versions they don't know
 investigation:
   id: 2026-07-30-example        # matches the filename
-  trigger: manual               # what started this: manual | (trigger surfaces land with epic 4)
+  trigger: manual               # what started this, as text: manual | alert-inbox (profile,
+                                #   delivery facts). Fields arrive with contract v2 (#24)
   complaint: "..."              # verbatim, as reported — never normalized
   started: 2026-07-30T10:00:00+03:00
   concluded: 2026-07-30T10:12:00+03:00
