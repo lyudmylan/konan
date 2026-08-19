@@ -30,6 +30,14 @@ Per investigation (one fixture, one model, one repetition), the scorer semantics
   the journal's own `wall_clock_seconds` (the investigator's stamps) is kept as written.
 - **API-equivalent cost** — the envelope's `total_cost_usd`; on a subscription the
   marginal cost is flat, this is the number an API-billed deployment would pay.
+- **Quota share** — two measures, both on the subscription (the only meter konan is
+  designed for; benchmarks never move to API credits): (a) investigations completed
+  between consecutive quota stops per model, from the run sidecars (`eval/bench.py`,
+  "Quota" section — a proxy for investigations per 5-hour window; exact only when a batch
+  starts near an empty window with nothing else on the pool); (b) `/usage` read by the
+  operator right before and right after a single-model batch — the per-model weekly
+  percentage delta ÷ runs = the exact quota cost of one investigation on the plan.
+  Recorded in the results section with the plan tier.
 - **Headless denials** — tool calls that would have prompted and were auto-denied
   (compound commands outside the pre-approved shapes): a proxy for how much of a
   model's idiom the boundary absorbs.
@@ -83,6 +91,15 @@ Coverage and the classes this lab cannot exercise: `eval/README.md`.
 9. **Fairness of the boundary.** The hook treats a `cd <session cwd> &&` prefix as
    transparent (a harness idiom); every other compound shape prompts and is auto-denied
    headless — recorded per run as denials, identical for every model.
+
+## What the benchmark is for, beyond ranking
+
+The table is also the instrument for optimization. Role-tiered configurations — a cheaper
+model for the dedicated investigation work (lenses, deep-dives), a stronger one for
+orchestration and the judge — are compared against the single-model rows on the same
+fixtures; a configuration that holds the pass rate at lower tokens, cost, and quota share
+becomes the recommended default, with the numbers. This is benchmark v2 (#65): the skill
+reads a tiering config, the harness envelope attributes tokens and cost per model.
 
 ## Reproduce
 

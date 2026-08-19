@@ -88,6 +88,30 @@ def collect(run_dirs, fixtures, jv):
     return rows
 
 
+def quota_windows(run_dirs):
+    """Per model: how many investigations completed between consecutive quota stops —
+    a proxy for 'investigations per 5-hour window' on the subscription (exact only when
+    the batch starts near an empty window and nothing else uses the pool)."""
+    events = {}
+    for rd in run_dirs:
+        for meta_path in Path(rd).glob("*/*.meta.json"):
+            m = json.loads(meta_path.read_text())
+            events.setdefault(m.get("model", "?"), []).append(
+                (m.get("started_at") or "", bool(m.get("quota_error")), m.get("status")))
+    out = {}
+    for model, evs in events.items():
+        evs.sort()
+        segments, count = [], 0
+        for _, quota, status in evs:
+            if quota:
+                segments.append(count)
+                count = 0
+            elif status in ("ok", "no-journal", "timeout", "error"):
+                count += 1
+        out[model] = {"segments": segments, "open_segment": count}
+    return out
+
+
 def _med(vals):
     vals = [v for v in vals if isinstance(v, (int, float))]
     return st.median(vals) if vals else None
@@ -141,6 +165,13 @@ def render(rows, table, run_names):
                    f"{_pct(t['pass_rate_class_agnostic'])} | {_pct(t['rc_accuracy'])} | {t['false_attributions']} | {_pct(t['citation_rate'])} | "
                    f"{_num(t['tokens_median'])} | {_num(t['duration_median_s'])} | "
                    f"{_num(t['cost_median_usd'], '{:.2f}')} | {_num(t['denials_median'], '{:.1f}')} |")
+    qw = quota_windows(RUN_DIRS)
+    out += ["", "## Quota: investigations completed between quota stops (per model)", "",
+            "A proxy for investigations per 5-hour window on the subscription; exact only when a batch starts "
+            "near an empty window with nothing else on the pool. Segments = runs before each stop; the last "
+            "number is the open segment.", ""]
+    for model, q in sorted(qw.items()):
+        out.append(f"- {model}: {q['segments'] or '—'} + open {q['open_segment']}")
     out += ["", "## Every run", "",
             "| Run | Model | Scenario | Tier | Rep | Status | Verdict | Expected | Passed | RC | False attr | Citations | Tokens | Wall s | Cost $ | Denials |",
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
@@ -153,12 +184,16 @@ def render(rows, table, run_names):
     return "\n".join(out) + "\n"
 
 
+RUN_DIRS = []
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs", nargs="+", required=True, help="eval/runs/<run-id> directories")
     ap.add_argument("-o", "--output", help="write the markdown table here (default: stdout)")
     ap.add_argument("--json", help="also write rows + table as JSON here")
     a = ap.parse_args()
+    RUN_DIRS.extend(a.runs)
     fixtures = load_fixtures()
     jv = Draft202012Validator(json.loads((REPO / "skills/investigate/journal.schema.json").read_text()))
     rows = collect(a.runs, fixtures, jv)
