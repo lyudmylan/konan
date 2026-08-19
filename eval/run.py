@@ -316,7 +316,10 @@ def main():
             with results.open("a") as f:
                 f.write(json.dumps({k: meta[k] for k in ("run_id", "model", "scenario", "rep", "status",
                                                           "session_id", "num_turns", "duration_ms",
-                                                          "tokens_total", "total_cost_usd")}) + "\n")
+                                                          "tokens_total", "total_cost_usd", "quota_error")}) + "\n")
+            if meta["quota_error"]:   # keep every quota stop: the retry overwrites the sidecar
+                with (out / "quota-stops.jsonl").open("a") as f:
+                    f.write(json.dumps({"model": a.model, "scenario": sid, "rep": r, "at": ended}) + "\n")
             print(f"   {status}: turns={meta['num_turns']} dur={meta['duration_ms']}ms "
                   f"tokens={meta['tokens_total']} cost=${meta['total_cost_usd']} "
                   f"denials={len(meta['permission_denials'])}", flush=True)

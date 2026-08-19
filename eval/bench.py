@@ -98,6 +98,14 @@ def quota_windows(run_dirs):
             m = json.loads(meta_path.read_text())
             events.setdefault(m.get("model", "?"), []).append(
                 (m.get("started_at") or "", bool(m.get("quota_error")), m.get("status")))
+        stops = Path(rd) / "quota-stops.jsonl"          # retries overwrite sidecars; stops are kept here
+        if stops.exists():
+            for line in stops.read_text().splitlines():
+                try:
+                    q = json.loads(line)
+                except ValueError:
+                    continue
+                events.setdefault(q.get("model", "?"), []).append((q.get("at") or "", True, "error"))
     out = {}
     for model, evs in events.items():
         evs.sort()
