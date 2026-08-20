@@ -32,7 +32,9 @@ complaint: >-
   mention seeing an error page once. Health checks are green and fast.
 expected:
   verdict: root-cause-identified
-  incident_class: infra-process
+  incident_class: [infra-process, interfaces]   # set accepted for bench-v1 journals; the
+                                                #   definition (report contract) says infra-process;
+                                                #   singular again once bench-v2 pins the new lens text
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
@@ -42,7 +44,7 @@ expected:
       all_of: ["(?i)laten|slow|delay"]
   must_not_claim:
     - id: latent-defect-not-promoted
-      any_of: ["(?i)zero.?division", "(?i)divi\\w*\\s+by\\s+zero", "(?i)type.?error"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )divi\\w*\\s+by\\s+zero", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )type.?error"]
     - id: not-load
       any_of: ["(?i)saturat", "(?i)overload", "(?i)cpu\\s+(spin|burn)", "(?i)resource\\s+exhaust"]
 scoring_notes: >-

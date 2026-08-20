@@ -12,6 +12,9 @@ Look for:
 - Latency: request duration sums/counts deteriorating over time; slow responses without
   errors are your domain too.
 - Restart loops: repeated startup events are stronger evidence than any single crash.
+- Internal operational switches: chaos/degradation/feature toggles in the target that
+  change runtime behavior (error injection, added latency). Their class is
+  `infra-process` even when the symptom wears gateway-shaped statuses.
 
 Method: read process gauges and lifecycle events from metrics and logs first; anchor
 every anomaly to the timeline (when did uptime reset? when did RSS start climbing?).

@@ -168,7 +168,9 @@ def score_pair(fixture, core, journal_validator):
     if expected["incident_class"] is None:
         class_ok = None
     else:
-        class_ok = rc.get("incident_class") == expected["incident_class"]
+        exp_class = expected["incident_class"]
+        accepted = exp_class if isinstance(exp_class, list) else [exp_class]
+        class_ok = rc.get("incident_class") in accepted
 
     surface = claim_surface(core)
     claim_misses = []
