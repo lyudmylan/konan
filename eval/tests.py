@@ -193,7 +193,22 @@ def run():
     check_valid(loaded, base_fx())
     assert score.score_pair(base_fx(), loaded, JV)["citations_ok"]
 
-    print("OK: 14 semantics pins hold")
+    # 15. A fixture may accept a SET of incident classes (taxonomy ambiguity, #63):
+    #     any member passes, a non-member still fails, and the plain-string form is
+    #     unchanged.
+    core, fx = base_core(), base_fx()
+    fx["expected"]["incident_class"] = ["software-defect", "infra-process"]
+    check_valid(core, fx)
+    assert score.score_pair(fx, core, JV)["class_ok"]
+    core["root_cause"]["incident_class"] = "infra-process"
+    core["hypotheses"][0]["incident_class"] = "infra-process"
+    assert score.score_pair(fx, core, JV)["class_ok"]
+    core["root_cause"]["incident_class"] = "interfaces"
+    core["hypotheses"][0]["incident_class"] = "interfaces"
+    r = score.score_pair(fx, core, JV)
+    assert r["class_ok"] is False and not r["passed"]
+
+    print("OK: 15 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------

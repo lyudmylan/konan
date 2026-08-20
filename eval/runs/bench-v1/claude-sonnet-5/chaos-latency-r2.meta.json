@@ -1,0 +1,71 @@
+{
+  "session_id": "09e1c0f1-6575-4f3f-8b24-e7b041722bc4",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 40,
+  "duration_ms": 559040,
+  "duration_api_ms": 621922,
+  "total_cost_usd": 2.4377224500000003,
+  "tokens_total": 2797280,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 104,
+      "outputTokens": 57835,
+      "cacheReadInputTokens": 2575469,
+      "cacheCreationInputTokens": 163872,
+      "costUSD": 2.4377224500000003
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---metrics---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n '\"event\": \"request\"' lab/logs/app.log | sed -n '1,5p;$p'\necho \"---paths seen---\"\ngrep -o '\"path\": \"[^\"]*\"' lab/logs/app.log | sort | uniq -c\necho \"---around marker---\"\ngrep -n '\"ts\": \"2026-08-18T22:57:4[0-3]' lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /health && ./scripts/probe.sh /products"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -A5 'http_exceptions_total'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re, sys\ntext = open('journals/2026-08-18-shop-latency-chaos-flag.md').read()\nfm = text.split('---')[1]\ndata = yaml.safe_load(fm)\ntry:\n    import jsonschema\n    schema = json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.validate(data, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('jsonschema not installed, doing manual checks')\n\n# referential integrity checks\nev_ids = {e['id'] for e in data['evidence']}\nfor h in data['hypotheses']:\n    for ref in h['evidence_for'] + h['evidence_against']:\n        assert ref in ev_ids, f'missing {ref}'\nassert data['root_cause']['hypothesis'] in [h['id'] for h in data['hypotheses'] if h['state']=='validated']\nfrom datetime import datetime\nstarted = datetime.fromisoformat(data['investigation']['started'].replace('Z','+00:00'))\nconcluded = datetime.fromisoformat(data['investigation']['concluded'].replace('Z','+00:00'))\nwc = int((concluded-started).total_seconds())\nprint('computed wall_clock_seconds:', wc, 'recorded:', data['usage']['wall_clock_seconds'])\nassert wc == data['usage']['wall_clock_seconds']\nprint('MANUAL CHECKS OK')\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py"
+    }
+  ],
+  "result_tail": "ed and invalidated by the same telemetry. An adversarial judge validated the primary hypothesis after two rounds of tightening the evidence (closed a gap on missing post-incident `/orders` timing and pre-incident route baselines).\n\nJournal written to `journals/2026-08-18-shop-latency-chaos-flag.md` (uncommitted \u2014 let me know if you'd like it committed). Note: `scripts/lab.sh status` wasn't reachable in this session (no approval available for non-allowlisted commands), so I worked entirely from the investigator's actual telemetry surface (`scripts/probe.sh` + `lab/logs/`), which was sufficient.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-18T22:57:52Z",
+  "ended_at": "2026-08-18T23:07:15Z",
+  "restages": 0,
+  "wall_seconds_runner": 562,
+  "journal_source_name": "2026-08-18-shop-latency-chaos-flag.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

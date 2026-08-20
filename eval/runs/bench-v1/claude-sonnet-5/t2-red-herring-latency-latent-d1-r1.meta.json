@@ -1,0 +1,39 @@
+{
+  "session_id": "714a8330-32d5-4c1a-98fa-21c0096f7354",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 6,
+  "duration_ms": 173030,
+  "duration_api_ms": 705534,
+  "total_cost_usd": 2.5052842500000003,
+  "tokens_total": 2745307,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 96,
+      "outputTokens": 65730,
+      "cacheReadInputTokens": 2522790,
+      "cacheCreationInputTokens": 156691,
+      "costUSD": 2.5052842500000003
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport re, json, sys\ntry:\n    import yaml\nexcept ImportError:\n    print('NO_YAML'); sys.exit(0)\ntext = open('journals/2026-08-19-chaos-latency-slowness.md').read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', text, re.S)\ndata = yaml.safe_load(m.group(1))\ntry:\n    import jsonschema\n    schema = json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.validate(data, schema)\n    print('SCHEMA_OK')\nexcept ImportError:\n    print('NO_JSONSCHEMA')\n    print(json.dumps(data, indent=2)[:500])\nexcept Exception as e:\n    print('SCHEMA_ERROR', e)\n\"\n"
+    }
+  ],
+  "result_tail": " slow, but health checks stayed green.\n\nThree independent checks (process/infra, interfaces, and code-defect) agreed on this cause. An adversarial judge review confirmed it after I added missing evidence for the `/orders` route.\n\n**Not confirmed:** the \"error page seen once.\" The server logs show zero 4xx/5xx responses and zero exceptions during this event. I cannot confirm this claim from the data available to me. It may be a client-side timeout, not a server error. This gap is recorded in the journal.\n\n**Open item:** the file is written but not committed. Tell me if you want me to commit it.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-19T02:27:13Z",
+  "ended_at": "2026-08-19T02:37:33Z",
+  "restages": 0,
+  "wall_seconds_runner": 620,
+  "journal_source_name": "2026-08-19-chaos-latency-slowness.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,63 @@
+{
+  "session_id": "5ab153da-527a-4a3d-bbf1-995da22958b5",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 231520,
+  "duration_api_ms": 317154,
+  "total_cost_usd": 4.3026745,
+  "tokens_total": 1449249,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 76,
+      "outputTokens": 23125,
+      "cacheReadInputTokens": 1310782,
+      "cacheCreationInputTokens": 115266,
+      "costUSD": 4.3026745
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'http_requests_total|chaos' ; echo ---; scripts/probe.sh /health | tail -3; echo ---; wc -l lab/logs/app.log; grep -E 'chaos|startup' lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'http_exceptions_total|http_requests_total|chaos_enabled|^\\[|^#' | grep -v '^# '; echo ---; scripts/probe.sh /products/1 | tail -3; echo ---; scripts/probe.sh /products/1 | tail -1; echo ---; wc -l lab/logs/app.log; grep -E '\"event\": ?\"(unhandled_exception|simulated_exception|chaos_enabled|chaos_disabled|chaos_failure)\"' lab/logs/app.log | head -40; echo ---; grep -E '\"status\": ?5' lab/logs/app.log | head -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /metrics | grep -E 'process_|duration|chaos|exceptions|http_requests_total'; echo ---; ls -la lab/logs/; wc -l lab/logs/app.log; grep -E '\"event\": ?\"(startup|chaos_enabled|chaos_disabled|unhandled_exception)\"' lab/logs/app.log*"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -c '\"status\": 503' lab/logs/app.log; grep '\"status\": 503' lab/logs/app.log | python3 -c 'import sys,json; ids=[json.loads(l)[\"request_id\"] for l in sys.stdin]; print(ids)' ; grep chaos_failure lab/logs/app.log | python3 -c 'import sys,json; print([json.loads(l)[\"request_id\"] for l in sys.stdin])'; grep -c chaos_disabled lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'faultline_chaos_enabled|request_id='"
+    },
+    {
+      "tool": "Bash",
+      "command": "uv run --with pyyaml --with jsonschema python3 -c \"\nimport yaml,json,jsonschema,sys\nt=open('journals/2026-08-19-intermittent-503s-chaos-enabled.md').read()\nfm=yaml.safe_load(t.split('---')[1])\ns=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(fm,s)\nids={e['id'] for e in fm['evidence']}\nfor h in fm['hypotheses']:\n    assert set(h['evidence_for']+h['evidence_against'])<=ids,h['id']\nprint('schema ok; refs ok; wall',fm['usage']['wall_clock_seconds'])\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml,json,jsonschema\nt=open('journals/2026-08-19-intermittent-503s-chaos-enabled.md').read()\nfm=yaml.safe_load(t.split('---')[1])\ns=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(fm,s)\nids={e['id'] for e in fm['evidence']}\nfor h in fm['hypotheses']:\n    assert set(h['evidence_for']+h['evidence_against'])<=ids,h['id']\nprint('schema ok; refs ok; wall',fm['usage']['wall_clock_seconds'])\n\""
+    }
+  ],
+  "result_tail": "- The dashboard is green because `/health` is not covered by the injection (4/4 200) and the process is healthy: single startup, monotonic uptime, flat RSS, no exceptions.\n- Alternatives killed: software defect (no exceptions, no data-dependent pattern) and process/resource issue (no restart, no saturation, 503s served in ~0.3 ms).\n- Gaps: who/why behind the `/chaos/enable` call (operator surface, out of contract); small sample for the failure share.\n\nJournal written: `journals/2026-08-19-intermittent-503s-chaos-enabled.md`. Not committed \u2014 this was a manual `/konan` run, not an on-call shift.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "chaos-error-rate",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-19T17:11:39Z",
+  "ended_at": "2026-08-19T17:15:32Z",
+  "restages": 0,
+  "wall_seconds_runner": 233,
+  "journal_source_name": "2026-08-19-intermittent-503s-chaos-enabled.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

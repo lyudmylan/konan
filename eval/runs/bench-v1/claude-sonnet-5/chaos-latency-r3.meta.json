@@ -1,0 +1,34 @@
+{
+  "session_id": "e68b8cd4-175f-4f49-8103-cb9d1574b1f3",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 4,
+  "duration_ms": 210607,
+  "duration_api_ms": 422175,
+  "total_cost_usd": 1.6624573500000002,
+  "tokens_total": 1919764,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 86,
+      "outputTokens": 38396,
+      "cacheReadInputTokens": 1760642,
+      "cacheCreationInputTokens": 120640,
+      "costUSD": 1.6624573500000002
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "ouched and producing zero errors \u2014 exactly matching the reported symptom. Three independent triage lenses (infra-process, interfaces, software-defect) converged on this with no contradicting evidence, and an adversarial judge validated it while invalidating the saturation and software-defect alternatives.\n\nJournal written to `journals/2026-08-18-shop-slow-chaos-enabled.md` (not committed \u2014 that's left for you to review). One open gap: the configured 1500ms latency vs. the observed 600\u20131100ms isn't reconciled, since the injection mechanism itself is outside the investigator's read-only surface.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-18T23:07:34Z",
+  "ended_at": "2026-08-18T23:13:36Z",
+  "restages": 0,
+  "wall_seconds_runner": 362,
+  "journal_source_name": "2026-08-18-shop-slow-chaos-enabled.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -71,6 +71,23 @@ Field notes:
 - **`hypotheses`** is the complete list considered seriously enough to test, including
   the invalidated and inconclusive ones — killed hypotheses are results, and false
   attributions are scored from this list.
+- **Incident classes, defined** (benchmark finding 2026-08-19, #63: models split on
+  injected degradation — the definitions below make the call explicit):
+  - `software-defect` — the target's own code produces a wrong result or an unhandled
+    error for some input; deterministic per-input is the classic shape.
+  - `load-saturation` — demand exceeds capacity: queues, resource exhaustion, gradual
+    degradation under volume.
+  - `infra-process` — the process and the platform it runs on, **including internal
+    operational switches**: lifecycle (crash, restart, hang), resources, and
+    configuration/feature/chaos toggles that change runtime behavior. An injected
+    degradation switch is `infra-process` even when its symptom is gateway-shaped
+    statuses or added latency.
+  - `third-party` — an external provider's fault: their outage, their quota, their bug.
+  - `interfaces` — a **contract surface between parties**: upstream/downstream API
+    mismatches, malformed payloads, schema drift, a proxy/gateway tier's own failures.
+    Requires an external party or a boundary component; an internal switch is not
+    `interfaces`.
+  - `data-db` — the data layer: corrupt/missing/inconsistent data, database failures.
 - **`incident_class`** comes from the taxonomy: `software-defect`, `load-saturation`,
   `infra-process`, `third-party`, `interfaces`, `data-db`. A new lens may extend the
   taxonomy; scenario fixtures pin the expected class per scenario, so an invented class

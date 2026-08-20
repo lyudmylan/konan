@@ -1,0 +1,51 @@
+{
+  "session_id": "05874593-7893-4bed-afc6-848c57a564f0",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 12,
+  "duration_ms": 185415,
+  "duration_api_ms": 611832,
+  "total_cost_usd": 2.408486850000001,
+  "tokens_total": 3263802,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 124,
+      "outputTokens": 53886,
+      "cacheReadInputTokens": 3070142,
+      "cacheCreationInputTokens": 139650,
+      "costUSD": 2.408486850000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && date -u +%Y-%m-%dT%H:%M:%SZ"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E \"http_requests_total\\{.*503|faultline_chaos_enabled|http_exceptions_total\""
+    },
+    {
+      "tool": "Bash",
+      "command": "ls -la journals/ 2>&1 | head -5; git status --porcelain=v1 journals/ | head -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print('NO_JSONSCHEMA'); sys.exit(0)\n\"\n"
+    }
+  ],
+  "result_tail": " checked the evidence and confirmed the finding.\n\n**One side finding, not linked to the earlier noise:**\nProduct 4 (\"Mystery Box\") has no price listed (`price: null`). No one has ordered this product yet, so this has not caused a failure. I could not test what would happen on an order \u2014 that needs a POST request, and my read-only probe tool allows GET requests only. I flag this as an open question for someone with write access to check.\n\n**Report:**\nFull evidence-cited journal written to `journals/2026-08-19-chaos-toggle-503s.md`. I did not commit it to git \u2014 let me know if you want that done.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-19T01:46:14Z",
+  "ended_at": "2026-08-19T01:54:41Z",
+  "restages": 0,
+  "wall_seconds_runner": 506,
+  "journal_source_name": "2026-08-19-chaos-toggle-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

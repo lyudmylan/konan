@@ -1,0 +1,63 @@
+{
+  "session_id": "cf7232f4-5454-44a1-a6ff-20db2cc250eb",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 24,
+  "duration_ms": 353794,
+  "duration_api_ms": 458531,
+  "total_cost_usd": 7.020183499999997,
+  "tokens_total": 1793799,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 88,
+      "outputTokens": 28986,
+      "cacheReadInputTokens": 1505136,
+      "cacheCreationInputTokens": 259589,
+      "costUSD": 7.020183499999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/3; echo ---; scripts/probe.sh /products | head -c 2000; echo; echo ---; scripts/probe.sh /metrics | grep -E 'http_exceptions_total|products|chaos_enabled'"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /metrics | grep -E 'process_|faultline_chaos|http_request_duration|http_requests_total|http_exceptions'; ls -la lab/logs/; wc -l lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "ls lab/logs/ && cat lab/logs/app.log && echo ---- && scripts/probe.sh /metrics && scripts/probe.sh /health && scripts/probe.sh /products/3"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-ppmhhr2d/wt/scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, sys\ntry:\n    import yaml, jsonschema\nexcept ImportError as e:\n    print('SKIP:', e); sys.exit(0)\ntext = open('journals/2026-08-19-products-3-500s.md').read()\nfm = text.split('---\\n')[1]\ndoc = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(doc, schema)\n# referential integrity\nids = {e['id'] for e in doc['evidence']}\nfor h in doc['hypotheses']:\n    for r in h['evidence_for'] + h['evidence_against']:\n        assert r in ids, r\nassert doc['root_cause']['hypothesis'] in {h['id'] for h in doc['hypotheses'] if h['state']=='validated'}\nfrom datetime import datetime\ns = datetime.fromisoformat(doc['investigation']['started'].replace('Z','+00:00') if isinstance(doc['investigation']['started'],str) else str(doc['investigation']['started']))\nprint('schema OK, refs OK')\nprint('started', doc['investigation']['started'], 'concluded', doc['investigation']['concluded'], 'wall', doc['usage']['wall_clock_seconds'])\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, sys\ntry:\n    import yaml, jsonschema\nexcept ImportError as e:\n    print('SKIP:', e); sys.exit(0)\ntext = open('journals/2026-08-19-products-3-500s.md').read()\nfm = text.split('---\\n')[1]\ndoc = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(doc, schema)\nids = {e['id'] for e in doc['evidence']}\nfor h in doc['hypotheses']:\n    for r in h['evidence_for'] + h['evidence_against']:\n        assert r in ids, r\nassert doc['root_cause']['hypothesis'] in {h['id'] for h in doc['hypotheses'] if h['state']=='validated'}\nprint('schema OK, refs OK')\nprint('started', doc['investigation']['started'], 'concluded', doc['investigation']['concluded'], 'wall', doc['usage']['wall_clock_seconds'])\n\""
+    }
+  ],
+  "result_tail": " (process problem \u2014 no restart, flat memory, low latency). One follow-up probe (`/products/4` \u2192 200) closed the judge's last open item.\n\n**Gaps:** The log window starts at process startup (21:40:28Z), so I cannot confirm the \"started within the last hour\" onset from telemetry. The true onset is the moment product 3's stock reached 0, which is outside this surface.\n\n**Not done:** I did not commit the journal \u2014 this was a manual `/konan` run, not an on-call shift, and you did not ask for a commit. A schema-validation script needed an approval, so I verified the frontmatter shape by hand instead.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 2,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-08-19T21:40:41Z",
+  "ended_at": "2026-08-19T21:46:36Z",
+  "restages": 0,
+  "wall_seconds_runner": 355,
+  "journal_source_name": "2026-08-19-products-3-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

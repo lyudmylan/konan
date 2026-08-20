@@ -1,0 +1,75 @@
+{
+  "session_id": "54e48f11-fb1c-468e-9f71-a7c6bdc26624",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 33,
+  "duration_ms": 542508,
+  "duration_api_ms": 603587,
+  "total_cost_usd": 2.26304925,
+  "tokens_total": 2214438,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 98,
+      "outputTokens": 54653,
+      "cacheReadInputTokens": 1979210,
+      "cacheCreationInputTokens": 180477,
+      "costUSD": 2.26304925
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---METRICS---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products && echo \"---\" && scripts/probe.sh /orders"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/999999 2>&1; echo \"---\"; scripts/probe.sh /orders/999999 2>&1; echo \"---\"; scripts/probe.sh /products 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -i exception"
+    },
+    {
+      "tool": "Bash",
+      "command": "echo \"--- /products ---\" && scripts/probe.sh /products && echo \"--- /products/4 ---\" && scripts/probe.sh /products/4 && echo \"--- /orders ---\" && scripts/probe.sh /orders"
+    },
+    {
+      "tool": "Bash",
+      "command": "echo \"--- /openapi.json (products/price schema) ---\" && scripts/probe.sh /openapi.json > /tmp/openapi.json 2>&1; cat /tmp/openapi.json | head -c 200; echo; python3 -c \"\nimport json,re\nwith open('/tmp/openapi.json') as f:\n    txt = f.read()\n# strip trailer line if present\nlines = txt.splitlines()\njson_lines = []\nfor l in lines:\n    json_lines.append(l)\ndata_txt = '\\n'.join(json_lines)\ntry:\n    data = json.loads(data_txt)\nexcept Exception as e:\n    print('parse error', e)\n    data = None\nif data:\n    import pprint\n    schemas = data.get('components',{}).get('schemas',{})\n    for name, schema in schemas.items():\n        if 'price' in json.dumps(schema):\n            print('---', name, '---')\n            pprint.pprint(schema)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\"' lab/logs/app.log | python3 -c \"\nimport json,sys,collections\nc = collections.Counter()\nfor line in sys.stdin:\n    try:\n        d = json.loads(line)\n    except:\n        continue\n    c[d.get('event')] += 1\nprint(c)\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/1; scripts/probe.sh /products/2; scripts/probe.sh /products/3; scripts/probe.sh /products/5"
+    }
+  ],
+  "result_tail": "er opens that product page.\n2. **Open data anomaly**: product 4 (\"Mystery Box\") has `price: null`, unlike every other product. No order has ever referenced it, and I couldn't test whether ordering it would break total-price calculation, since order creation is outside the investigator's read-only surface.\n\nBoth findings went through triage \u2192 deep-dive \u2192 an adversarial judge and were validated exactly as scoped (the judge flagged one clause \u2014 \"no organic traffic hit `/products/3`\" \u2014 as representative-not-exhaustive evidence, noted as a gap). Full evidence, timeline, and gaps are in the journal.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-19T01:27:15Z",
+  "ended_at": "2026-08-19T01:36:20Z",
+  "restages": 0,
+  "wall_seconds_runner": 545,
+  "journal_source_name": "2026-08-19-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

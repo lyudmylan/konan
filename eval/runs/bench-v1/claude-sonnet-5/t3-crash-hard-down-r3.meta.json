@@ -1,0 +1,75 @@
+{
+  "session_id": "5d2cb548-0183-44ca-8c23-2ac9981133dc",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 36,
+  "duration_ms": 500974,
+  "duration_api_ms": 498524,
+  "total_cost_usd": 1.7516484000000005,
+  "tokens_total": 2287760,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 92,
+      "outputTokens": 41978,
+      "cacheReadInputTokens": 2150948,
+      "cacheCreationInputTokens": 94742,
+      "costUSD": 1.7516484000000005
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "cat lab/faultline.pid; echo \"---\"; ps -p $(cat lab/faultline.pid) 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; echo \"===\"; wc -l lab/logs/app.log; echo \"===\"; tail -1 lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "echo \"=== app.log full ===\"; cat -A /dev/null 2>/dev/null; wc -l ./lab/logs/app.log; echo \"--- content ---\"; cat ./lab/logs/app.log; echo \"=== probe.sh ===\"; cat ./scripts/probe.sh"
+    },
+    {
+      "tool": "Bash",
+      "command": "find . -iname \"*faultline*\" -not -path \"*/node_modules/*\" 2>/dev/null; echo \"---\"; grep -n \"FAULTLINE_DIR\\|faultline_dir\\|restart\\|reload\" eval/run.py | head -50"
+    },
+    {
+      "tool": "Bash",
+      "command": "for e in 1787110351 1787110386 1787110575; do date -u -r \"$e\" 2>/dev/null || python3 -c \"import datetime;print(datetime.datetime.utcfromtimestamp($e))\"; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport datetime\nfor e in [1787110351, 1787110386, 1787110575]:\n    print(e, datetime.datetime.utcfromtimestamp(e))\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py journals/2026-08-19-shop-down-crash.md 2>&1 || cat lab/validate_journal.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py journals/2026-08-19-shop-down-crash.md"
+    }
+  ],
+  "result_tail": "process for the other lenses to query.\n- An adversarial judge caught real overclaiming in my first draft (asserting a specific PID and a confirmed OS exit code that weren't actually in the cited evidence) \u2014 I tightened the hypothesis to what the evidence directly supports and it validated on the second pass.\n- Wrote the journal to `journals/2026-08-19-shop-down-crash.md` with verdict `root-cause-identified`, 6 cited evidence entries, and 5 recorded gaps (including that the complaint's \"ten minutes ago\" framing doesn't reconcile with telemetry, which only goes back ~7 seconds before the crash).",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-08-19T03:32:10Z",
+  "ended_at": "2026-08-19T03:40:32Z",
+  "restages": 0,
+  "wall_seconds_runner": 502,
+  "journal_source_name": "2026-08-19-shop-down-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,45 @@
+{
+  "session_id": "b4efe911-80ff-4501-a854-20f902fea7fc",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 21700,
+  "duration_api_ms": 21120,
+  "total_cost_usd": 0.197958,
+  "tokens_total": 333186,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 16,
+      "outputTokens": 1359,
+      "cacheReadInputTokens": 318130,
+      "cacheCreationInputTokens": 13681,
+      "costUSD": 0.197958
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "This command needs your approval to run. Please approve `scripts/lab.sh status` so I can check whether the lab service is up before I start the baseline checks.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 2,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-08-19T00:57:00Z",
+  "ended_at": "2026-08-19T00:57:25Z",
+  "restages": 0,
+  "wall_seconds_runner": 25,
+  "status": "no-journal",
+  "quota_error": false
+}

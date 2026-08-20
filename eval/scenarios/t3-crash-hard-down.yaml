@@ -34,9 +34,9 @@ expected:
       all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening"]
   must_not_claim:
     - id: not-code-defect
-      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )type.?error"]
     - id: not-chaos
-      any_of: ["(?i)chaos", "(?i)inject"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )chaos", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )inject"]
     - id: not-network-guess
       any_of: ["(?i)firewall", "(?i)dns"]
 scoring_notes: >-

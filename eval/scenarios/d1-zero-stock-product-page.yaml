@@ -44,7 +44,7 @@ expected:
       all_of: ["(?i)units_in_stock\\s*=?\\s*0|zero[\\s-]stock|stock\\s+(is\\s+)?0\\b"]
   must_not_claim:
     - id: not-chaos
-      any_of: ["(?i)chaos", "(?i)inject"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )chaos", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )inject"]
     - id: not-infra
       any_of: ["(?i)crash", "(?i)restart\\s+loop", "(?i)saturat", "(?i)overload"]
 scoring_notes: >-

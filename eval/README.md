@@ -66,8 +66,10 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   or inconclusive hypotheses (killed hypotheses are results, not claims), and not
   `latent_findings` (see the healthy nuance below).
 - **Verdict**: `journal.verdict == expected.verdict`.
-- **Class**: when a root cause is expected, `root_cause.incident_class ==
-  expected.incident_class`.
+- **Class**: when a root cause is expected, `root_cause.incident_class` must equal
+  `expected.incident_class` — or be a member of it when the fixture states a set
+  (taxonomy ambiguity is a fixture decision, recorded with a reason; the class
+  definitions live in the report contract).
 - **Root-cause hit**: every `must_claim` entry matches — an entry matches when each
   regex in its `all_of` finds a match somewhere in the claim surface.
 - **False attribution**: any `must_not_claim` entry with any `any_of` regex matching
@@ -82,7 +84,11 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   keeps YAML timestamps as the RFC3339 strings written, quoted or not — a model that
   copies the contract's unquoted example must not fail on a parsing accident.
 - Regexes are Python-flavored, applied with `re.search`; case-insensitivity is spelled
-  in the pattern (`(?i)`), never assumed. Matchers live in fixtures so the scorer stays
+  in the pattern (`(?i)`), never assumed. Tripwire convention: `must_not_claim`
+  vocabulary carries fixed-width negation lookbehinds (`(?<!not )(?<!no )(?<!than )`)
+  so a correct report may *deny* a cause ("a defect, not chaos") without firing them —
+  a partial guard by design; the structural fix (a machine-matchable cause field) is
+  contract-v2 material (#37/#64). Matchers live in fixtures so the scorer stays
   target-generic — no target string ever appears in scorer code.
 
 ## Scoring a run
