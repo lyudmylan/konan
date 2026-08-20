@@ -94,6 +94,15 @@ scripts/lab.sh start          # needs a faultline checkout (FAULTLINE_DIR=../fau
 The full lab contract — what the investigator may touch, and the eval-side scenario
 controls — is in [docs/lab.md](docs/lab.md).
 
+## Bring your own target
+
+A target plugs in as a **thin rim** — a surface-contract doc, a read-only permission
+profile, and MCP/CLI config; the methodology never changes per target. `/rim`
+builds one with you: it interviews you about your observability surface, writes the
+rim, pins the tool allowlist from what your server actually serves, and smoke-tests
+it. A prepared example rim (Grafana Cloud via the official MCP server) is in
+[docs/rims/](docs/rims/grafana-cloud.md).
+
 ## Install as a plugin
 
 The methodology travels as a Claude Code plugin — skills plus the boundary hook
