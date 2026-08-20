@@ -10,6 +10,9 @@ manual trigger adapter (`/konan <complaint text>`): synthesizes the complaint ob
 per the trigger contract (`docs/triggers.md`) and starts the investigate loop.
 `oncall` — the shift (`/oncall`): watches `alerts/inbox.jsonl`, catch-up first then
 Monitor, investigates every alert serially, commits each journal, pages the owner.
+`setup` — agent-run onboarding (`/setup`): prerequisite checks, lab wiring, a first
+scored investigation, and the hand-over map; the operator's manual steps are only
+install / clone / trust / operator prompts.
 
 Dev mode, once a skill exists — symlink it into the project's skill path so sessions in
 this repo load it live:

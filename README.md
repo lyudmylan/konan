@@ -73,8 +73,17 @@ boundaries, the investigation loop, the on-call trigger path.
 
 ## Try it
 
-konan develops against [faultline](https://github.com/lyudmylan/faultline), a
-deliberately unreliable HTTP service (the lab):
+Onboarding is agent-run. Install [Claude Code](https://code.claude.com), clone this
+repo, start `claude` in it, and type:
+
+```
+/setup
+```
+
+The agent checks prerequisites, wires up [faultline](https://github.com/lyudmylan/faultline)
+(the deliberately unreliable lab service) beside the repo, runs a first read-only
+investigation, and scores it in front of you. Your manual steps are only: install,
+clone, trust the workspace, and approve the operator prompts. By hand instead:
 
 ```sh
 scripts/lab.sh start          # needs a faultline checkout (FAULTLINE_DIR=../faultline)
