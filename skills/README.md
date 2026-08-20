@@ -12,7 +12,9 @@ per the trigger contract (`docs/triggers.md`) and starts the investigate loop.
 Monitor, investigates every alert serially, commits each journal, pages the owner.
 `setup` — agent-run onboarding (`/setup`): prerequisite checks, lab wiring, a first
 scored investigation, and the hand-over map; the operator's manual steps are only
-install / clone / trust / operator prompts.
+install / clone / trust / operator prompts. `rim` — bring your own target (`/rim`):
+interview → surface-contract doc + read-only permission profile + MCP config →
+mechanical verification and a smoke investigation; configuration, never code.
 
 Dev mode, once a skill exists — symlink it into the project's skill path so sessions in
 this repo load it live:
