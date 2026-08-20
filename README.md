@@ -94,6 +94,22 @@ scripts/lab.sh start          # needs a faultline checkout (FAULTLINE_DIR=../fau
 The full lab contract — what the investigator may touch, and the eval-side scenario
 controls — is in [docs/lab.md](docs/lab.md).
 
+## Install as a plugin
+
+The methodology travels as a Claude Code plugin — skills plus the boundary hook
+(plugins cannot carry permission lists, so the read-only boundary ships as the
+content-based hook, `hooks/hooks.json`):
+
+```
+/plugin marketplace add lyudmylan/konan
+/plugin install konan@lyudmylan
+```
+
+Then `/konan:setup` onboards you. The per-target rim — probe allowlist, surface
+contract, lab scripts — stays per-repo setup, by design. Working inside a clone of
+this repo? Don't also install the plugin there: the repo's own settings already run
+the same hook, and two registrations would double-count the tripwire's denials.
+
 ## Docs
 
 - Product contract: [docs/product.md](docs/product.md)
