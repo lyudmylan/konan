@@ -1,0 +1,17 @@
+# Quality gates that need no model: scorer + runner pins, boundary decision pins.
+# The corpus-in-CI half (model runs) is tracked in #60 — it waits on the auth decision.
+name: gates
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  pins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Scorer + runner pins
+        run: uv run eval/tests.py
+      - name: Boundary decision pins
+        run: python3 hooks/tests.py
