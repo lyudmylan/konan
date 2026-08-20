@@ -22,5 +22,7 @@ mkdir -p .claude/skills
 ln -s ../../skills/<name> .claude/skills/<name>
 ```
 
-Plugin packaging is the post-flip fast-follow, tracked in #44 — a hook port of the
-read-only boundary comes first, because plugins cannot ship permission lists.
+Plugin packaging: `.claude-plugin/plugin.json` + `hooks/hooks.json` ship these skills
+and the boundary hook as the `konan` plugin (`/plugin marketplace add lyudmylan/konan`,
+install `konan@lyudmylan`; skills arrive namespaced, e.g. `/konan:setup`). The rim
+stays per-target setup — see the README's plugin section.

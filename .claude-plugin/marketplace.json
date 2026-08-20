@@ -1,0 +1,14 @@
+{
+  "name": "lyudmylan",
+  "owner": {
+    "name": "Lyudmyla Novoselsky"
+  },
+  "plugins": [
+    {
+      "name": "konan",
+      "source": "./",
+      "description": "Production-incident investigator: methodology skills, trigger adapters, boundary hook."
+    }
+  ],
+  "description": "konan \u2014 the on-call investigator, installable as a plugin; a version is not announced, it ships with its scorecard."
+}
