@@ -4,7 +4,7 @@ Read `AGENTS.md` first — it is how to work in this repo (lab boundary, workflo
 commands).
 
 `docs/product.md` is the product source of truth — ground planning and scope decisions
-in it. The shared AI-SDLC skills (`github-planning`, `github-shipping`, `repo-review`)
+in it. The shared AI-SDLC skills (`planning`, `shipping`, `repo-review`)
 apply here.
 
 Rules that matter in this repo:
