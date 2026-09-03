@@ -31,9 +31,9 @@ expected:
   must_claim: []
   must_not_claim:
     - id: no-invented-defect
-      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )type.?error"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]
     - id: no-invented-degradation
-      any_of: ["(?i)(?<!not )(?<!no )(?<!than )(?<!Not )chaos", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )crash", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )saturat", "(?i)(?<!not )(?<!no )(?<!than )(?<!Not )overload"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos", "(?i)(?<!not )(?<!no )(?<!than )crash", "(?i)(?<!not )(?<!no )(?<!than )saturat", "(?i)(?<!not )(?<!no )(?<!than )overload"]
 scoring_notes: >-
   The test almost nobody in the field runs. Latent discoveries are permitted and
   expected — a competent read-only investigator probing the business surface WILL

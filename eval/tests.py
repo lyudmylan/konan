@@ -208,7 +208,16 @@ def run():
     r = score.score_pair(fx, core, JV)
     assert r["class_ok"] is False and not r["passed"]
 
-    print("OK: 15 semantics pins hold")
+    # 16. Every committed fixture loads and every matcher compiles. load_fixture is the
+    #     only place a bad regex surfaces, and until now the pins reached just two
+    #     fixtures — so a variable-width lookbehind or a stray bracket in any of the
+    #     others passed CI green and raised re.error mid-benchmark, after paid model runs.
+    scenarios = sorted((EVAL / "scenarios").glob("*.yaml"))
+    assert len(scenarios) >= 10, f"expected the committed corpus, found {len(scenarios)}"
+    for path in scenarios:
+        score.load_fixture(path, FV)   # validates against the schema and compiles matchers
+
+    print("OK: 16 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------
