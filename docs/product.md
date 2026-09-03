@@ -122,6 +122,13 @@ Exit criteria:
   attribution traps, a healthy battery), repeated runs, at least three models with the
   skills held constant, tokens and wall clock captured by the eval runner, protocol and
   limits documented (`eval/BENCHMARK.md`), results table in the README.
+  Decided when the first round landed: a tier ships a published number only once its
+  fixtures are shown to measure the agent rather than themselves. Tier 3 failed that
+  test in round one — three models that diverge everywhere else scored identically on
+  it, which is the signature of a matcher, not of a difficulty — so it is re-run after
+  the taxonomy and matcher fixes and carries no claim until then. The pass rate the
+  protocol committed to before the runs is always reported, even where the corpus,
+  not the agent, is what it measures.
 - **Onboarding is agent-run.** `/setup` runs the lab quickstart end to end (the human
   installs Claude Code, clones, trusts the workspace, approves operator prompts —
   nothing else); the plugin installs the methodology with the boundary hook; `/rim`

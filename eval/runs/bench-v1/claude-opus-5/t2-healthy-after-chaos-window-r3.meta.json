@@ -1,0 +1,43 @@
+{
+  "session_id": "a22a0be6-f08f-4c34-a974-d5498d4997be",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 248116,
+  "duration_api_ms": 246387,
+  "total_cost_usd": 1.3444340000000001,
+  "tokens_total": 1067914,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 46,
+      "outputTokens": 17177,
+      "cacheReadInputTokens": 1009698,
+      "cacheCreationInputTokens": 40993,
+      "costUSD": 1.3444340000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep 'konan-1787140651-56869' lab/logs/app.log | head -1 | python3 -c \"import sys,json; print(json.loads(sys.stdin.read())['stack'][-600:])\""
+    }
+  ],
+  "result_tail": "start at 11:55:24.883Z and there are no rotated backups, thus I cannot see before the process start. If the \"noise earlier\" is older than that, the answer is not in the telemetry. And this session could not start subagents, thus I applied the three lenses and the adversarial check myself. The cross-checks are all cited, but there was no independent judge.\n\nJournal: `journals/2026-08-19-handover-check.md` (verdict `no-active-incident`, 4 hypotheses, 16 evidence entries). I did not commit it \u2014 the working tree has 9 other journals in a deleted state, and I did not want to mix that into a commit.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-19T11:55:59Z",
+  "ended_at": "2026-08-19T12:00:09Z",
+  "restages": 0,
+  "wall_seconds_runner": 250,
+  "journal_source_name": "2026-08-19-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

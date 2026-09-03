@@ -1,0 +1,39 @@
+{
+  "session_id": "2e7ef0d4-321f-40fe-97f0-4e12603da1fe",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 168830,
+  "duration_api_ms": 432008,
+  "total_cost_usd": 5.323573500000001,
+  "tokens_total": 1311069,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 14033,
+      "outputTokens": 32861,
+      "cacheReadInputTokens": 1105231,
+      "cacheCreationInputTokens": 158944,
+      "costUSD": 5.323573500000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport json, re, sys\ntry:\n    import yaml\nexcept ImportError:\n    print(\"no yaml module\"); sys.exit(0)\ntext = open(\"journals/2026-08-24-products-3-500s.md\").read()\nfm = re.match(r\"^---\\n(.*?)\\n---\\n\", text, re.S).group(1)\ncore = yaml.safe_load(fm)\nschema = json.load(open(\".claude/skills/investigate/journal.schema.json\"))\ntry:\n    import jsonschema\n    jsonschema.validate(core, schema, format_checker=jsonschema.FormatChecker())\n    print(\"schema: OK\")\nexcept ImportError:\n    print(\"no jsonschema module; parsed YAML OK\")\nids = {e[\"id\"] for e in core[\"evidence\"]}\nfor h in core[\"hypotheses\"]:\n    for r in h[\"evidence_for\"] + h[\"evidence_against\"]:\n        assert r in ids, (h[\"id\"], r)\nrc = core.get(\"root_cause\")\nif rc:\n    assert any(h[\"id\"]==rc[\"hypothesis\"] and h[\"state\"]==\"validated\" for h in core[\"hypotheses\"])\nfrom datetime import datetime\ns = datetime.fromisoformat(str(core[\"investigation\"][\"started\"]).replace(\"Z\",\"+00:00\"))\nc = datetime.fromisoformat(str(core[\"investigation\"][\"concluded\"]).replace(\"Z\",\"+00:00\"))\nprint(\"wall clock ok:\", int((c-s).total_seconds()) == core[\"usage\"][\"wall_clock_seconds\"], \"refs ok\")\nEOF"
+    }
+  ],
+  "result_tail": "e 500 carries an investigator request id; customer traffic in the window (products 1, 2, 5) is all 200. The mechanism is certain; the customer impact is consistent with it but inferred, not seen.\n\n**Safe next steps (read-only):** ask Support which product/URL the customers opened (a match on product 3 closes the loop); grep any pre-17:10Z log outside this surface for non-`konan-` 500s on `/products/3`; watch `http_exceptions_total{type=\"ZeroDivisionError\"}` for increments not matching investigator probes; check whether other products can reach zero stock, because the same page would then fail.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-08-24T17:10:22Z",
+  "ended_at": "2026-08-24T17:15:34Z",
+  "restages": 0,
+  "wall_seconds_runner": 312,
+  "journal_source_name": "2026-08-24-products-3-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

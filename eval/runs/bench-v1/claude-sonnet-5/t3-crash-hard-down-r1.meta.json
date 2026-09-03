@@ -1,0 +1,83 @@
+{
+  "session_id": "0632729e-78bc-4367-b15a-aaf765a765df",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 37,
+  "duration_ms": 443485,
+  "duration_api_ms": 501316,
+  "total_cost_usd": 1.8277723500000005,
+  "tokens_total": 2140394,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 90,
+      "outputTokens": 44545,
+      "cacheReadInputTokens": 1979522,
+      "cacheCreationInputTokens": 116237,
+      "costUSD": 1.8277723500000005
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics; echo \"---\"; scripts/probe.sh /products"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; echo \"---\"; scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-lj7gt_8b/wt\" && ./scripts/probe.sh GET /health 2>&1; echo \"---exit:$?\""
+    },
+    {
+      "tool": "Bash",
+      "command": "cd \"/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-lj7gt_8b/wt\" && ./scripts/probe.sh GET /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-lj7gt_8b/wt/scripts/probe.sh GET /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    jsonschema = None\n\nwith open('journals/2026-08-19-shop-total-outage-crash.md') as f:\n    content = f.read()\n\nparts = content.split('---\\n')\n# frontmatter is between first and second '---'\nfm = content.split('---',2)[1]\ndata = yaml.safe_load(fm)\nprint('Parsed OK, top-level keys:', list(data.keys()))\n\nwith open('.claude/skills/investigate/journal.schema.json') as f:\n    schema = json.load(f)\n\nif jsonschema:\n    jsonschema.validate(data, schema)\n    print('Schema validation: PASS')\nelse:\n    print('jsonschema module not available, skipping formal validation')\n\"\n"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 .validate_journal.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 .validate_journal.py"
+    }
+  ],
+  "result_tail": "agree on this cause:\n- The process lens confirms a clean crash, no restart loop.\n- The interfaces lens found no config change and no gateway-style error.\n- The software-defect lens found no exception and no per-input bug.\n\nA separate judge agent checked the evidence and confirmed the verdict.\n\nOne gap remains: I could not confirm the process is gone at the OS level (no `ps` access on this read-only surface). The judge treated this gap as minor, since the TCP-level refusal already rules out a slow-but-alive process.\n\nThe journal is written but not committed. Tell me if you want me to commit it.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-08-19T03:16:21Z",
+  "ended_at": "2026-08-19T03:23:46Z",
+  "restages": 0,
+  "wall_seconds_runner": 446,
+  "journal_source_name": "2026-08-19-shop-total-outage-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

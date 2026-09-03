@@ -1,7 +1,7 @@
 # konan — repo agent instructions
 
 Read `docs/product.md` for what konan is; this file is how to work here. The shared
-AI-SDLC skills (`github-planning`, `github-shipping`, `repo-review`) apply; this file
+AI-SDLC skills (`planning`, `shipping`, `repo-review`) apply; this file
 overrides them where they conflict.
 
 ## Lab boundary (hard rule)

@@ -1,0 +1,71 @@
+{
+  "session_id": "3cbc2d53-ed65-4882-b413-cb19f9a41b2c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 227175,
+  "duration_api_ms": 224385,
+  "total_cost_usd": 3.3845145000000003,
+  "tokens_total": 1515260,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 66,
+      "outputTokens": 16513,
+      "cacheReadInputTokens": 1436647,
+      "cacheCreationInputTokens": 62034,
+      "costUSD": 3.3845145000000003
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "echo \"INVESTIGATION_START=$(date -u +%Y-%m-%dT%H:%M:%SZ)\"; scripts/lab.sh status; scripts/probe.sh /health; echo; scripts/probe.sh /metrics | grep -E 'http_requests_total|http_exceptions_total|faultline_chaos_enabled|process_uptime_seconds|duration_seconds_(sum|count)'"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E '^(http_requests_total|http_exceptions_total|faultline_chaos_enabled|process_uptime_seconds|http_request_duration_seconds_(sum|count))|^-- HTTP'"
+    },
+    {
+      "tool": "Bash",
+      "command": "for i in 1 2 3 4 5 6 7 8; do scripts/probe.sh /products/$i 2>&1 | tail -1; done; scripts/probe.sh /health | tail -1; scripts/probe.sh /health | tail -1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/1 | tail -1; scripts/probe.sh /products/2 | tail -1; scripts/probe.sh /products/3 | tail -1; scripts/probe.sh /products/4 | tail -1; scripts/probe.sh /products/5 | tail -1; scripts/probe.sh /products | tail -1; scripts/probe.sh /orders | tail -1; scripts/probe.sh /health | tail -1; scripts/probe.sh /health | tail -1; scripts/probe.sh /health | tail -1"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -E 'konan-178715907[36]' lab/logs/app.log; echo ---; grep -c '\"status\": 503' lab/logs/app.log; grep -v konan- lab/logs/app.log | grep -c '\"event\": \"request\"'; grep -v konan- lab/logs/app.log | grep '\"event\": \"request\"' | awk -F'\"ts\": \"' '{print $2}' | awk '$0 > \"2026-08-19T17:03:10.245\"' | grep -c ."
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n \"def \\|argparse\\|usage\" eval/score.py | head -30"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print(\"no jsonschema\"); sys.exit(0)\nt=open(\"journals/2026-08-19-shop-intermittent-503s.md\").read()\nfm=t.split(\"---\\n\")[1]\nd=yaml.safe_load(fm)\ns=json.load(open(\"skills/investigate/journal.schema.json\"))\njsonschema.Draft202012Validator(s).validate(d)\nids={e[\"id\"] for e in d[\"evidence\"]}\nfor h in d[\"hypotheses\"]:\n    for r in h[\"evidence_for\"]+h[\"evidence_against\"]:\n        assert r in ids, r\nfrom datetime import datetime\na=datetime.fromisoformat(str(d[\"investigation\"][\"started\"]).replace(\"Z\",\"+00:00\")); b=datetime.fromisoformat(str(d[\"investigation\"][\"concluded\"]).replace(\"Z\",\"+00:00\"))\nprint(\"wall\", (b-a).total_seconds(), \"declared\", d[\"usage\"][\"wall_clock_seconds\"])\nprint(\"schema OK, refs OK\")\nEOF"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml,json,jsonschema;t=open('journals/2026-08-19-shop-intermittent-503s.md').read();d=yaml.safe_load(t.split('---\\n')[1]);s=json.load(open('skills/investigate/journal.schema.json'));jsonschema.Draft202012Validator(s).validate(d);ids=[e['id'] for e in d['evidence']];print(all(r in ids for h in d['hypotheses'] for r in h['evidence_for']+h['evidence_against']), 'schema OK')\""
+    }
+  ],
+  "result_tail": "y the dashboard is green:** `/health` is exempt; it stayed 200 with monotonic uptime.\n- **Killed:** H2 per-input software defect (no exceptions, same input flips), H3 restart/saturation (one startup marker, no uptime reset, sub-2 ms latencies).\n- **Gaps:** no lens subagents were spawned (the full 32-line log made the evidence deterministic; recorded honestly), the change-actor is outside the surface, and the 40% figure comes from the config, not from the 10-request user sample.\n- **Safe next step:** ask the operator who issued `POST /chaos/enable`; a `chaos_disabled` log event marks the clear.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-19T17:03:21Z",
+  "ended_at": "2026-08-19T17:07:12Z",
+  "restages": 0,
+  "wall_seconds_runner": 230,
+  "journal_source_name": "2026-08-19-shop-intermittent-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

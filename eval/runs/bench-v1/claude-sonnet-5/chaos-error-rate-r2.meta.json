@@ -1,0 +1,39 @@
+{
+  "session_id": "aba1358e-67aa-4e85-aeae-991a0404c850",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 13,
+  "duration_ms": 174578,
+  "duration_api_ms": 951288,
+  "total_cost_usd": 4.055670299999999,
+  "tokens_total": 6230710,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 224,
+      "outputTokens": 84247,
+      "cacheReadInputTokens": 5926946,
+      "cacheCreationInputTokens": 219293,
+      "costUSD": 4.055670299999999
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "find . -iname \"*.py\" -o -iname \"*.js\" 2>/dev/null | xargs grep -l \"journal.schema\" 2>/dev/null | head -5; ls eval/ 2>/dev/null; ls scripts/ 2>/dev/null"
+    }
+  ],
+  "result_tail": "sive (wanted proof this was the *sole* failure mechanism, and more than 2 `/health` samples), so a second targeted probe round swept the full log (13/13 5xx lines paired 1:1 with chaos events, zero unexplained) and ran 20 more `/health` calls. Round 2 validated it, after independently re-verifying the raw log itself and catching two citation-accuracy slips in my evidence draft (a stale line count, a mislabeled timestamp) \u2014 both fixed in the final ledger.\n\nJournal written to `journals/2026-08-18-chaos-mode-503s.md`. No remediation was taken \u2014 this was read-only throughout, per the lab boundary.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-18T22:25:59Z",
+  "ended_at": "2026-08-18T22:40:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 845,
+  "journal_source_name": "2026-08-18-chaos-mode-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

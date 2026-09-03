@@ -1,0 +1,71 @@
+{
+  "session_id": "78dd6ae8-849d-4c83-93ed-464a14d44f4d",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 602871,
+  "duration_api_ms": 744239,
+  "total_cost_usd": 3.157115,
+  "tokens_total": 1662950,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 92,
+      "outputTokens": 55366,
+      "cacheReadInputTokens": 1475185,
+      "cacheCreationInputTokens": 132307,
+      "costUSD": 3.157115
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1 | tail -10"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products 2>&1 | tail -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1 | tail -10"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": \"request\"' lab/logs/app.log | python3 -c \"\nimport sys,json\nfor l in sys.stdin:\n    d=json.loads(l)\n    print(d['ts'], d['method'], d['path'], d['status'], d['duration_ms'], d.get('request_id'))\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/2 2>&1 | tail -5; scripts/probe.sh /orders/1 2>&1 | tail -5; scripts/probe.sh /orders 2>&1 | tail -5"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; scripts/probe.sh /orders"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport json,sys,re\ntry:\n    import yaml, jsonschema\nexcept ImportError as e:\n    print(\"SKIP validate:\", e); sys.exit(0)\np=\"journals/2026-08-19-shop-wide-latency.md\"\nt=open(p).read()\nfm=t.split('---',2)[1]\nd=yaml.safe_load(fm)\ns=json.load(open(\".claude/skills/investigate/journal.schema.json\"))\njsonschema.validate(d,s)\nprint(\"schema: OK\")\nids={e[\"id\"] for e in d[\"evidence\"]}\nrefs=set()\nfor h in d[\"hypotheses\"]: refs|=set(h[\"evidence_for\"])|set(h[\"evidence_against\"])\nfor l in d.get(\"latent_findings\",[]): refs|=set(l[\"evidence\"])\nprint(\"unresolved refs:\", refs-ids or \"none\")\nprint(\"unused evidence:\", ids-refs or \"none\")\nimport datetime as dt\nst=dt.datetime.fromisoformat(str(d[\"investigation\"][\"started\"]).replace(\"Z\",\"+00:00\"))\nen=dt.datetime.fromisoformat(str(d[\"investigation\"][\"concluded\"]).replace(\"Z\",\"+00:00\"))\nprint(\"wall clock matches:\", (en-st).total_seconds()==d[\"usage\"][\"wall_clock_seconds\"], (en-st).total_seconds())\nrc=d[\"root_cause\"][\"hypothesis\"]\nprint(\"root_cause points at validated:\", [h[\"state\"] for h in d[\"hypotheses\"] if h[\"id\"]==rc])\nEOF"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py"
+    }
+  ],
+  "result_tail": "al judge caught a real citation error of mine (I had cited a metrics scrape taken 96 s *before* the exception to argue no user traffic hit `/products/3`) \u2014 I re-gathered and settled it with a whole-file scan. And the judge suggested reading faultline's source to close the mechanism gap; I declined, because a read-only suggestion that breaches the surface contract is still a breach. Separately, my schema-validation script needed approval to run, so I hand-verified the machine core rather than retrying variants; it is left at `lab/validate_journal.py` (gitignored) if you want to run it yourself.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "chaos-latency",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-19T06:08:00Z",
+  "ended_at": "2026-08-19T06:18:06Z",
+  "restages": 0,
+  "wall_seconds_runner": 606,
+  "journal_source_name": "2026-08-19-shop-wide-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

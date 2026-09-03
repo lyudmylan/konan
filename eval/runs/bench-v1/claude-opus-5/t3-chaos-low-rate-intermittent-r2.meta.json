@@ -1,0 +1,39 @@
+{
+  "session_id": "e06b2463-e162-4d0d-a2b6-68a5b08bb034",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 13,
+  "duration_ms": 251811,
+  "duration_api_ms": 890004,
+  "total_cost_usd": 4.076990500000001,
+  "tokens_total": 2463705,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 102,
+      "outputTokens": 62382,
+      "cacheReadInputTokens": 2232526,
+      "cacheCreationInputTokens": 168695,
+      "costUSD": 4.076990500000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json,sys\np='journals/2026-08-19-chaos-injection-503s.md'\nt=open(p).read()\nfm=t.split('---',2)[1]\ntry:\n    import yaml\nexcept ImportError:\n    print('PyYAML not available'); sys.exit(0)\nd=yaml.safe_load(fm)\nprint('YAML parses OK')\nev={e['id'] for e in d['evidence']}\nprint('evidence ids:',len(ev))\nbad=[]\nfor h in d['hypotheses']:\n    for r in h['evidence_for']+h['evidence_against']:\n        if r not in ev: bad.append((h['id'],r))\n    if not (h['evidence_for'] or h['evidence_against']): bad.append((h['id'],'NO CITATION'))\nfor lf in d.get('latent_findings',[]):\n    for r in lf['evidence']:\n        if r not in ev: bad.append(('latent',r))\nprint('dangling refs:',bad or 'none')\nrc=d.get('root_cause')\nst={h['id']:h['state'] for h in d['hypotheses']}\nprint('root_cause ->',rc['hypothesis'],'state=',st[rc['hypothesis']])\nfrom datetime import datetime\ns=d['investigation']['started']; c=d['investigation']['concluded']\ns=s if isinstance(s,datetime) else datetime.fromisoformat(str(s).replace('Z','+00:00'))\nc=c if isinstance(c,datetime) else datetime.fromisoformat(str(c).replace('Z','+00:00'))\nprint('wall clock actual:',int((c-s).total_seconds()),'declared:',d['usage']['wall_clock_seconds'])\nprint('verdict:',d['verdict'],'| keys:',sorted(d.keys()))\n\"\n"
+    }
+  ],
+  "result_tail": "nded. This is the fastest way to close the question.\n2. Read the flag again before you decide \u2014 my reading is one moment in time.\n3. Ask the reporters for a rough first-error time. That is the one fact that would settle whether this explains what they hit.\n\nI also found a smaller, separate defect: the metrics label errors with the raw path but successes with the route template, so a route's 503s never add up with its own 200s. It did not cause this incident, but it will break per-route error alerting.\n\nJournal: `journals/2026-08-19-chaos-injection-503s.md`. Tell me if you want me to commit it.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-19T16:28:06Z",
+  "ended_at": "2026-08-19T16:39:43Z",
+  "restages": 0,
+  "wall_seconds_runner": 696,
+  "journal_source_name": "2026-08-19-chaos-injection-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

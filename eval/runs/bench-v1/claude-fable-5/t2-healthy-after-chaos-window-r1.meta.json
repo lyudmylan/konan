@@ -1,0 +1,47 @@
+{
+  "session_id": "49c7fb0a-74c3-42ca-85ba-8ff2312b6167",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 10,
+  "duration_ms": 235259,
+  "duration_api_ms": 717094,
+  "total_cost_usd": 5.508338,
+  "tokens_total": 1692933,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 78,
+      "outputTokens": 39646,
+      "cacheReadInputTokens": 1531063,
+      "cacheCreationInputTokens": 122146,
+      "costUSD": 5.508338
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'status=\"5|faultline_chaos_enabled|process_uptime_seconds|request_id'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntext = open('journals/2026-08-20-routine-handover-check.md').read()\nfm = text.split('---\\n')[1]\ncore = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(core, schema)\n    print('schema: VALID')\nexcept ImportError:\n    print('jsonschema not installed; YAML parses OK')\n# referential integrity\neids = {e['id'] for e in core['evidence']}\nrefs = [r for h in core['hypotheses'] for r in h['evidence_for']+h['evidence_against']]\nmissing = [r for r in refs if r not in eids]\nprint('refs resolve:', not missing, missing or '')\nprint('verdict:', core['verdict'], '| root_cause present:', 'root_cause' in core)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntext = open('journals/2026-08-20-routine-handover-check.md').read()\nfm = text.split('---\\n')[1]\ncore = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(core, schema)\n    print('schema: VALID')\nexcept ImportError:\n    print('jsonschema not installed; YAML parses OK')\neids = {e['id'] for e in core['evidence']}\nrefs = [r for h in core['hypotheses'] for r in h['evidence_for']+h['evidence_against']]\nmissing = [r for r in refs if r not in eids]\nprint('refs resolve:', not missing, missing or '')\nprint('verdict:', core['verdict'], '| root_cause present:', 'root_cause' in core)\n\""
+    }
+  ],
+  "result_tail": "The investigation is done and the journal is written. The result, in short: **no active incident**. The earlier noise was a closed chaos-injection window (05:48:09\u201305:48:15Z) that caused three 503 errors on user traffic. The service is healthy now. The full record, with evidence and gaps, is in `journals/2026-08-20-routine-handover-check.md`.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-20T05:48:39Z",
+  "ended_at": "2026-08-20T05:58:05Z",
+  "restages": 0,
+  "wall_seconds_runner": 566,
+  "journal_source_name": "2026-08-20-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

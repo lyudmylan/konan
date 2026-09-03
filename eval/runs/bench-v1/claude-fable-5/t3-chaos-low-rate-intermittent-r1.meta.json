@@ -1,0 +1,47 @@
+{
+  "session_id": "29ea09b6-8ccf-4a4f-9f24-e0fdae708a24",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 35,
+  "duration_ms": 615420,
+  "duration_api_ms": 704805,
+  "total_cost_usd": 7.979741999999998,
+  "tokens_total": 1862184,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 4990,
+      "outputTokens": 63625,
+      "cacheReadInputTokens": 1603952,
+      "cacheCreationInputTokens": 189617,
+      "costUSD": 7.979741999999998
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "perl -i -pe 's/\\e\\[36m%d\\e\\[0m/\\\\u001b[36m%d\\\\u001b[0m/' journals/2026-08-25-intermittent-503s-chaos-failure-rate.md && grep -n 'color_message' journals/2026-08-25-intermittent-503s-chaos-failure-rate.md | cat -v && python3 - <<'EOF'\nimport json, re, sys\ntry:\n    import yaml\nexcept ImportError:\n    print(\"no yaml module\"); sys.exit(2)\ntext = open(\"journals/2026-08-25-intermittent-503s-chaos-failure-rate.md\").read()\nm = re.match(r\"^---\\n(.*?)\\n---\\n\", text, re.S)\ncore = yaml.safe_load(m.group(1))\nschema = json.load(open(\".claude/skills/investigate/journal.schema.json\"))\ntry:\n    import jsonschema\n    jsonschema.Draft202012Validator(schema).validate(core)\n    print(\"schema: OK\")\nexcept ImportError:\n    print(\"no jsonschema module; shape not validated\")\nids = {e[\"id\"] for e in core[\"evidence\"]}\nrefs = set()\nfor h in core[\"hypotheses\"]:\n    refs |= set(h[\"evidence_for\"]) | set(h[\"evidence_against\"])\nfor l in core.get(\"latent_findings\", []):\n    refs |= set(l[\"evidence\"])\nprint(\"unresolved refs:\", refs - ids)\nprint(\"unused evidence:\", ids - refs)\nfrom datetime import datetime\ns = datetime.fromisoformat(core[\"investigation\"][\"started\"].replace(\"Z\",\"+00:00\"))\nc = datetime.fromisoformat(core[\"investigation\"][\"concluded\"].replace(\"Z\",\"+00:00\"))\nprint(\"wall clock ok:\", int((c-s).total_seconds()) == core[\"usage\"][\"wall_clock_seconds\"])\nrc = core[\"root_cause\"][\"hypothesis\"]\nprint(\"root_cause validated:\", any(h[\"id\"]==rc and h[\"state\"]==\"validated\" for h in core[\"hypotheses\"]))\nEOF"
+    },
+    {
+      "tool": "Bash",
+      "command": "perl -i -pe 's/\\e\\[36m%d\\e\\[0m/\\\\u001b[36m%d\\\\u001b[0m/' journals/2026-08-25-intermittent-503s-chaos-failure-rate.md"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py journals/2026-08-25-intermittent-503s-chaos-failure-rate.md"
+    }
+  ],
+  "result_tail": "35Z` and whether it was intended. Watch `faultline_chaos_enabled` and the `status=\"503\"` counters on `/products` and `POST /orders`. Ask the reporters for the time of their first error; anything before `05:02:30Z` is from a previous process whose log is not on this surface.\n\n**Gaps.** Nothing before `05:02:30.034Z` is visible. The user sample is 32 requests. The change origin is on the operator surface. The frontmatter was checked by hand, not by the validator (permission prompt). A helper script `lab/validate_journal.py` remains in the gitignored `lab/` directory; you can run it or delete it.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-25T05:02:36Z",
+  "ended_at": "2026-08-25T05:12:54Z",
+  "restages": 0,
+  "wall_seconds_runner": 618,
+  "journal_source_name": "2026-08-25-intermittent-503s-chaos-failure-rate.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,47 @@
+{
+  "session_id": "26cc4a9c-428a-4a24-a9af-5c71e2680bec",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 20,
+  "duration_ms": 254352,
+  "duration_api_ms": 567200,
+  "total_cost_usd": 2.4971513999999995,
+  "tokens_total": 3330594,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 112,
+      "outputTokens": 51105,
+      "cacheReadInputTokens": 3116793,
+      "cacheCreationInputTokens": 162584,
+      "costUSD": 2.4971513999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "wc -l lab/logs/app.log; ls -la lab/logs/; echo \"---rotated files if any---\"; for f in lab/logs/app.log.1 lab/logs/app.log.2 lab/logs/app.log.3; do [ -f \"$f\" ] && echo \"$f exists\" && wc -l \"$f\"; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\nwith open('journals/2026-08-19-order-500-null-price.md') as f:\n    content = f.read()\nparts = content.split('---')\nfm = yaml.safe_load(parts[1])\nprint(json.dumps(fm, indent=2)[:500])\nprint('...')\nprint('verdict:', fm['verdict'])\nprint('has root_cause:', 'root_cause' in fm)\nprint('num hypotheses:', len(fm['hypotheses']))\nprint('num evidence:', len(fm['evidence']))\nevidence_ids = {e['id'] for e in fm['evidence']}\nprint('evidence ids:', sorted(evidence_ids, key=lambda x: int(x[1:])))\nfor h in fm['hypotheses']:\n    for ref in h['evidence_for'] + h['evidence_against']:\n        assert ref in evidence_ids, f'missing {ref}'\nprint('all hypothesis evidence refs resolve OK')\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\nwith open('journals/2026-08-19-order-500-null-price.md') as f:\n    content = f.read()\nparts = content.split('---')\nfm = yaml.safe_load(parts[1])\nprint('verdict:', fm['verdict'])\nprint('has root_cause:', 'root_cause' in fm)\nprint('num hypotheses:', len(fm['hypotheses']))\nprint('num evidence:', len(fm['evidence']))\nevidence_ids = {e['id'] for e in fm['evidence']}\nprint('evidence ids:', sorted(evidence_ids, key=lambda x: int(x[1:])))\nfor h in fm['hypotheses']:\n    for ref in h['evidence_for'] + h['evidence_against']:\n        assert ref in evidence_ids, 'missing ' + ref\nprint('all hypothesis evidence refs resolve OK')\nfrom datetime import datetime\nstarted = datetime.fromisoformat(fm['investigation']['started'].replace('Z','+00:00'))\nconcluded = datetime.fromisoformat(fm['investigation']['concluded'].replace('Z','+00:00'))\ndelta = (concluded-started).total_seconds()\nprint('computed wall_clock_seconds:', delta, 'vs recorded:', fm['usage']['wall_clock_seconds'])\n\"\n"
+    }
+  ],
+  "result_tail": " POST bodies, and the success-only `order_created` line (which does carry product_id) never fires for the failures. I confirmed this gap is real and unclosable on the read-only surface (no rotated logs, full-log grep shows `product_id` appears only in the 3 successful orders), and reproducing the request myself is outside konan's read-only boundary. The journal documents this honestly rather than overstating confidence.\n\nSafe next step logged: ask engineering to add `product_id`/request body to the exception and access-log events, which would let a future investigation close this gap directly.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 2,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-08-19T01:05:39Z",
+  "ended_at": "2026-08-19T01:13:44Z",
+  "restages": 0,
+  "wall_seconds_runner": 485,
+  "journal_source_name": "2026-08-19-order-500-null-price.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,39 @@
+{
+  "session_id": "18a50f04-fdca-4fb6-910d-dfbfd505717d",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 7,
+  "duration_ms": 171969,
+  "duration_api_ms": 397119,
+  "total_cost_usd": 5.026307999999999,
+  "tokens_total": 1259176,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 10642,
+      "outputTokens": 31363,
+      "cacheReadInputTokens": 1071163,
+      "cacheCreationInputTokens": 146008,
+      "costUSD": 5.026307999999999
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "uv run --with pyyaml --with jsonschema python lab/validate_journal.py journals/2026-08-25-occasional-shop-503s-chaos-enabled.md"
+    }
+  ],
+  "result_tail": "ss `interfaces`) validated; H2 (code defect) and H3 (restart/saturation) invalidated with direct evidence.\n\n**Gaps.** Only one user-facing 503 exists, so the ~8% is the configured value, not a measured one. The actor who issued `POST /chaos/enable` is not visible on the telemetry surface. Two subagent probes and the validator were refused by the permission layer; I did not work around them.\n\n**Next.** Ask the operator whether the chaos flag was intentional; watch `faultline_chaos_enabled` and the 503 counters until the gauge reads 0. If you want the journal committed, tell me and I will do it.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-25T05:20:00Z",
+  "ended_at": "2026-08-25T05:24:50Z",
+  "restages": 0,
+  "wall_seconds_runner": 290,
+  "journal_source_name": "2026-08-25-occasional-shop-503s-chaos-enabled.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

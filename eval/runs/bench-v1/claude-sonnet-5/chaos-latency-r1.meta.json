@@ -1,0 +1,87 @@
+{
+  "session_id": "56fa350b-90e4-4cec-952e-bab104417641",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 41,
+  "duration_ms": 465892,
+  "duration_api_ms": 544692,
+  "total_cost_usd": 1.9038187499999997,
+  "tokens_total": 2237648,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 86,
+      "outputTokens": 45940,
+      "cacheReadInputTokens": 2070015,
+      "cacheCreationInputTokens": 121607,
+      "costUSD": 1.9038187499999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "cd \"$(pwd)\" && find . -maxdepth 2 -not -path './.git*' | sort"
+    },
+    {
+      "tool": "Bash",
+      "command": "find skills/investigate -type f | sort; echo ---; cat scripts/lab.sh | head -50; echo ---; scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "ls -la lab/ lab/logs/ 2>&1; echo ---; cat lab/faultline.pid 2>&1; echo ---; ps -p \"$(cat lab/faultline.pid 2>/dev/null)\" 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /orders; scripts/probe.sh /products; scripts/probe.sh /products/1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1; echo \"===\"; scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport yaml, json, re, sys\n\npath = \"journals/2026-08-18-shop-latency-chaos-toggle.md\"\ntext = open(path).read()\nm = re.match(r\"^---\\n(.*?)\\n---\\n(.*)$\", text, re.S)\nfm, body = m.group(1), m.group(2)\ndata = yaml.safe_load(fm)\n\nschema = json.load(open(\"skills/investigate/journal.schema.json\"))\n\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print(\"SCHEMA OK\")\nexcept ImportError:\n    print(\"jsonschema not installed, skipping strict validation\")\nexcept Exception as e:\n    print(\"SCHEMA ERROR:\", e)\n\n# referential integrity checks (scorer-layer, doing manually)\nev_ids = {e[\"id\"] for e in data[\"evidence\"]}\nfor h in data[\"hypotheses\"]:\n    for ref in h[\"evidence_for\"] + h[\"evidence_against\"]:\n        assert ref in ev_ids, f\"missing evidence ref {ref} in hyp {h['id']}\"\nif \"root_cause\" in data:\n    rc = data[\"root_cause\"]\n    hyp = next(h for h in data[\"hypotheses\"] if h[\"id\"] == rc[\"hypothesis\"])\n    assert hyp[\"state\"] == \"validated\", \"root_cause hypothesis not validated\"\n\nfrom datetime import datetime\nstarted = datetime.fromisoformat(data[\"investigation\"][\"started\"].replace(\"Z\",\"+00:00\"))\nconcluded = datetime.fromisoformat(data[\"investigation\"][\"concluded\"].replace(\"Z\",\"+00:00\"))\nwc = (concluded - started).total_seconds()\nassert wc == data[\"usage\"][\"wall_clock_seconds\"], f\"wall clock mismatch: {wc} vs {data['usage']['wall_clock_seconds']}\"\n\nprint(\"REFERENTIAL INTEGRITY OK, wall_clock computed =\", wc)\nEOF"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 validate_journal.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "git status --porcelain=v1 journals/ | head -20; echo ---; git status --porcelain=v1 | grep -v '^ D' "
+    },
+    {
+      "tool": "Bash",
+      "command": "git status --porcelain=v1"
+    }
+  ],
+  "result_tail": "adversarial judge validated that hypothesis and separately invalidated a code-defect explanation (no exceptions, uniform across routes) and a resource-saturation explanation (uptime monotonic, RSS flat, no restarts). The chaos flag was still active at the end of the investigation \u2014 it has not self-resolved.\n\nGaps noted in the journal: no tracing surface to fully exclude a silent (non-exception) defect stacked on top of the chaos latency, and no worker-pool metric to test thread starvation specifically \u2014 both are read-only limitations of this lab's telemetry surface, not contradicting evidence.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-18T22:49:46Z",
+  "ended_at": "2026-08-18T22:57:34Z",
+  "restages": 0,
+  "wall_seconds_runner": 468,
+  "journal_source_name": "2026-08-18-shop-latency-chaos-toggle.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,43 @@
+{
+  "session_id": "4864832c-fb67-42b8-8934-9c5259956689",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 235181,
+  "duration_api_ms": 671139,
+  "total_cost_usd": 3.0018245000000006,
+  "tokens_total": 1634705,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 78,
+      "outputTokens": 49767,
+      "cacheReadInputTokens": 1456944,
+      "cacheCreationInputTokens": 127916,
+      "costUSD": 3.0018245000000006
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E \"chaos_enabled|uptime|products|orders\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py"
+    }
+  ],
+  "result_tail": "ws no literal retry, only the same route yielding both outcomes. And **who** enabled the flag is unanswerable here \u2014 the enabling request is unstamped and `/chaos` is outside the read-only probe surface by design. That question goes to whoever owns the operator surface.\n\nTwo triage lenses had `probe.sh` denied and worked from logs and metrics alone; recorded in Gaps, not worked around.\n\nJournal: `journals/2026-08-19-chaos-injection-503s.md`. I left it uncommitted \u2014 the allowlisted journal-commit path is for `/oncall` shifts, and this was a manual trigger. Say the word if you want it committed.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "chaos-error-rate",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-19T04:02:25Z",
+  "ended_at": "2026-08-19T04:11:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 534,
+  "journal_source_name": "2026-08-19-chaos-injection-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

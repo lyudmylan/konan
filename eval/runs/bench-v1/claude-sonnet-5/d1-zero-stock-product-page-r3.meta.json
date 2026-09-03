@@ -1,0 +1,49 @@
+{
+  "session_id": "5719c3cc-7c2c-44b5-9ea7-a2a12f5fada4",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 13,
+  "duration_ms": 31028,
+  "duration_api_ms": 30532,
+  "total_cost_usd": 0.200667,
+  "tokens_total": 432096,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 20,
+      "outputTokens": 1816,
+      "cacheReadInputTokens": 422490,
+      "cacheCreationInputTokens": 7770,
+      "costUSD": 0.200667
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "I'm blocked \u2014 the `scripts/lab.sh status` command needs your approval to run, and it isn't going through. Please approve the permission prompt for this command, or let me know if you'd like to proceed differently.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 3,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-08-19T00:57:40Z",
+  "ended_at": "2026-08-19T00:58:13Z",
+  "restages": 0,
+  "wall_seconds_runner": 33,
+  "status": "no-journal",
+  "quota_error": false
+}

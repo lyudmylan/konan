@@ -33,9 +33,38 @@ shift start, the wait stamped honestly ([journal](journals/2026-08-06-overnight-
 Between events an on-call shift is idle at zero model cost — delivery is push or
 event, never poll.
 
-**Honesty over polish**: token costs are not yet captured (they land with runner
-automation); wall-clock numbers include real interruptions, documented inside the
-journals rather than hidden.
+### The same skills, three models
+
+Skills, lenses and scorer held constant; only the model swapped. 90 blind headless
+investigations — 10 fixtures across three difficulty tiers, N = 3, one small lab.
+Protocol, limits and the full narrative: [eval/BENCHMARK.md](eval/BENCHMARK.md);
+generated table: [eval/BENCHMARK-results.md](eval/BENCHMARK-results.md).
+
+| Model | Journals | Pass (pre-registered) | Pass (class-agnostic) | Root-cause acc. | Citations | Tokens (median) | Wall s (median) |
+|---|---|---|---|---|---|---|---|
+| Fable 5 | 30/30 | 47% | **73%** | 76% | 100% | **1.29M** | **285** |
+| Opus 5 | 30/30 | **53%** | 63% | 67% | 100% | 1.77M | 496 |
+| Sonnet 5 | 24/30 | 17% | 50% | 76% | 80% | 2.26M | 418 |
+
+Read the two pass columns together. The pre-registered rate is the one the protocol
+committed to before the runs; the class-agnostic rate ignores only the incident-class
+label, whose taxonomy this round proved ambiguous ([#63](../../issues/63)). The gap
+between them is the corpus's, not the models'.
+
+Two results are worth more than the ranking. Sonnet's six missing journals are all one
+behavior — it asked the absent operator for approval and ended the session — which is a
+difference in *unattended* fitness that no accuracy column shows. And the suggestive-
+complaint fixture, where a dormant defect meets a complaint implying an outage, caught
+every model at the same rate: each resisted in exactly 1 of 3 runs. That is the
+healthy-baseline failure measured on frontier models, and it is a stability problem
+rather than a capability ceiling.
+
+**Honesty over polish**: tokens, wall clock and quota share are captured per run from
+the harness envelope and committed with the journals. The tier-3 fixtures are not yet
+trustworthy as a model measure and carry no claim here ([#75](../../issues/75)).
+Wall-clock numbers include real interruptions, documented inside the journals rather
+than hidden. One earlier batch was invalidated by a runner bug, archived rather than
+deleted, and is described in the protocol.
 
 ## How it works
 

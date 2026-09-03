@@ -1,0 +1,59 @@
+{
+  "session_id": "1b4eb737-a947-4700-9190-87318824390b",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 407105,
+  "duration_api_ms": 495207,
+  "total_cost_usd": 1.68385995,
+  "tokens_total": 1660984,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 72,
+      "outputTokens": 46196,
+      "cacheReadInputTokens": 1499279,
+      "cacheCreationInputTokens": 115437,
+      "costUSD": 1.68385995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---METRICS---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, yaml, sys\ncontent = open('journals/2026-08-19-chaos-latency-slowdown.md').read()\nfm = content.split('---\\n')[1]\ndata = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.validate(data, schema)\n    print('VALID')\nexcept ImportError:\n    print('jsonschema not installed, doing manual checks')\n    print('top-level keys:', list(data.keys()))\nexcept Exception as e:\n    print('INVALID:', e)\n\"\n"
+    }
+  ],
+  "result_tail": "nt, blind triage lenses (infra-process, interfaces, software-defect).\n- **The \"error page\" report has no server-side corroboration**: zero 5xx responses, zero exceptions recorded anywhere. That hypothesis was invalidated as a server-side cause. It's noted as a gap that a client-side timeout during the latency spikes can't be ruled out \u2014 this lab has no proxy/browser layer to check that.\n\nWhat I need from you: either approve me continuing past this tripwire (and I'll commit the journal), or you can commit it yourself \u2014 it's sitting at `journals/2026-08-19-chaos-latency-slowdown.md` uncommitted.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-19T02:52:55Z",
+  "ended_at": "2026-08-19T02:59:45Z",
+  "restages": 0,
+  "wall_seconds_runner": 410,
+  "journal_source_name": "2026-08-19-chaos-latency-slowdown.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
