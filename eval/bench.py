@@ -59,6 +59,9 @@ def collect(run_dirs, fixtures, jv):
         for model_dir in sorted(p for p in rd.iterdir() if p.is_dir()):
             for meta_path in sorted(model_dir.glob("*.meta.json")):
                 meta = json.loads(meta_path.read_text())
+                if meta.get("quota_error"):
+                    continue  # a quota stop is not a run (protocol): retried, or resumed later;
+                              # it feeds quota_windows via metas/quota-stops.jsonl, never the table
                 sid, rep = meta.get("scenario"), meta.get("rep")
                 fx = fixtures.get(sid)
                 row = {"run": rd.name, "model": meta.get("model", model_dir.name), "scenario": sid,
@@ -144,10 +147,10 @@ def aggregate(rows):
             "rc_accuracy": (sum(r["rc_hit"] for r in rc_rows) / len(rc_rows)) if rc_rows else None,
             "false_attributions": sum(r["false_attr"] for r in rs),
             "citation_rate": sum(r["citations_ok"] for r in rs) / n if n else None,
-            "tokens_median": _med([r["tokens"] for r in rs]),
-            "duration_median_s": _med([r["duration_s"] for r in rs]),
-            "cost_median_usd": _med([r["cost_usd"] for r in rs]),
-            "denials_median": _med([r["denials"] for r in rs]),
+            "tokens_median": _med([r["tokens"] for r in rs if r["status"] == "ok"]),
+            "duration_median_s": _med([r["duration_s"] for r in rs if r["status"] == "ok"]),
+            "cost_median_usd": _med([r["cost_usd"] for r in rs if r["status"] == "ok"]),
+            "denials_median": _med([r["denials"] for r in rs if r["status"] == "ok"]),
         })
     return table
 
@@ -164,7 +167,8 @@ def render(rows, table, run_names):
     out = ["# konan benchmark — results", "",
            f"Runs: {', '.join(run_names)}. {len(rows)} investigations. Protocol and limits: `eval/BENCHMARK.md`.",
            "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.",
-           "Pass rate is the pre-registered metric; the class-agnostic column ignores only the incident-class label (taxonomy issue tracked separately).", "",
+           "Pass rate is the pre-registered metric; the class-agnostic column ignores only the incident-class label (taxonomy issue tracked separately).",
+           "Medians cover completed investigations (status ok); failed runs count in Runs/Failed and their consumption stays in the sidecars.", "",
            "## Per tier × model", "",
            "| Tier | Model | Runs | Failed | Pass rate | Pass (class-agnostic) | Root-cause acc. | False attr. | Citations | Tokens (median) | Wall s (median) | Cost $ (median) | Denials (median) |",
            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]

@@ -1,0 +1,39 @@
+{
+  "session_id": "50c01ea0-49ce-48d4-9ad8-bc1484d07384",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 4,
+  "duration_ms": 103537,
+  "duration_api_ms": 441969,
+  "total_cost_usd": 1.75478895,
+  "tokens_total": 2097977,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 82,
+      "outputTokens": 38901,
+      "cacheReadInputTokens": 1937244,
+      "cacheCreationInputTokens": 121750,
+      "costUSD": 1.75478895
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print('no jsonschema module')\n    sys.exit(0)\nwith open('journals/2026-08-19-shop-intermittent-503s.md') as f:\n    content = f.read()\nfront = content.split('---')[1]\ndata = yaml.safe_load(front)\nwith open('.claude/skills/investigate/journal.schema.json') as f:\n    schema = json.load(f)\njsonschema.validate(data, schema)\nprint('VALID')\nprint(json.dumps(data, indent=2)[:200])\n\"\n"
+    }
+  ],
+  "result_tail": " one order create. Each one worked on the next try, about 85 milliseconds later. This matches what the users saw.\n- No code error occurred. No process crash occurred. No resource problem occurred. Three independent checks confirm this.\n- The flag is still on. I checked at 03:12:58 UTC \u2014 it was still active. New requests can still fail at the same rate until someone turns it off.\n\n**Recommended next step:** find who or what sent that `POST /chaos/enable` call, and confirm if it was intentional (a test) or a mistake. I cannot see who sent it \u2014 the logs do not record an identity for that request.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-19T03:09:59Z",
+  "ended_at": "2026-08-19T03:16:10Z",
+  "restages": 0,
+  "wall_seconds_runner": 371,
+  "journal_source_name": "2026-08-19-shop-intermittent-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

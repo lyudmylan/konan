@@ -1,0 +1,43 @@
+{
+  "session_id": "af8abfaa-5370-4274-afd4-e72e36c6b3fb",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 469300,
+  "duration_api_ms": 532819,
+  "total_cost_usd": 5.3040015,
+  "tokens_total": 1172049,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 7733,
+      "outputTokens": 36951,
+      "cacheReadInputTokens": 969304,
+      "cacheCreationInputTokens": 158061,
+      "costUSD": 5.3040015
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; python3 -c \"import yaml, jsonschema; print('validators ok')\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport json, re, sys, datetime\np='journals/2026-08-25-shop-down-process-crash.md'\ntxt=open(p).read()\nfm=txt.split('---\\n')[1]\ntry:\n    import yaml\nexcept ImportError:\n    print('no pyyaml'); sys.exit(0)\ndoc=yaml.safe_load(fm)\nschema=json.load(open('.claude/skills/investigate/journal.schema.json'))\ntry:\n    import jsonschema\n    jsonschema.Draft202012Validator(schema).validate(doc); print('schema: OK')\nexcept ImportError:\n    print('no jsonschema; shape not checked')\nids={e['id'] for e in doc['evidence']}\nrefs=[r for h in doc['hypotheses'] for r in h['evidence_for']+h['evidence_against']]\nprint('unresolved refs:', [r for r in refs if r not in ids])\nst=doc['investigation']['started']; co=doc['investigation']['concluded']\nif isinstance(st,str): st=datetime.datetime.fromisoformat(st.replace('Z','+00:00')); co=datetime.datetime.fromisoformat(co.replace('Z','+00:00'))\nprint('wall clock:', int((co-st).total_seconds()), 'declared:', doc['usage']['wall_clock_seconds'])\nrc=doc['root_cause']['hypothesis']; print('root cause state:', [h['state'] for h in doc['hypotheses'] if h['id']==rc])\nEOF"
+    }
+  ],
+  "result_tail": ", one crash, log mtime frozen at 21:41).\n\nJournal: `journals/2026-08-25-shop-down-process-crash.md` (not committed \u2014 you did not ask for a commit). Gaps recorded there: no metrics snapshot (endpoint down), exit code is logged intent not an observed status, stderr outside the surface, no dedicated load/third-party/data lenses in this repo, and a 998 s trigger latency plus two judge-agent API failures that inflated the wall clock.\n\nSafe next step for the operator: confirm no listener on port 8000, and find the origin of client `127.0.0.1:53099` that hit the operator-only `/simulate/crash` route.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-08-25T21:41:41Z",
+  "ended_at": "2026-08-25T22:54:01Z",
+  "restages": 0,
+  "wall_seconds_runner": 4340,
+  "journal_source_name": "2026-08-25-shop-down-process-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,47 @@
+{
+  "session_id": "16f5e40d-c6f3-44a4-9a6c-b63a0967c7c2",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 26,
+  "duration_ms": 430402,
+  "duration_api_ms": 543201,
+  "total_cost_usd": 5.169676,
+  "tokens_total": 836542,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 8889,
+      "outputTokens": 43611,
+      "cacheReadInputTokens": 642076,
+      "cacheCreationInputTokens": 141966,
+      "costUSD": 5.169676
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E \"http_exceptions_total|products/\\{product_id\\}|chaos_enabled\""
+    },
+    {
+      "tool": "Bash",
+      "command": "sed -n '20p' lab/logs/app.log | grep -o 'File \\\\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py.*' | cut -c1-400; echo ---; sed -n '19p;22,23p;26,28p;31,33p' lab/logs/app.log | cut -c1-260"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'product_id|exceptions_total\\{|chaos_enabled |uptime_seconds |rss|HTTP'"
+    }
+  ],
+  "result_tail": "a permission prompt. I stopped shell use at that point, as AGENTS.md requires. Consequences are in the journal's Gaps: the stack-tail quote comes from two independent lens reads, no final metrics scrape, and schema validation was not run.\n\n**Safe next steps (read-only):** ask support for the product id and timestamps (if it is product 3, the latent finding explains the reports); get logs from before the 17:02:55Z process start; watch `http_exceptions_total{type=\"ZeroDivisionError\"}` for growth beyond the 3 probe-caused counts.\n\nThe journal is not committed; you asked for a check, not a commit.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-08-24T17:03:01Z",
+  "ended_at": "2026-08-24T17:10:15Z",
+  "restages": 0,
+  "wall_seconds_runner": 434,
+  "journal_source_name": "2026-08-24-product-page-500-report.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

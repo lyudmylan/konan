@@ -10,6 +10,11 @@ manual trigger adapter (`/konan <complaint text>`): synthesizes the complaint ob
 per the trigger contract (`docs/triggers.md`) and starts the investigate loop.
 `oncall` — the shift (`/oncall`): watches `alerts/inbox.jsonl`, catch-up first then
 Monitor, investigates every alert serially, commits each journal, pages the owner.
+`setup` — agent-run onboarding (`/setup`): prerequisite checks, lab wiring, a first
+scored investigation, and the hand-over map; the operator's manual steps are only
+install / clone / trust / operator prompts. `rim` — bring your own target (`/rim`):
+interview → surface-contract doc + read-only permission profile + MCP config →
+mechanical verification and a smoke investigation; configuration, never code.
 
 Dev mode, once a skill exists — symlink it into the project's skill path so sessions in
 this repo load it live:
@@ -19,5 +24,7 @@ mkdir -p .claude/skills
 ln -s ../../skills/<name> .claude/skills/<name>
 ```
 
-Plugin packaging is the post-flip fast-follow, tracked in #44 — a hook port of the
-read-only boundary comes first, because plugins cannot ship permission lists.
+Plugin packaging: `.claude-plugin/plugin.json` + `hooks/hooks.json` ship these skills
+and the boundary hook as the `konan` plugin (`/plugin marketplace add lyudmylan/konan`,
+install `konan@lyudmylan`; skills arrive namespaced, e.g. `/konan:setup`). The rim
+stays per-target setup — see the README's plugin section.

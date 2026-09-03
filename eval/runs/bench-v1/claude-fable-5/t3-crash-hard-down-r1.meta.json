@@ -1,0 +1,51 @@
+{
+  "session_id": "12d1b5c5-7302-43ae-9bf9-8650f630f9b5",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 20,
+  "duration_ms": 308915,
+  "duration_api_ms": 331430,
+  "total_cost_usd": 3.4709835,
+  "tokens_total": 627860,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 3160,
+      "outputTokens": 26310,
+      "cacheReadInputTokens": 500076,
+      "cacheCreationInputTokens": 98314,
+      "costUSD": 3.4709835
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-9zpwhqls/wt/scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-9zpwhqls/wt/scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-9zpwhqls/wt/scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-9zpwhqls/wt/scripts/probe.sh /metrics"
+    }
+  ],
+  "result_tail": "nterfaces) \u2192 deep-dive skipped (evidence already deterministic) \u2192 adversarial judge \u2192 journal.\n\n**Journal:** `journals/2026-08-25-shop-down-process-exit.md` (schema-shaped machine core, 11 evidence entries, 4 hypotheses, 5 recorded gaps). Not committed \u2014 the manual `/konan` trigger has no commit step; that stays with you.\n\n**Gaps to know:** no metrics were readable (endpoint down); the process table and `lab/server.out` are outside the investigator's surface; no log history exists before 20:28:14Z; the actor at `127.0.0.1:52840` that issued the crash request is not identifiable from telemetry.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-08-25T20:28:23Z",
+  "ended_at": "2026-08-25T20:48:51Z",
+  "restages": 0,
+  "wall_seconds_runner": 1228,
+  "journal_source_name": "2026-08-25-shop-down-process-exit.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

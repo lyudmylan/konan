@@ -1,0 +1,59 @@
+{
+  "session_id": "662d6df3-cf30-4f75-8840-e9132f87d096",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 26,
+  "duration_ms": 334759,
+  "duration_api_ms": 432769,
+  "total_cost_usd": 5.098869,
+  "tokens_total": 964591,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 9167,
+      "outputTokens": 36274,
+      "cacheReadInputTokens": 765549,
+      "cacheCreationInputTokens": 153601,
+      "costUSD": 5.098869
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products; for i in 1 2 3 4 5 6 7 8 9 10; do scripts/probe.sh /products/$i; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "for i in 1 2 3 4 5; do scripts/probe.sh /products/$i | tail -1; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "for p in /health /products /products/1 /products/2 /products/3 /products/4 /products/5; do echo \"=== $p\"; scripts/probe.sh \"$p\" 2>&1 | tail -c 1500; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'http_requests_total|http_exceptions_total|faultline_chaos_enabled|process_uptime|HTTP|status'"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'http_exceptions_total|status=\"500\"|status=\"404\"'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import jsonschema, yaml; print('ok', jsonschema.__version__)\" 2>&1; uv run --no-project python -c \"import jsonschema, yaml; print('uv ok')\" 2>&1 | tail -1"
+    }
+  ],
+  "result_tail": "the customer occurrences from \"this morning\" are not in retained telemetry; the retained user traffic never hit `/products/3`. The finding is the currently active, deterministic cause of exactly the reported symptom.\n- **Not done:** in-session schema validation (the Python check hit a permission prompt; per the lab boundary I did not retry). `lab/server.out` was not read (not in the listed surface).\n\n**Suggested next (read-only):** ask support which product the affected customers opened \u2014 a report for any product other than 3 is not explained by this finding and would reopen the investigation.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-08-24T17:15:41Z",
+  "ended_at": "2026-08-24T17:21:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 338,
+  "journal_source_name": "2026-08-24-product-3-zero-stock-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

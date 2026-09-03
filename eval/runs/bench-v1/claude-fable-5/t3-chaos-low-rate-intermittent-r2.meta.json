@@ -1,0 +1,43 @@
+{
+  "session_id": "ae601602-6e3b-456a-b7bf-484720d58517",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 8,
+  "duration_ms": 283503,
+  "duration_api_ms": 523115,
+  "total_cost_usd": 6.0218855,
+  "tokens_total": 1227266,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 7573,
+      "outputTokens": 44270,
+      "cacheReadInputTokens": 1002268,
+      "cacheCreationInputTokens": 173155,
+      "costUSD": 6.0218855
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "ls scripts/ && grep -n '\"2ff22b73a123\"\\|\"38922d3d869a\"' lab/logs/app.log | grep chaos_failure && python3 -c \"import jsonschema, yaml; print('validators ok')\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport json, re, sys, datetime\np = \"journals/2026-08-25-occasional-shop-errors-chaos-503.md\"\ntext = open(p).read()\nfm = text.split(\"---\\n\", 2)[1]\ntry:\n    import yaml\nexcept ImportError:\n    print(\"no pyyaml\"); sys.exit(1)\ncore = yaml.safe_load(fm)\ntry:\n    import jsonschema\n    schema = json.load(open(\"skills/investigate/journal.schema.json\"))\n    jsonschema.Draft202012Validator(schema).validate(core)\n    print(\"schema: OK\")\nexcept ImportError:\n    print(\"no jsonschema \u2014 shape not machine-checked\")\nids = {e[\"id\"] for e in core[\"evidence\"]}\nrefs = set()\nfor h in core[\"hypotheses\"]:\n    refs |= set(h[\"evidence_for\"]) | set(h[\"evidence_against\"])\nfor l in core.get(\"latent_findings\", []):\n    refs |= set(l[\"evidence\"])\nprint(\"unresolved refs:\", refs - ids)\nprint(\"unused evidence:\", sorted(ids - refs, key=lambda x:int(x[1:])))\nrc = core[\"root_cause\"][\"hypothesis\"]\nprint(\"root_cause ->\", rc, [h[\"state\"] for h in core[\"hypotheses\"] if h[\"id\"]==rc])\ns = core[\"investigation\"][\"started\"]; c = core[\"investigation\"][\"concluded\"]\nif isinstance(s, str): s = datetime.datetime.fromisoformat(s.replace(\"Z\",\"+00:00\"))\nif isinstance(c, str): c = datetime.datetime.fromisoformat(c.replace(\"Z\",\"+00:00\"))\nprint(\"wall clock:\", int((c-s).total_seconds()), \"declared:\", core[\"usage\"][\"wall_clock_seconds\"])\nprint(\"id matches filename:\", core[\"investigation\"][\"id\"] in p)\nEOF"
+    }
+  ],
+  "result_tail": "-occasional-shop-errors-chaos-503.md` (complaint object verbatim, trigger latency 10 s, 23 evidence entries, 5 gaps). It is uncommitted \u2014 the skill did not ask for a commit, so that is your call.\n\n**Not done:** machine validation of the frontmatter against `journal.schema.json` \u2014 the boundary hook denied the inline Python, so the check above is manual. Run `uv run eval/tests.py` or the scorer on your side to confirm.\n\n**Next (read-only):** watch the gauge for a return to 0, and find out on the operator side who issued the `/chaos/enable` call from `127.0.0.1:49236` and whether it was intended.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-25T05:13:02Z",
+  "ended_at": "2026-08-25T05:19:52Z",
+  "restages": 0,
+  "wall_seconds_runner": 411,
+  "journal_source_name": "2026-08-25-occasional-shop-errors-chaos-503.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

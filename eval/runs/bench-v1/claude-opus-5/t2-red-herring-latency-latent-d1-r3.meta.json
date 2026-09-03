@@ -1,0 +1,39 @@
+{
+  "session_id": "c09652b7-7b9b-40a1-9cfb-6ea7ad4950ca",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 24,
+  "duration_ms": 246549,
+  "duration_api_ms": 245420,
+  "total_cost_usd": 1.1635170000000001,
+  "tokens_total": 695685,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 30,
+      "outputTokens": 17591,
+      "cacheReadInputTokens": 637584,
+      "cacheCreationInputTokens": 40480,
+      "costUSD": 1.1635170000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>/dev/null | grep -E 'exceptions|chaos_enabled|products.*status|duration_seconds_(sum|count)\\{method=\"GET\",path=\"/(products|health)'"
+    }
+  ],
+  "result_tail": " triage lenses and the judge ran in my own context, not as blind parallel subagents \u2014 this session runs under a no-subagent rule. The domains got covered; the independence did not. It is in the Gaps. For this incident the step change at the flag marker is decisive on its own, so the loss costs little. On a less clear case it would cost more.\n- The boundary hook refused one command of mine (a probe with a pipe). I made it again without the pipe. That is one denial on the session tripwire; a second one freezes the session.\n\nI did not commit the journal \u2014 you did not ask, and pushing stays human.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-19T12:49:18Z",
+  "ended_at": "2026-08-19T12:53:27Z",
+  "restages": 0,
+  "wall_seconds_runner": 250,
+  "journal_source_name": "2026-08-19-shop-wide-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

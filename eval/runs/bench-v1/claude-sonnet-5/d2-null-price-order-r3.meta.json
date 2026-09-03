@@ -1,0 +1,83 @@
+{
+  "session_id": "0b3ef6c9-d566-4c8d-8ccd-c5faf4709703",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 43,
+  "duration_ms": 739446,
+  "duration_api_ms": 808024,
+  "total_cost_usd": 2.97507285,
+  "tokens_total": 3269227,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 104,
+      "outputTokens": 73415,
+      "cacheReadInputTokens": 2995962,
+      "cacheCreationInputTokens": 199746,
+      "costUSD": 2.97507285
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"---\" && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": *\"request\"' lab/logs/app.log | python3 -c \"\nimport sys,json\nfor line in sys.stdin:\n    d=json.loads(line)\n    print(d.get('ts'), d.get('method'), d.get('path'), d.get('status'), d.get('duration_ms'), d.get('request_id'))\n\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics && scripts/probe.sh /health && scripts/probe.sh /openapi.json"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /orders; scripts/probe.sh /metrics | grep -E \"http_requests_total\\{method=\\\"POST\\\"|http_exceptions_total\""
+    },
+    {
+      "tool": "Bash",
+      "command": "git log --diff-filter=A --format=\"%H\" -- journals/2026-08-18-routine-handover-check.md | tail -1 | xargs -I{} git show {}:journals/2026-08-18-routine-handover-check.md 2>/dev/null | head -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, yaml, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print('no jsonschema module, trying pip')\n    sys.exit(1)\n\" 2>&1; pip3 show jsonschema pyyaml 2>&1 | head -5"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml, jsonschema; print('ok')\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml, jsonschema; print('ok')\""
+    }
+  ],
+  "result_tail": "ely rather than the overclaimed compound one.\n\nNotably, this matches a prior investigation from 2026-07-31 that found the identical root cause \u2014 this looks like a recurring, unfixed condition rather than a one-off.\n\nJournal written to `journals/2026-08-19-order-500s.md`.\n\nOne separate, unrelated note: this repo's working tree currently shows 9 journal files deleted (uncommitted) going back to 2026-07-30, including the 2026-07-31 one I referenced from git history. That's outside the scope of this investigation, but you may want to check whether that deletion was intentional before it gets lost.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 3,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-08-19T01:13:57Z",
+  "ended_at": "2026-08-19T01:26:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 742,
+  "journal_source_name": "2026-08-19-order-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

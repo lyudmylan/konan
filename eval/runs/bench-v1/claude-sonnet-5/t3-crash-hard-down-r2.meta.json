@@ -1,0 +1,51 @@
+{
+  "session_id": "ce7d6c84-5817-4e25-9e7c-0c01a934c52d",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 193610,
+  "duration_api_ms": 490651,
+  "total_cost_usd": 1.61064735,
+  "tokens_total": 2037711,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 70,
+      "outputTokens": 41943,
+      "cacheReadInputTokens": 1918527,
+      "cacheCreationInputTokens": 77171,
+      "costUSD": 1.61064735
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json\nwith open('journals/2026-08-19-shop-total-outage.md') as f:\n    content = f.read()\nfm = content.split('---')[1]\ndata = yaml.safe_load(fm)\nprint(json.dumps(data, indent=2)[:2000])\nprint('---VALID YAML---')\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json\nwith open('journals/2026-08-19-shop-total-outage.md') as f:\n    content = f.read()\nfm = content.split('---')[1]\ndata = yaml.safe_load(fm)\nprint(json.dumps(data, indent=2)[:2500])\nprint('---VALID YAML---')\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml; print('ok')\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 lab/validate_journal.py journals/2026-08-19-shop-total-outage.md"
+    }
+  ],
+  "result_tail": "he journal records high confidence, but not a fully validated verdict.\n\n**Gaps noted in the journal:**\n- No OS-level proof that the process is actually dead (out of my allowed scope, permanently).\n- No log data from before the process started, so I cannot check the \"it was fine ten minutes ago\" claim beyond the ~6 seconds of healthy traffic before the crash.\n- I did not spawn separate agents for the \"interfaces\" and \"software-defect\" lenses, since the total connection failure did not match either lens's pattern.\n\nNo remediation was taken \u2014 this investigation is read-only, per the lab boundary.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-08-19T03:23:56Z",
+  "ended_at": "2026-08-19T03:32:01Z",
+  "restages": 0,
+  "wall_seconds_runner": 485,
+  "journal_source_name": "2026-08-19-shop-total-outage.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,51 @@
+{
+  "session_id": "2c115729-6b02-41c3-8705-f5746deb8d78",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 18,
+  "duration_ms": 287411,
+  "duration_api_ms": 408900,
+  "total_cost_usd": 2.8214569999999997,
+  "tokens_total": 799239,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 56,
+      "outputTokens": 18304,
+      "cacheReadInputTokens": 701087,
+      "cacheCreationInputTokens": 79792,
+      "costUSD": 2.8214569999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ && scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json 2>&1 | python3 -c \"import sys,json; raw=sys.stdin.read(); body=raw.rsplit('-- HTTP',1)[0]; d=json.loads(body); import re; print(json.dumps(d.get('components',{}).get('schemas',{}).get('Product',d.get('components',{}).get('schemas',{}).keys() and list(d['components']['schemas'].keys())), indent=1))\""
+    }
+  ],
+  "result_tail": "**Latent finding, no impact now.** Product 4 (\"Mystery Box\") has `price: null` in the catalog. No user has ordered this product. An order for it could trigger a data-dependent defect in the price calculation. If a 500 appears on `POST /orders` later, examine orders for product 4 first.\n2. **Short history.** The process started at 05:36:33Z, approximately one minute before the check. The logs and counters begin there. I cannot see behavior from before this process lifetime.\n\nI wrote the journal to `journals/2026-08-20-routine-handover-check.md` with the full evidence ledger, timeline, and gaps.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-20T05:36:42Z",
+  "ended_at": "2026-08-20T05:41:32Z",
+  "restages": 0,
+  "wall_seconds_runner": 290,
+  "journal_source_name": "2026-08-20-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

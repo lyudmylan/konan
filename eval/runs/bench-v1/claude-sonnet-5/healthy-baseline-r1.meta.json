@@ -1,0 +1,49 @@
+{
+  "session_id": "37e3ff25-852b-48bd-964a-3322ff43b553",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 32395,
+  "duration_api_ms": 31902,
+  "total_cost_usd": 0.2386245,
+  "tokens_total": 422903,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 20,
+      "outputTokens": 2127,
+      "cacheReadInputTokens": 406645,
+      "cacheCreationInputTokens": 14111,
+      "costUSD": 0.2386245
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "I've tried running `scripts/lab.sh status` a few times and it keeps requiring approval without going through. Rather than keep retrying the same command, I'll pause here \u2014 could you approve the Bash permission prompt for `scripts/lab.sh status` (and likely `scripts/probe.sh`) so I can check the lab service, or let me know if it should run differently?",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 1,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-19T01:26:29Z",
+  "ended_at": "2026-08-19T01:27:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 35,
+  "status": "no-journal",
+  "quota_error": false
+}

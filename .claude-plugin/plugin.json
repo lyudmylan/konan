@@ -1,0 +1,7 @@
+{
+  "name": "konan",
+  "description": "Agentic production-incident investigator as Claude Code skills: baseline-first methodology with blind parallel triage lenses and an adversarial judge, schema-enforced evidence citation, a legitimate no-incident verdict, trigger adapters (/konan manual, /oncall shift), agent-run onboarding (/setup) — and a content-based read-only boundary hook. The per-target rim (probe allowlist, surface contract) stays per-repo setup.",
+  "author": {
+    "name": "Lyudmyla Novoselsky"
+  }
+}

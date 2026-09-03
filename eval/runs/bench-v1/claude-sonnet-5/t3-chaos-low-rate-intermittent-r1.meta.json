@@ -1,0 +1,41 @@
+{
+  "session_id": "16b60b41-14b8-4871-bdcd-dab9bb1153d6",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 12,
+  "duration_ms": 71491,
+  "duration_api_ms": 71031,
+  "total_cost_usd": 0.3148611,
+  "tokens_total": 360848,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 16,
+      "outputTokens": 5937,
+      "cacheReadInputTokens": 333967,
+      "cacheCreationInputTokens": 20928,
+      "costUSD": 0.3148611
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": " not writing a journal file for this run. Doing so with no evidence would violate the report contract.\n\n**What I need from you:**\n- Please check the lab status yourself (`scripts/lab.sh status`), or grant approval so I can run it, and let me know how to proceed.\n- Alternatively, tell me if there is a reason this session's permissions are locked down, so I do not keep tripping the same guard.\n\nI have not touched the target. The complaint itself remains unactioned \u2014 a couple of users saw an occasional error, self-resolved on retry \u2014 but I could not gather any telemetry to confirm or rule it out.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-08-19T02:59:53Z",
+  "ended_at": "2026-08-19T03:01:06Z",
+  "restages": 0,
+  "wall_seconds_runner": 74,
+  "status": "no-journal",
+  "quota_error": false
+}

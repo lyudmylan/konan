@@ -1,0 +1,62 @@
+{
+  "session_id": "0c4f4d5b-5c98-41b9-a633-fd830970573a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 140867,
+  "duration_api_ms": 364998,
+  "total_cost_usd": 4.0928465,
+  "tokens_total": 1820235,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 64,
+      "outputTokens": 17090,
+      "cacheReadInputTokens": 1505618,
+      "cacheCreationInputTokens": 60388,
+      "costUSD": 3.5074155
+    },
+    "claude-opus-5[1m]": {
+      "inputTokens": 30,
+      "outputTokens": 8638,
+      "cacheReadInputTokens": 184037,
+      "cacheCreationInputTokens": 44370,
+      "costUSD": 0.585431
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E \"faultline_chaos_enabled|process_uptime|request_id=\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport yaml,json,re,sys\nt=open('journals/2026-08-19-shop-slowness-chaos-latency.md').read()\nfm=t.split('---\\n')[1]\nd=yaml.safe_load(fm)\ntry:\n    import jsonschema\n    s=json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.Draft202012Validator(s).validate(d); print(\"schema OK\")\nexcept ImportError:\n    print(\"jsonschema missing; parsed OK:\", list(d))\nids={e['id'] for e in d['evidence']}\nfor h in d['hypotheses']:\n    for r in h['evidence_for']+h['evidence_against']:\n        assert r in ids, r\nprint(\"refs OK\")\nEOF"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "ls scripts/ eval/ 2>/dev/null | head -30"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml,json\nt=open('journals/2026-08-19-shop-slowness-chaos-latency.md').read()\nd=yaml.safe_load(t.split('---\\n')[1])\nimport jsonschema\ns=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.Draft202012Validator(s).validate(d)\nids=set(e['id'] for e in d['evidence'])\nassert all(r in ids for h in d['hypotheses'] for r in h['evidence_for']+h['evidence_against'])\nprint('schema OK, refs OK, wall', d['usage']['wall_clock_seconds'])\n\""
+    }
+  ],
+  "result_tail": "produced it live: `/health` 2 ms, `/products` 513 ms, `/orders` 386 ms.\n- H2 (code defect) and H3 (load/lifecycle) were invalidated by the judge: no exceptions, single startup, monotonic uptime, flat RSS, `/health` fast in the same process.\n\nJournal: `journals/2026-08-19-shop-slowness-chaos-latency.md`.\n\nGaps: who issued the `/chaos/enable` call is outside the read-only surface; the sample window is short (~3 min); the delay-randomization claim is inferred, not read.\n\nSafe next step for a human: ask the operator whether the `POST /chaos/enable` from `127.0.0.1:65423` at 21:30:42Z was intended.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-19T21:30:54Z",
+  "ended_at": "2026-08-19T21:35:12Z",
+  "restages": 0,
+  "wall_seconds_runner": 258,
+  "journal_source_name": "2026-08-19-shop-slowness-chaos-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

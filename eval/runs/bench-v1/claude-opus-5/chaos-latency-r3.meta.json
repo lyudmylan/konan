@@ -1,0 +1,55 @@
+{
+  "session_id": "10f757c8-abaa-4728-b6fd-ebcc4ee8ee9b",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 22,
+  "duration_ms": 480332,
+  "duration_api_ms": 602319,
+  "total_cost_usd": 2.6390955000000003,
+  "tokens_total": 1265749,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 82,
+      "outputTokens": 43912,
+      "cacheReadInputTokens": 1096171,
+      "cacheCreationInputTokens": 125584,
+      "costUSD": 2.6390955000000003
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /health 2>&1 | tail -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health; echo \"---\"; scripts/probe.sh /products"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products 2>&1 | tail -5; echo \"-----\"; scripts/probe.sh /products/1 2>&1 | tail -5; echo \"-----\"; scripts/probe.sh /orders 2>&1 | tail -5"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'exceptions_total|duration_seconds_count|chaos_enabled|HTTP ' "
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json,sys\ntry:\n    import yaml\nexcept ImportError:\n    print('no pyyaml'); sys.exit(0)\np='journals/2026-08-19-chaos-latency-injection.md'\nt=open(p).read()\nfm=t.split('---',2)[1]\nd=yaml.safe_load(fm)\nev={e['id'] for e in d['evidence']}\nbad=[]\nfor h in d['hypotheses']:\n    for r in h['evidence_for']+h['evidence_against']:\n        if r not in ev: bad.append((h['id'],r))\nfor lf in d.get('latent_findings',[]):\n    for r in lf['evidence']:\n        if r not in ev: bad.append(('latent',r))\nprint('unresolved refs:',bad)\nprint('root_cause H state:',[h['state'] for h in d['hypotheses'] if h['id']==d['root_cause']['hypothesis']])\nfrom datetime import datetime\ns=datetime.fromisoformat(str(d['investigation']['started']).replace('Z','+00:00'))\nc=datetime.fromisoformat(str(d['investigation']['concluded']).replace('Z','+00:00'))\nprint('wall clock computed:',int((c-s).total_seconds()),'declared:',d['usage']['wall_clock_seconds'])\nprint('evidence count:',len(ev))\n\"\n"
+    }
+  ],
+  "result_tail": "ad 0.097 s\u20131.42 s. The judge made me correct that wording.\n- I could not tie your \"last few minutes\" to the telemetry: the log begins at process start, 24 seconds before your report. Slowness felt earlier than that is outside what I can see.\n- Who enabled chaos is not attributable from my surface. The trail ends at `POST /chaos/enable`, request_id `d1c8573ab137`, from `127.0.0.1`. `/chaos` is operator surface, outside my read-only allowlist.\n\nJournal: `journals/2026-08-19-chaos-latency-injection.md` \u2014 full evidence ledger, timeline, all five hypotheses with the judge's verdicts, and five gaps.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-19T06:18:27Z",
+  "ended_at": "2026-08-19T06:26:28Z",
+  "restages": 0,
+  "wall_seconds_runner": 481,
+  "journal_source_name": "2026-08-19-chaos-latency-injection.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

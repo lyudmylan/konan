@@ -1,0 +1,34 @@
+{
+  "session_id": "e6aabba5-5495-4e7c-9548-3238f7e9a834",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 5,
+  "duration_ms": 175698,
+  "duration_api_ms": 765317,
+  "total_cost_usd": 3.8877852500000003,
+  "tokens_total": 2375375,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 126,
+      "outputTokens": 49691,
+      "cacheReadInputTokens": 2115843,
+      "cacheCreationInputTokens": 209715,
+      "costUSD": 3.8877852500000003
+    }
+  },
+  "permission_denials": [],
+  "result_tail": " user has used the service since 11:30:12Z.** Every request during my check was mine. So this verdict tells you the service *can* work. It does not tell you that users *are* served.\n\nThe judge found a true error in my work: I claimed contract drift on the orders route while I cited evidence for the products route only. I probed the orders route and the claim now holds. I also had 3 denied Bash calls, one mine and two in a lens. I did not go around any of them, and no evidence was lost.\n\n`journals/2026-08-19-shop-handover-check.md`. I did not commit it \u2014 commits from `/konan` are yours to make.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "healthy-baseline",
+  "rep": 3,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-19T11:30:12Z",
+  "ended_at": "2026-08-19T11:38:33Z",
+  "restages": 0,
+  "wall_seconds_runner": 501,
+  "journal_source_name": "2026-08-19-shop-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

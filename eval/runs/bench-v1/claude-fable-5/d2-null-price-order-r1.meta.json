@@ -1,0 +1,39 @@
+{
+  "session_id": "50ab884c-d921-49c0-a33f-a6bd0300fe2a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 8,
+  "duration_ms": 184180,
+  "duration_api_ms": 399998,
+  "total_cost_usd": 4.781714,
+  "tokens_total": 1422212,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 70,
+      "outputTokens": 29238,
+      "cacheReadInputTokens": 1261969,
+      "cacheCreationInputTokens": 130935,
+      "costUSD": 4.781714
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, sys\ntry:\n    import yaml, jsonschema\nexcept ImportError as e:\n    print('validator unavailable:', e); sys.exit(0)\ntext = open('journals/2026-08-19-orders-null-price-500s.md').read()\nfm = text.split('---')[1]\ndoc = yaml.safe_load(fm)\nschema = json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(doc, schema)\nprint('schema: OK')\nrefs = {e['id'] for e in doc['evidence']}\nused = set(doc['root_cause']['hypothesis'] for _ in [1])\nfor h in doc['hypotheses']:\n    for r in h['evidence_for']+h['evidence_against']:\n        assert r in refs, r\nprint('refs: OK; wall_clock:', doc['usage']['wall_clock_seconds'])\n\""
+    }
+  ],
+  "result_tail": "gs do not record request payloads, so the link from the three failed requests to product 4 is a mechanism-level inference \u2014 product 4 is the only null-price item, and the stack shows the null multiply. Also, the probe surface is GET-only, so I could not reproduce the POST myself.\n\n**Safe next steps (read-only):** watch the `TypeError` counter against the 500 counter, and probe `/products` for null `price` fields \u2014 the incident ends when product 4 gets a price. Remediation (a null-price guard in `create_order`, or a catalog fix) is out of scope for the journal, but that is where a fix would go.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "d2-null-price-order",
+  "rep": 1,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-08-19T21:55:10Z",
+  "ended_at": "2026-08-19T22:00:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 310,
+  "journal_source_name": "2026-08-19-orders-null-price-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

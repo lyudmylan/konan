@@ -1,0 +1,47 @@
+{
+  "session_id": "116050c5-66ee-44e0-b25c-3be3ff1cfd87",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 280337,
+  "duration_api_ms": 491375,
+  "total_cost_usd": 5.3740369999999995,
+  "tokens_total": 1102605,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 4604,
+      "outputTokens": 42473,
+      "cacheReadInputTokens": 911942,
+      "cacheCreationInputTokens": 143586,
+      "costUSD": 5.3740369999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'chaos_enabled|uptime|exceptions|requests_total|_sum|_count|request_id'"
+    },
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; python3 -c \"import yaml, jsonschema; print('validators ok')\" 2>&1 | tail -1"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml, jsonschema; print('validators ok')\""
+    }
+  ],
+  "result_tail": "; deep-dive was skipped because the triage evidence was deterministic and complete; the evidence-only judge validated H1 and invalidated H2 and H3.\n- Two commands needed a permission prompt (a piped `probe.sh` and a `python3` schema check). I did not retry them; the journal frontmatter was checked by hand against the schema and this is noted in Gaps.\n\n**Safe next steps (read-only):** find who issued the `POST /chaos/enable`, watch for a `chaos_disabled` event, ask the reporters for the URL and time of the error page, and check whether any history exists before `04:46:48Z` outside this surface.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-08-25T04:47:04Z",
+  "ended_at": "2026-08-25T04:53:45Z",
+  "restages": 0,
+  "wall_seconds_runner": 401,
+  "journal_source_name": "2026-08-25-shop-wide-slowness-chaos-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
