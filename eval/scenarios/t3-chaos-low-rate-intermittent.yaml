@@ -56,7 +56,9 @@ complaint: >-
   minutes — it works on retry, most people notice nothing. Probably nothing?
 expected:
   verdict: root-cause-identified
-  incident_class: infra-process
+  incident_class: [infra-process, interfaces]   # set accepted for bench-v1 journals; the
+                                                #   definition (report contract) says infra-process;
+                                                #   singular again once bench-v2 pins the new lens text
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
@@ -66,7 +68,7 @@ expected:
       all_of: ["(?i)intermittent|occasional|rare|low[\\s-]rate|small\\s+fraction|a\\s+few|sporadic|probabilist"]
   must_not_claim:
     - id: not-code-defect
-      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]
     - id: not-load
       any_of: ["(?i)saturat", "(?i)overload", "(?i)resource\\s+exhaust"]
 scoring_notes: >-

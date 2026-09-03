@@ -42,7 +42,7 @@ expected:
       all_of: ["(?i)price\\W{0,5}(is\\s+|=\\s*)?(null|none)|null\\s+price|product\\s*4\\b"]
   must_not_claim:
     - id: not-chaos
-      any_of: ["(?i)chaos", "(?i)inject"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos", "(?i)(?<!not )(?<!no )(?<!than )inject"]
     - id: not-infra
       any_of: ["(?i)crash", "(?i)restart\\s+loop", "(?i)saturat", "(?i)overload"]
     - id: not-d1-misattribution

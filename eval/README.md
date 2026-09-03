@@ -54,8 +54,8 @@ expected:
     - id: mechanism
       all_of: ["(?i)zero.?division"]   # every regex in all_of must match the claim surface
   must_not_claim:               # ANY match = a false attribution
-    - id: not-chaos
-      any_of: ["(?i)chaos"]
+    - id: not-chaos             # carry the negation lookbehinds (see Scoring semantics)
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos"]
 scoring_notes: ...              # nuances the scorer implementer must honor, optional
 ```
 
@@ -66,8 +66,10 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   or inconclusive hypotheses (killed hypotheses are results, not claims), and not
   `latent_findings` (see the healthy nuance below).
 - **Verdict**: `journal.verdict == expected.verdict`.
-- **Class**: when a root cause is expected, `root_cause.incident_class ==
-  expected.incident_class`.
+- **Class**: when a root cause is expected, `root_cause.incident_class` must equal
+  `expected.incident_class` — or be a member of it when the fixture states a set
+  (taxonomy ambiguity is a fixture decision, recorded with a reason; the class
+  definitions live in the report contract).
 - **Root-cause hit**: every `must_claim` entry matches — an entry matches when each
   regex in its `all_of` finds a match somewhere in the claim surface.
 - **False attribution**: any `must_not_claim` entry with any `any_of` regex matching
@@ -82,8 +84,24 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   keeps YAML timestamps as the RFC3339 strings written, quoted or not — a model that
   copies the contract's unquoted example must not fail on a parsing accident.
 - Regexes are Python-flavored, applied with `re.search`; case-insensitivity is spelled
-  in the pattern (`(?i)`), never assumed. Matchers live in fixtures so the scorer stays
-  target-generic — no target string ever appears in scorer code.
+  in the pattern (`(?i)`), never assumed. Note `(?i)` is a global inline flag in
+  Python: it applies to lookbehinds too, so `(?<!not )` already blocks "Not" and "NOT"
+  and a separate `(?<!Not )` is dead weight.
+  Tripwire convention: `must_not_claim` vocabulary carries fixed-width negation
+  lookbehinds (`(?<!not )(?<!no )(?<!than )`) so a correct report may *deny* a cause
+  ("a defect, not chaos") without firing them.
+  **Know what that guard does not cover.** Python requires a fixed-width lookbehind, so
+  it only sees the characters immediately before the term. "not chaos" is blocked;
+  "not **a** chaos toggle", "not **the** chaos switch" and "not resource saturation"
+  are not — any intervening article defeats it, and those are the common phrasings in a
+  real report. Nor can a lookbehind see a negation that *trails* the term ("chaos is not
+  the cause"). Widening the alternation cannot fix this: it trades false positives for
+  false negatives and never converges, because scoring prose for the *absence* of a
+  claim is the wrong shape for a regex. The structural fix — a machine-matchable cause
+  field the scorer compares by equality — is #78, and until it lands a `must_not_claim`
+  hit on a report that reads as a denial is a known artifact, not a verdict. Matchers
+  live in fixtures so the scorer stays target-generic — no target string ever appears in
+  scorer code.
 
 ## Scoring a run
 

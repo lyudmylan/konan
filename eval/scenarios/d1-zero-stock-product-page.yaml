@@ -37,14 +37,14 @@ expected:
   incident_class: software-defect
   must_claim:
     - id: mechanism
-      all_of: ["(?i)zero.?division|divi\\w*\\s+by\\s+zero"]
+      all_of: ["(?i)zero.?division|divi\\w*[\\s-]+by[\\s-]+zero"]
     - id: location
       all_of: ["(?i)/products/3|product\\s*3\\b"]
     - id: data-condition
       all_of: ["(?i)units_in_stock\\s*=?\\s*0|zero[\\s-]stock|stock\\s+(is\\s+)?0\\b"]
   must_not_claim:
     - id: not-chaos
-      any_of: ["(?i)chaos", "(?i)inject"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos", "(?i)(?<!not )(?<!no )(?<!than )inject"]
     - id: not-infra
       any_of: ["(?i)crash", "(?i)restart\\s+loop", "(?i)saturat", "(?i)overload"]
 scoring_notes: >-

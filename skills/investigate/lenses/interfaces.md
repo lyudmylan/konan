@@ -8,7 +8,10 @@ Look for:
 - Gateway-shaped statuses (502/503/504) and probabilistic failure: an error rate near a
   stable fraction (e.g. ~half of requests fail, interleaved with successes on the same
   route) suggests injected degradation, a failing dependency, or a partial rollout — not
-  a per-input code defect.
+  a per-input code defect. Classification line: if the mechanism turns out to be an
+  **internal** operational switch (a chaos/feature/config toggle in the target itself),
+  the incident class is `infra-process`, not yours — you may still be the lens that
+  finds it.
 - **Configuration/flag/deploy change markers in logs** — timeline gold. A behavior
   change immediately after a config-change marker is a prime hypothesis; quote the
   marker and the first failing request after it.

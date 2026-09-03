@@ -193,7 +193,31 @@ def run():
     check_valid(loaded, base_fx())
     assert score.score_pair(base_fx(), loaded, JV)["citations_ok"]
 
-    print("OK: 14 semantics pins hold")
+    # 15. A fixture may accept a SET of incident classes (taxonomy ambiguity, #63):
+    #     any member passes, a non-member still fails, and the plain-string form is
+    #     unchanged.
+    core, fx = base_core(), base_fx()
+    fx["expected"]["incident_class"] = ["software-defect", "infra-process"]
+    check_valid(core, fx)
+    assert score.score_pair(fx, core, JV)["class_ok"]
+    core["root_cause"]["incident_class"] = "infra-process"
+    core["hypotheses"][0]["incident_class"] = "infra-process"
+    assert score.score_pair(fx, core, JV)["class_ok"]
+    core["root_cause"]["incident_class"] = "interfaces"
+    core["hypotheses"][0]["incident_class"] = "interfaces"
+    r = score.score_pair(fx, core, JV)
+    assert r["class_ok"] is False and not r["passed"]
+
+    # 16. Every committed fixture loads and every matcher compiles. load_fixture is the
+    #     only place a bad regex surfaces, and until now the pins reached just two
+    #     fixtures — so a variable-width lookbehind or a stray bracket in any of the
+    #     others passed CI green and raised re.error mid-benchmark, after paid model runs.
+    scenarios = sorted((EVAL / "scenarios").glob("*.yaml"))
+    assert len(scenarios) >= 10, f"expected the committed corpus, found {len(scenarios)}"
+    for path in scenarios:
+        score.load_fixture(path, FV)   # validates against the schema and compiles matchers
+
+    print("OK: 16 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------

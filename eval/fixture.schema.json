@@ -38,7 +38,14 @@
       "required": ["verdict", "incident_class", "must_claim", "must_not_claim"],
       "properties": {
         "verdict": { "enum": ["root-cause-identified", "no-active-incident", "inconclusive"] },
-        "incident_class": { "type": ["string", "null"], "minLength": 1 },
+        "incident_class": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" },
+            { "type": "array", "minItems": 1, "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1 } }
+          ]
+        },
         "must_claim": {
           "type": "array",
           "items": {
@@ -67,7 +74,7 @@
       "if": { "properties": { "verdict": { "const": "root-cause-identified" } } },
       "then": {
         "properties": {
-          "incident_class": { "type": "string" },
+          "incident_class": { "type": ["string", "array"] },
           "must_claim": { "minItems": 1 }
         }
       },

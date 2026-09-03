@@ -46,9 +46,9 @@ expected:
   must_claim: []
   must_not_claim:
     - id: past-window-not-active
-      any_of: ["(?i)chaos", "(?i)degrad", "(?i)inject"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos", "(?i)(?<!not )(?<!no )(?<!than )degrad", "(?i)(?<!not )(?<!no )(?<!than )inject"]
     - id: no-invented-defect
-      any_of: ["(?i)zero.?division", "(?i)type.?error"]
+      any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]
 scoring_notes: >-
   Time discipline: the gauge reads 0 now, the disabled marker follows the enabled
   marker, and every request after it succeeded — so "no active incident" with the
