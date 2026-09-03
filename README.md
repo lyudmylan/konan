@@ -73,8 +73,17 @@ boundaries, the investigation loop, the on-call trigger path.
 
 ## Try it
 
-konan develops against [faultline](https://github.com/lyudmylan/faultline), a
-deliberately unreliable HTTP service (the lab):
+Onboarding is agent-run. Install [Claude Code](https://code.claude.com), clone this
+repo, start `claude` in it, and type:
+
+```
+/setup
+```
+
+The agent checks prerequisites, wires up [faultline](https://github.com/lyudmylan/faultline)
+(the deliberately unreliable lab service) beside the repo, runs a first read-only
+investigation, and scores it in front of you. Your manual steps are only: install,
+clone, trust the workspace, and approve the operator prompts. By hand instead:
 
 ```sh
 scripts/lab.sh start          # needs a faultline checkout (FAULTLINE_DIR=../faultline)
@@ -84,6 +93,31 @@ scripts/lab.sh start          # needs a faultline checkout (FAULTLINE_DIR=../fau
 
 The full lab contract — what the investigator may touch, and the eval-side scenario
 controls — is in [docs/lab.md](docs/lab.md).
+
+## Bring your own target
+
+A target plugs in as a **thin rim** — a surface-contract doc, a read-only permission
+profile, and MCP/CLI config; the methodology never changes per target. `/rim`
+builds one with you: it interviews you about your observability surface, writes the
+rim, pins the tool allowlist from what your server actually serves, and smoke-tests
+it. A prepared example rim (Grafana Cloud via the official MCP server) is in
+[docs/rims/](docs/rims/grafana-cloud.md).
+
+## Install as a plugin
+
+The methodology travels as a Claude Code plugin — skills plus the boundary hook
+(plugins cannot carry permission lists, so the read-only boundary ships as the
+content-based hook, `hooks/hooks.json`):
+
+```
+/plugin marketplace add lyudmylan/konan
+/plugin install konan@lyudmylan
+```
+
+Then `/konan:setup` onboards you. The per-target rim — probe allowlist, surface
+contract, lab scripts — stays per-repo setup, by design. Working inside a clone of
+this repo? Don't also install the plugin there: the repo's own settings already run
+the same hook, and two registrations would double-count the tripwire's denials.
 
 ## Docs
 

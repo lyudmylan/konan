@@ -1,7 +1,7 @@
 # konan — repo agent instructions
 
 Read `docs/product.md` for what konan is; this file is how to work here. The shared
-AI-SDLC skills (`github-planning`, `github-shipping`, `repo-review`) apply; this file
+AI-SDLC skills (`planning`, `shipping`, `repo-review`) apply; this file
 overrides them where they conflict.
 
 ## Lab boundary (hard rule)
@@ -21,7 +21,10 @@ overrides them where they conflict.
   win over any hook allow). Tripwire: the second denial in a session freezes it —
   every further Bash call is denied and the agent is told to stop and page; a denied
   action is a signal to stop, never a puzzle to solve. Changing the hook, its pins, or
-  either settings list is a SPEC-grade change (PR with rationale, never casual).
+  either settings list is a SPEC-grade change (PR with rationale, never casual). The
+  plugin ships the same hook via `hooks/hooks.json`; in a checkout of this repo the
+  settings registration is the active one — do not install the plugin into the repo
+  itself (double registration double-counts the tripwire).
 - `/simulate` and `/chaos` are outside the probe allowlist even though they are GETs:
   faultline serves mutating GETs there (crash, hang, ballast), and chaos state is
   operator surface, not telemetry.
