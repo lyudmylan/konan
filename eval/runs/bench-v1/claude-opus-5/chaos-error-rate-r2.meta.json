@@ -1,0 +1,75 @@
+{
+  "session_id": "46b1ca56-02b6-4950-85de-b615c3b41bcc",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 530494,
+  "duration_api_ms": 735914,
+  "total_cost_usd": 3.4281745,
+  "tokens_total": 2034527,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 122,
+      "outputTokens": 53672,
+      "cacheReadInputTokens": 1829094,
+      "cacheCreationInputTokens": 151639,
+      "costUSD": 3.4281745
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-1x7uhfbg/wt/scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "for i in 1 2 3 4 5 6; do scripts/probe.sh /products/1 2>&1 | tail -2; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "for i in $(seq 1 12); do scripts/probe.sh /products 2>&1 | tail -1; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'http_requests_total|chaos_enabled|exceptions'"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /metrics | grep -E \"process_|chaos_enabled|exceptions\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'exceptions|chaos_enabled|uptime'"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'chaos_enabled|uptime|exceptions_total\\{|requests_total\\{.*503|requests_total\\{.*500|request_id'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json,sys\ntry:\n    import yaml, jsonschema\nexcept ImportError as e:\n    print('missing dep:', e); sys.exit(2)\np='journals/2026-08-19-chaos-injection-503s.md'\nt=open(p).read()\nfm=t.split('---',2)[1]\nd=yaml.safe_load(fm)\ns=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(d,s)\nprint('SCHEMA OK')\nev={e['id'] for e in d['evidence']}\nrefs=set()\nfor h in d['hypotheses']: refs|=set(h['evidence_for'])|set(h['evidence_against'])\nfor l in d.get('latent_findings',[]): refs|=set(l['evidence'])\nprint('dangling refs:', refs-ev or 'none')\nprint('unused evidence:', ev-refs or 'none')\nrc=d['root_cause']['hypothesis']\nprint('root_cause H state:', [h['state'] for h in d['hypotheses'] if h['id']==rc])\nfrom datetime import datetime as dt\na=dt.fromisoformat(str(d['investigation']['started']).replace('Z','+00:00'))\nb=dt.fromisoformat(str(d['investigation']['concluded']).replace('Z','+00:00'))\nprint('wall clock match:', (b-a).total_seconds()==d['usage']['wall_clock_seconds'], (b-a).total_seconds())\n\""
+    },
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": "ot the cause\n`shop.py:64` divides by `units_in_stock` with no guard. Product 3 has 0 stock, so `/products/3` always gives 500. **Only my own probes triggered this** \u2014 no user request reached it. I recorded it as latent, not as the incident. It will hit users when any product goes to 0 stock.\n\n### What I could not answer\nWho turned chaos mode on, and whether it was intended. The `/chaos` surface is outside my read-only contract. That is the one question that ends the user impact, and it needs an operator.\n\nJournal: `journals/2026-08-19-chaos-injection-503s.md`. Tell me if you want it committed.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-19T03:53:11Z",
+  "ended_at": "2026-08-19T04:02:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 533,
+  "journal_source_name": "2026-08-19-chaos-injection-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

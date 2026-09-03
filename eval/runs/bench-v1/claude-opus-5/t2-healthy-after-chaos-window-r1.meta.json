@@ -1,0 +1,63 @@
+{
+  "session_id": "4a06237e-3e74-47b7-b312-b12f473d8fc9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 664025,
+  "duration_api_ms": 865854,
+  "total_cost_usd": 3.4785365,
+  "tokens_total": 1560368,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 88,
+      "outputTokens": 63088,
+      "cacheReadInputTokens": 1340618,
+      "cacheCreationInputTokens": 156574,
+      "costUSD": 3.4785365
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /health 2>&1 | tail -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health && echo \"=====\" && scripts/probe.sh /products"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>/dev/null | grep -E \"exceptions_total|products\""
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /metrics 2>/dev/null | grep -E 'process_|chaos_enabled|exceptions_total|duration_seconds_(sum|count)\\{method=\"GET\",path=\"/health\"'"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'http_requests_total|chaos_enabled|exceptions_total|uptime'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json,re,sys\np='journals/2026-08-19-routine-handover-check.md'\nt=open(p).read()\nassert t.startswith('---')\nfm=t.split('---',2)[1]\ntry:\n    import yaml\nexcept ImportError:\n    print('pyyaml missing'); sys.exit(9)\nd=yaml.safe_load(fm)\nsch=json.load(open('.claude/skills/investigate/journal.schema.json'))\nreq=sch['required']\nprint('missing top-level:',[k for k in req if k not in d])\nprint('unknown top-level:',[k for k in d if k not in sch['properties']])\nprint('verdict:',d['verdict'],'| root_cause present:','root_cause' in d)\nids={e['id'] for e in d['evidence']}\nprint('evidence ids:',len(ids))\nbad=[]\nfor h in d['hypotheses']:\n    refs=h['evidence_for']+h['evidence_against']\n    if not refs: bad.append((h['id'],'no citations'))\n    for r in refs:\n        if r not in ids: bad.append((h['id'],'dangling '+r))\nfor lf in d.get('latent_findings',[]):\n    for r in lf['evidence']:\n        if r not in ids: bad.append(('latent','dangling '+r))\nprint('referential problems:',bad or 'none')\nunused=ids-{r for h in d['hypotheses'] for r in h['evidence_for']+h['evidence_against']}-{r for lf in d.get('latent_findings',[]) for r in lf['evidence']}\nprint('evidence not cited by any hypothesis/latent:',sorted(unused, key=lambda x:int(x[1:])))\nfor e in d['evidence']:\n    assert re.match(r'^E[1-9][0-9]*\\$',e['id']), e['id']\n    assert e['type'] in ('log','metric','probe'), e\nprint('states:',[(h['id'],h['state']) for h in d['hypotheses']])\nprint('wall_clock:',d['usage']['wall_clock_seconds'])\n\"\n"
+    }
+  ],
+  "result_tail": "oise you mean.** It is the only bad thing I can see, but it starts only 3.8 seconds after my telemetry starts. To settle this, look at a log that outlives the process \u2014 a proxy or load balancer log.\n\nThe adversarial judge rejected my first draft on both points, plus a third: my summary said \"healthy\" while a page failed 100% of the time. I corrected all three in the journal.\n\nJournal: `journals/2026-08-19-routine-handover-check.md` \u2014 verdict `no-active-incident`, 5 hypotheses (4 validated, 1 killed), 4 latent findings, 22 evidence entries, 7 gaps. I did not commit it; tell me if you want that.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-19T11:39:09Z",
+  "ended_at": "2026-08-19T11:50:16Z",
+  "restages": 0,
+  "wall_seconds_runner": 668,
+  "journal_source_name": "2026-08-19-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

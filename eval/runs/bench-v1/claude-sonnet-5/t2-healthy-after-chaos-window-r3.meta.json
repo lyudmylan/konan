@@ -1,0 +1,55 @@
+{
+  "session_id": "f05a2e85-83b8-499a-98be-777c9e96b10e",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 35,
+  "duration_ms": 418073,
+  "duration_api_ms": 466049,
+  "total_cost_usd": 1.80328305,
+  "tokens_total": 2026426,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 78,
+      "outputTokens": 42241,
+      "cacheReadInputTokens": 1859476,
+      "cacheCreationInputTokens": 124631,
+      "costUSD": 1.80328305
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "bash scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json, yaml, sys\ntry:\n    import jsonschema\nexcept ImportError:\n    print('no jsonschema module available, skipping programmatic validation')\n    sys.exit(0)\n\nwith open('.claude/skills/investigate/journal.schema.json') as f:\n    schema = json.load(f)\nwith open('journals/2026-08-19-routine-handover-chaos-toggle.md') as f:\n    content = f.read()\nfrontmatter = content.split('---')[1]\ndata = yaml.safe_load(frontmatter)\njsonschema.validate(data, schema)\nprint('VALID')\n\"\n"
+    }
+  ],
+  "result_tail": "caused 4 failed requests (503 errors) on `/products`, `/products/2`, and `POST /orders`. Chaos mode turned off at 01:54:52 UTC. All traffic since then has worked.\n\nThree independent checks found the same cause: no crash, no code defect, no ongoing dependency problem. A full log check confirmed these were the only 4 errors in the whole log. No errors exist outside this window.\n\nTwo open gaps:\n- The log does not show who or what turned chaos mode on.\n- No older logs exist. If \"earlier\" meant something before this process started, we cannot check it.\n\nNo action is needed on the service right now.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-19T01:55:17Z",
+  "ended_at": "2026-08-19T02:02:18Z",
+  "restages": 0,
+  "wall_seconds_runner": 421,
+  "journal_source_name": "2026-08-19-routine-handover-chaos-toggle.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

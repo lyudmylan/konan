@@ -1,0 +1,39 @@
+{
+  "session_id": "0e63fa12-d565-4366-89e0-061d46541de7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 6,
+  "duration_ms": 278293,
+  "duration_api_ms": 492244,
+  "total_cost_usd": 5.4516725,
+  "tokens_total": 1074036,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 4660,
+      "outputTokens": 41693,
+      "cacheReadInputTokens": 873915,
+      "cacheCreationInputTokens": 153768,
+      "costUSD": 5.4516725
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport re, sys, json, datetime\ntry:\n    import yaml\nexcept ImportError:\n    print(\"no pyyaml\"); sys.exit(0)\ntext = open(\"journals/2026-08-24-routine-handover-check.md\").read()\nfm = text.split(\"---\\n\")[1]\ncore = yaml.safe_load(fm)\nschema = json.load(open(\".claude/skills/investigate/journal.schema.json\"))\ntry:\n    import jsonschema\n    # yaml parses date-times as datetime objects; stringify for format check\n    def norm(o):\n        if isinstance(o, dict): return {k: norm(v) for k, v in o.items()}\n        if isinstance(o, list): return [norm(v) for v in o]\n        if isinstance(o, datetime.datetime): return o.isoformat()\n        return o\n    jsonschema.validate(norm(core), schema, format_checker=jsonschema.FormatChecker())\n    print(\"schema: OK\")\nexcept ImportError:\n    print(\"no jsonschema; shape not checked by lib\")\nev = {e[\"id\"] for e in core[\"evidence\"]}\nrefs = set()\nfor h in core[\"hypotheses\"]:\n    refs |= set(h[\"evidence_for\"]) | set(h[\"evidence_against\"])\nfor l in core.get(\"latent_findings\", []):\n    refs |= set(l[\"evidence\"])\nprint(\"unresolved refs:\", refs - ev)\nprint(\"unreferenced evidence:\", ev - refs)\ns, c = core[\"investigation\"][\"started\"], core[\"investigation\"][\"concluded\"]\nprint(\"wall clock:\", (c - s).total_seconds(), \"declared:\", core[\"usage\"][\"wall_clock_seconds\"])\nprint(\"verdict:\", core[\"verdict\"], \"root_cause present:\", \"root_cause\" in core)\nEOF"
+    }
+  ],
+  "result_tail": " per-route error math.\n\n**Gaps to know at handover:** who called `/chaos/enable` and `/chaos/disable` is outside the read-only surface; the log starts at process start (16:48:17Z), so nothing before that is visible; the three failed requests cannot be told apart from harness traffic.\n\n**One thing for you:** the boundary hook denied one Bash call during journal validation (a Python heredoc). It was a read-only check with no target impact; I stopped rather than retry. Note that the working tree also shows nine older journals as deleted \u2014 that state predates this session and I did not touch them.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-08-24T16:48:52Z",
+  "ended_at": "2026-08-24T16:55:38Z",
+  "restages": 0,
+  "wall_seconds_runner": 406,
+  "journal_source_name": "2026-08-24-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

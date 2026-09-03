@@ -1,0 +1,71 @@
+{
+  "session_id": "29302427-35ad-49fc-964b-2e75ff33b829",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 870603,
+  "duration_api_ms": 1199143,
+  "total_cost_usd": 5.159815500000001,
+  "tokens_total": 2476612,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 130,
+      "outputTokens": 86152,
+      "cacheReadInputTokens": 2139871,
+      "cacheCreationInputTokens": 250459,
+      "costUSD": 5.159815500000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json 2>&1 | head -c 6000"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E \"http_exceptions_total|products|chaos_enabled\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-gip4j7dl/wt/scripts/probe.sh /openapi.json"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-eval-bench-v1-gip4j7dl/wt/scripts/probe.sh /products/4"
+    },
+    {
+      "tool": "Bash",
+      "command": "uv run --with pyyaml --with jsonschema python lab/validate_journal.py"
+    }
+  ],
+  "result_tail": "rnal exception class name (`ZeroDivisionError`) to the client. And log rotation looks incorrect \u2014 one un-rotated file that resets with the process is why this investigation could not see its own incident window.\n\nFull report: `journals/2026-08-19-product-detail-zero-stock-500.md` \u2014 16 evidence entries, 5 hypotheses (1 validated, 3 killed, 1 open), 9 gaps.\n\nTwo notes: I left a temporary validator script at `lab/validate_journal.py` (that directory is gitignored) \u2014 I could not delete it without another Bash call. And konan touched the target read-only throughout, through `scripts/probe.sh` only.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-08-19T12:09:29Z",
+  "ended_at": "2026-08-19T12:24:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 875,
+  "journal_source_name": "2026-08-19-product-detail-zero-stock-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

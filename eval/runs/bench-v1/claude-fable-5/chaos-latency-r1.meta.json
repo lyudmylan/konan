@@ -1,0 +1,51 @@
+{
+  "session_id": "2e342f6c-2de0-44e9-a286-fbf31d88cd94",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 236261,
+  "duration_api_ms": 295585,
+  "total_cost_usd": 4.2029545000000015,
+  "tokens_total": 1195824,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 60,
+      "outputTokens": 23825,
+      "cacheReadInputTokens": 1048802,
+      "cacheCreationInputTokens": 123137,
+      "costUSD": 4.2029545000000015
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; scripts/probe.sh /health"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E 'faultline_chaos_enabled|http_request_duration_seconds_(sum|count)|^HTTP|status'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml,json,jsonschema,sys\nt=open('journals/2026-08-19-shop-wide-latency.md').read().split('---')[1]\nd=yaml.safe_load(t); s=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(d,s)\nids={e['id'] for e in d['evidence']}\nfor h in d['hypotheses']:\n  assert set(h['evidence_for']+h['evidence_against'])<=ids,h['id']\nprint('ok', d['usage']['wall_clock_seconds'])\n\" 2>&1 | tail -3"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml,json,jsonschema\nt=open('journals/2026-08-19-shop-wide-latency.md').read().split('---')[1]\nd=yaml.safe_load(t); s=json.load(open('.claude/skills/investigate/journal.schema.json'))\njsonschema.validate(d,s)\nids={e['id'] for e in d['evidence']}\nfor h in d['hypotheses']:\n  assert set(h['evidence_for']+h['evidence_against'])<=ids,h['id']\nprint('ok', d['usage']['wall_clock_seconds'])\n\""
+    }
+  ],
+  "result_tail": "line \u2192 3 triage lenses in parallel (all converged on the marker) \u2192 deep-dive skipped (evidence deterministic) \u2192 adversarial judge: H1 validated, H2 software-defect and H3 load-saturation invalidated.\n\n**Journal:** `journals/2026-08-19-shop-wide-latency.md` (17 evidence entries, 4 gaps \u2014 actor behind `/chaos/enable` not observable, no CPU metric, health exemption inferred from observation, end of impact unknown).\n\n**Next (read-only):** watch `faultline_chaos_enabled` and the log for a `chaos_disabled` marker to see when impact ends. I did not commit the journal; say so if you want it committed.",
+  "run_id": "bench-v1",
+  "model": "claude-fable-5",
+  "scenario": "chaos-latency",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-08-19T17:15:49Z",
+  "ended_at": "2026-08-19T17:19:47Z",
+  "restages": 0,
+  "wall_seconds_runner": 237,
+  "journal_source_name": "2026-08-19-shop-wide-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

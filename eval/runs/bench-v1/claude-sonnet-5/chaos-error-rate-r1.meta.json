@@ -1,0 +1,47 @@
+{
+  "session_id": "92fc57bc-cc45-49f3-b8a0-ce78fccb8490",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 8,
+  "duration_ms": 150045,
+  "duration_api_ms": 506503,
+  "total_cost_usd": 2.0353005,
+  "tokens_total": 2218205,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 86,
+      "outputTokens": 46860,
+      "cacheReadInputTokens": 2022590,
+      "cacheCreationInputTokens": 148669,
+      "costUSD": 2.0353005
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 - <<'EOF'\nimport yaml, json, re\ntext = open(\"journals/2026-08-18-chaos-mode-enabled.md\").read()\nfm = text.split(\"---\\n\",2)[1]\ndata = yaml.safe_load(fm)\ntry:\n    import jsonschema\n    schema = json.load(open(\".claude/skills/investigate/journal.schema.json\"))\n    jsonschema.validate(data, schema)\n    print(\"SCHEMA OK\")\nexcept ImportError:\n    print(\"jsonschema not installed, doing manual checks\")\n    print(\"keys:\", list(data.keys()))\nexcept Exception as e:\n    print(\"SCHEMA ERROR:\", e)\n\n# referential integrity checks\nev_ids = {e[\"id\"] for e in data[\"evidence\"]}\nfor h in data[\"hypotheses\"]:\n    for ref in h[\"evidence_for\"] + h[\"evidence_against\"]:\n        assert ref in ev_ids, f\"missing {ref}\"\nprint(\"all evidence refs resolve\")\nprint(\"root_cause hypothesis state:\", [h[\"state\"] for h in data[\"hypotheses\"] if h[\"id\"]==data[\"root_cause\"][\"hypothesis\"]])\n\nfrom datetime import datetime\nstarted = datetime.fromisoformat(data[\"investigation\"][\"started\"].replace(\"Z\",\"+00:00\"))\nconcluded = datetime.fromisoformat(data[\"investigation\"][\"concluded\"].replace(\"Z\",\"+00:00\"))\ndelta = (concluded-started).total_seconds()\nprint(\"computed wall_clock_seconds:\", delta, \"vs recorded:\", data[\"usage\"][\"wall_clock_seconds\"])\nEOF"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json\nfrom datetime import datetime\n\ntext = open('journals/2026-08-18-chaos-mode-enabled.md').read()\nfm = text.split('---')[1]\ndata = yaml.safe_load(fm)\n\ntry:\n    import jsonschema\n    schema = json.load(open('.claude/skills/investigate/journal.schema.json'))\n    jsonschema.validate(data, schema)\n    print('SCHEMA OK')\nexcept ImportError:\n    print('no jsonschema lib available')\nexcept Exception as e:\n    print('SCHEMA ERROR')\n    print(e)\n\nev_ids = set(e['id'] for e in data['evidence'])\nmissing = []\nfor h in data['hypotheses']:\n    for ref in h['evidence_for'] + h['evidence_against']:\n        if ref not in ev_ids:\n            missing.append(ref)\nprint('missing refs:', missing)\n\nrc = data['root_cause']['hypothesis']\nstates = [h['state'] for h in data['hypotheses'] if h['id'] == rc]\nprint('root_cause hyp state:', states)\n\nstarted = datetime.fromisoformat(data['investigation']['started'].replace('Z', '+00:00'))\nconcluded = datetime.fromisoformat(data['investigation']['concluded'].replace('Z', '+00:00'))\ndelta = (concluded - started).total_seconds()\nprint('computed wall_clock_seconds', delta, 'recorded', data['usage']['wall_clock_seconds'])\n\"\n"
+    }
+  ],
+  "result_tail": "related routes, and the same route/input flipped between success and failure on repeat, which rules out a deterministic code bug.\n\nAn independent adversarial judge reviewed only the evidence (no narrative) and validated the chaos-mode hypothesis while invalidating the other two.\n\nGaps recorded honestly in the journal: no CPU metric is exposed by this service to fully close the saturation question, and the identity of whoever/whatever called `POST /chaos/enable` isn't visible from the investigator's read-only surface.\n\nI did not `git commit` the journal \u2014 let me know if you'd like it committed.",
+  "run_id": "bench-v1",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-08-18T22:18:37Z",
+  "ended_at": "2026-08-18T22:25:38Z",
+  "restages": 0,
+  "wall_seconds_runner": 421,
+  "journal_source_name": "2026-08-18-chaos-mode-enabled.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

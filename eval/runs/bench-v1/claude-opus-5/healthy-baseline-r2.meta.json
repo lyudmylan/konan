@@ -1,0 +1,75 @@
+{
+  "session_id": "06a8f240-af9c-4312-a1fe-a0832616b3a9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 38,
+  "duration_ms": 612499,
+  "duration_api_ms": 765878,
+  "total_cost_usd": 3.4641480000000007,
+  "tokens_total": 2012134,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 106,
+      "outputTokens": 55694,
+      "cacheReadInputTokens": 1807801,
+      "cacheCreationInputTokens": 148533,
+      "costUSD": 3.4641480000000007
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /products/3; echo \"===\"; scripts/probe.sh /products/4"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | tail -40"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json 2>&1 | python3 -c \"import sys;d=sys.stdin.read();print(d[-200:]);import json;j=json.loads(d[:d.rindex(chr(10)+'--')]);print(json.dumps(j,indent=1)[:4000])\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | tail -60"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /health 2>&1 | tail -10"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics | grep -E \"http_exceptions_total|http_requests_total|chaos_enabled|uptime\""
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json > /tmp/oapi.txt 2>&1; head -c 3000 /tmp/oapi.txt"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /metrics 2>&1 | grep -E 'http_requests_total|http_exceptions_total|chaos_enabled|uptime|request_id'"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport json,re,sys\np='journals/2026-08-19-routine-handover-check.md'\nt=open(p).read()\nfm=t.split('---',2)[1]\ntry:\n    import yaml\nexcept ImportError:\n    print('no pyyaml'); sys.exit(0)\nd=yaml.safe_load(fm)\nev={e['id'] for e in d['evidence']}\nprint('evidence ids:',len(ev),'dupes:',len(d['evidence'])-len(ev))\nbad=[]\nfor h in d['hypotheses']:\n    for r in h['evidence_for']+h['evidence_against']:\n        if r not in ev: bad.append((h['id'],r))\n    if not (h['evidence_for'] or h['evidence_against']): bad.append((h['id'],'NO CITATION'))\nfor lf in d.get('latent_findings',[]):\n    for r in lf['evidence']:\n        if r not in ev: bad.append(('latent',r))\nprint('dangling refs:',bad)\nprint('verdict:',d['verdict'],'| root_cause present:','root_cause' in d)\nfrom datetime import datetime\ns=datetime.fromisoformat(d['investigation']['started'].replace('Z','+00:00'))\nc=datetime.fromisoformat(d['investigation']['concluded'].replace('Z','+00:00'))\nprint('wall clock delta:',int((c-s).total_seconds()),'declared:',d['usage']['wall_clock_seconds'])\nprint('id matches filename:',d['investigation']['id']=='2026-08-19-routine-handover-check')\nprint('states:',[(h['id'],h['state']) for h in d['hypotheses']])\n\"\n"
+    }
+  ],
+  "result_tail": "ial judge rejected my first result. It found an unexplained 200 on the product route that could hide a successful `/products/3` call, and it asked if the 2 orders had cut the stock to zero. A second round closed both from telemetry: a full log enumeration reconciles the counters exactly and shows no `/products/3` ever gave 200, and the `order_created` events name products 1 and 2 only. A third probe of `/products/3` failed again, which made the sample 3/3.\n\nI did not commit the journal \u2014 this is an interactive session, and commits are for the unattended shift. Tell me if you want it committed.",
+  "run_id": "bench-v1",
+  "model": "claude-opus-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-08-19T07:41:36Z",
+  "ended_at": "2026-08-19T07:51:51Z",
+  "restages": 0,
+  "wall_seconds_runner": 615,
+  "journal_source_name": "2026-08-19-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
