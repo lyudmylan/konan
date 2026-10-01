@@ -13,7 +13,7 @@ version = "v1"
 
 # The version of Charter that this repo uses. The workflows fetch Charter at the tag charter--v<version>.
 [charter]
-version = "0.2.0"
+version = "0.3.0"
 
 [tools]
 issue_tracker = "github-issues"
@@ -43,6 +43,10 @@ approvals = 1
 # The review loop: a finding at this severity or above keeps the loop open. The limits come from the source.
 [review]
 threshold = "medium"
+
+# The Build phase: each work item has its plan, intents/<part>.plan.md, before the code.
+[build]
+plan_before_code = true
 
 [documents]
 necessary = ["docs/product.md"]

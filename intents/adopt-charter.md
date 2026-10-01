@@ -22,7 +22,9 @@ the rules of the contract with their identifiers.
 - `.github/workflows/`: `tests`, `verdict`, and `review-intents`, written by the setup step; they fetch
   Charter at the tag of `charter.version`. `gates.yml` goes: `tests` runs the same two commands from the
   contract.
-- `intents/_template.md`, and this file as the first intent.
+- `intents/_template.md`, and this file as the first intent. The contract sets `build.plan_before_code`:
+  from the next work item on, the plan `intents/<part>.plan.md` comes before the code. This change request
+  is the bootstrap and carries no plan.
 
 ## Out of scope
 
