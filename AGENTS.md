@@ -1,8 +1,11 @@
 # konan — repo agent instructions
 
-Read `docs/product.md` for what konan is; this file is how to work here. The shared
-AI-SDLC skills (`planning`, `shipping`, `repo-review`) apply; this file
-overrides them where they conflict.
+Read `docs/product.md` for what konan is; this file is how to work here. The repo
+follows Charter: the contract is `charter.toml`, and the section "Charter" below holds
+the rules of the contract with their identifiers. The skills `tracker` and
+`review-loop` of the plugin `charter-practices` apply, and the built-in `/code-review`
+before a change request. The rules of the contract hold; this file adds the rules of
+this repo on top of them.
 
 ## Lab boundary (hard rule)
 
@@ -39,15 +42,16 @@ overrides them where they conflict.
 
 ## Workflow
 
-- Issue-driven: one branch per issue; the PR body links `Closes #N`. Trivial
-  non-behavioral fixes may go direct to main.
+- Issue-driven: one branch per issue; the PR body links `Closes #N`. Every change to a
+  source file goes this way, also a small one: the contract locks it.
 - Unattended shift writes: an on-call session (`/oncall`) may write `journals/` and
   git-commit them on the current branch — those two forms are narrowly allowlisted in
   settings so an unattended investigation never blocks on a prompt. Pushing stays
   human. Widening either entry is SPEC-grade, like the probe allowlist.
 - Quality gates: `uv run eval/tests.py` (scorer + runner pins) and
-  `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) must pass,
-  the repo-review lens before merge, and docs ship with the change. Skill changes are
+  `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) must pass
+  (they are `checks.quality` of the contract), the built-in `/code-review` before
+  merge, and docs ship with the change. Skill changes are
   validated by re-running scenarios with the eval runner (`eval/README.md` → Running
   the corpus with the runner); wiring that into CI is still open (#34).
 - Public-eventually: everything committed here — files, issue bodies, commit
@@ -73,3 +77,54 @@ overrides them where they conflict.
 - `scripts/alert.sh "<summary>" [alertname] [severity]` — eval-side alert emitter:
   appends one contract-shaped complaint line to `alerts/inbox.jsonl` (the lab trigger
   profile, `docs/triggers.md`); prompts by design, like every operator action.
+
+## Charter
+
+The rules of the contract `charter.toml`, which references the organization source. Each rule ends
+with the identifier of its rule in the contract. The scripts of Charter come with the plugin `charter`:
+`charter-check`, `charter-gate`, and `charter-setup` are on the path of the shell while the plugin is
+enabled.
+
+### How a change moves
+
+- Each change to a source file (code, config, doc) has an issue in the tracker. [change.ticket_per_change]
+- Work on a branch. Open a change request that references the issue. A person merges. [tiers.high.approver]
+- The author of a change is not its reviewer. [change.author_not_reviewer]
+- The contract, this file, the intents, and the workflows are in the high risk tier: a deep review, and
+  the leader approves. [tiers.high.paths]
+- A person approves each change to a contract. [change.person_approves_contract]
+- On GitHub, the workflows `tests` and `verdict` run on each change request. A red check "verdict"
+  blocks the merge; its reasons are in the check and in the job log. [checks.quality]
+
+### Plan before the code
+
+A work item has an intent in `intents/<part>.md`: the goal, what is in scope, what is out of scope, and
+the acceptance checks. `intents/_template.md` is the form. A person approves the intent through a change
+request before the work starts. The skill `tracker` writes the issue and the intent. [tiers.high.paths]
+
+### Before a push
+
+Two commands must pass: `charter-gate quality --contract charter.toml` runs the quality checks that the
+contract lists, and `charter-check all charter.toml` runs the contract checks. [checks.quality]
+[instructions.file] [documents.text_checked]
+
+When a file under a declared code path changes, `docs/product.md` changes too, or the change request
+has one line in this exact form: `No document change: <reason>`. [documents.code_paths]
+A false failure of a gate: `False failure: <gate>: <reason>`. A finding of the intent reviewer that the
+author drops: `Dropped finding: <reason>`. One that the leader marks as wrong: `False finding: <reason>`. [checks.quality]
+
+### Text of commits, change requests, and issues
+
+- No private material: no file paths of a computer, no mail addresses, no tokens. [text.private_material_patterns]
+- No session links, and no names of other projects of this organization. [text.session_link_patterns]
+  [text.project_name_patterns]
+
+### Review and limits
+
+In a review, look also for broken contracts between parts of the system, and for documents that the
+change made stale. [documents.necessary]
+Stop and ask a person after the limits of the contract: failed runs of the acceptance checks, review
+rounds, or refusals in sequence. [limits.acceptance_loop] [limits.review_loop] [limits.refusals]
+The intent reviewer gives each finding a severity. A finding at the threshold or above keeps the
+author-reviewer loop open; below it, or at the limit, the loop ends and a person decides. The author side
+is the skill `review-loop`. [review.threshold] [limits.review_loop]

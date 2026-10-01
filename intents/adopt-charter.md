@@ -1,0 +1,45 @@
+# Intent: adopt Charter
+
+Work item: #79. Status: done. Approval: a person merges the change request that adds this file.
+
+## Goal
+
+This repo follows Charter: its contract names the organization source and the version of Charter, the
+three workflows run on each change request, each work item has an intent, and the rules file carries
+the rules of the contract with their identifiers.
+
+## In scope
+
+- `charter.toml`: the contract, written by the setup step of Charter. Quality checks: the two test
+  commands of this repo. Code paths: `skills/**`, `hooks/**`, `scripts/**`, so that a change under them
+  changes `docs/product.md` too, or records a reason. High tier: the contract, the rules file, the
+  intents, the workflows, the boundary hook and its tests, the settings file, and `scripts/probe.sh`.
+- `AGENTS.md`: the rules of this repo stay. The section "Charter" adds the rules of the contract with
+  their identifiers. The references to the skills of the previous framework become `tracker`,
+  `review-loop`, and the built-in `/code-review`. The sentence that allowed trivial fixes direct to
+  main goes: the organization locks one ticket and one change request per change.
+- `CLAUDE.md`: one sentence points to the contract and to the section "Charter".
+- `.github/workflows/`: `tests`, `verdict`, and `review-intents`, written by the setup step; they fetch
+  Charter at the tag of `charter.version`. `gates.yml` goes: `tests` runs the same two commands from the
+  contract.
+- `intents/_template.md`, and this file as the first intent.
+
+## Out of scope
+
+A ruleset on the main branch: the repo is private on the free plan; the check "verdict" informs, and a
+person merges. A change to `docs/product.md` or `docs/architecture.md`: both exist and stay.
+
+## Acceptance checks
+
+## Automatic checks
+
+1. The contract passes the contract checks against the organization source, and the rules file agrees
+   with it. command: `charter-check all charter.toml`
+2. The two quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
+
+## Manual checks
+
+3. On the change request that adds this file, the checks `tests` and `verdict` run and the intent
+   reviewer posts its report. who: the leader. Not automatic: the runs need the two secrets on GitHub.
+4. In a session of Claude Code in this repo, `charter-check` and `charter-gate` are on the path, from the
+   installed plugin. who: the leader. Not automatic: the plugin is installed per computer.
