@@ -4,8 +4,7 @@ Read `AGENTS.md` first — it is how to work in this repo (lab boundary, workflo
 commands).
 
 `docs/product.md` is the product source of truth — ground planning and scope decisions
-in it. The shared AI-SDLC skills (`planning`, `shipping`, `repo-review`)
-apply here.
+in it. The repo follows Charter (`charter.toml`; the section "Charter" of `AGENTS.md`).
 
 Rules that matter in this repo:
 
