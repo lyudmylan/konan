@@ -38,8 +38,9 @@ person merges. A change to `docs/product.md` or `docs/architecture.md`: both exi
 3. The three workflows exist and the old one is gone.
    command: `test -f .github/workflows/tests.yml -a -f .github/workflows/verdict.yml -a -f .github/workflows/review-intents.yml -a ! -e .github/workflows/gates.yml`
 
-4. `CLAUDE.md` points to the contract, and no instruction file names the skills of the previous framework.
-   command: `sh -c 'grep -q charter.toml CLAUDE.md && ! grep -nE "shipping|repo-review" CLAUDE.md AGENTS.md'`
+4. `CLAUDE.md` points to the contract, no instruction file names the skills of the previous framework, and
+   `AGENTS.md` no longer allows trivial fixes direct to main.
+   command: `sh -c 'grep -q charter.toml CLAUDE.md && ! grep -nE "shipping|repo-review" CLAUDE.md AGENTS.md && ! grep -niE "trivial|direct to main" AGENTS.md'`
 
 ## Manual checks
 
@@ -48,3 +49,5 @@ person merges. A change to `docs/product.md` or `docs/architecture.md`: both exi
    branch. who: the leader. Not automatic: the runs need the two secrets on GitHub.
 6. In a session of Claude Code in this repo, `charter-check` and `charter-gate` are on the path, from the
    installed plugin. who: the leader. Not automatic: the plugin is installed per computer.
+   The run of 2026-10-01, by the leader, in a new session: `charter-check all charter.toml` ran by name
+   and passed against the organization source.
