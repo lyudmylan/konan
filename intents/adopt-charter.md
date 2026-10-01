@@ -38,10 +38,13 @@ person merges. A change to `docs/product.md` or `docs/architecture.md`: both exi
 3. The three workflows exist and the old one is gone.
    command: `test -f .github/workflows/tests.yml -a -f .github/workflows/verdict.yml -a -f .github/workflows/review-intents.yml -a ! -e .github/workflows/gates.yml`
 
+4. `CLAUDE.md` points to the contract, and no instruction file names the skills of the previous framework.
+   command: `sh -c 'grep -q charter.toml CLAUDE.md && ! grep -nE "shipping|repo-review" CLAUDE.md AGENTS.md'`
+
 ## Manual checks
 
-4. On the change request that adds this file, the check `tests` runs and the intent reviewer posts its
+5. On the change request that adds this file, the check `tests` runs and the intent reviewer posts its
    report; the check "verdict" runs from the next change request on, because GitHub runs it from the main
    branch. who: the leader. Not automatic: the runs need the two secrets on GitHub.
-5. In a session of Claude Code in this repo, `charter-check` and `charter-gate` are on the path, from the
+6. In a session of Claude Code in this repo, `charter-check` and `charter-gate` are on the path, from the
    installed plugin. who: the leader. Not automatic: the plugin is installed per computer.
