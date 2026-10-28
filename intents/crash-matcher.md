@@ -38,7 +38,8 @@ and the fixture schema: #78. A new tier-3 fixture.
 ## Automatic checks
 
 1. Each bench-v1 journal of `t3-crash-hard-down` whose verdict is `root-cause-identified` matches
-   `no-restart-after`; a statement that says the process restarted does not.
+   `no-restart-after` and `process-died`; a statement that says the process restarted does not match
+   `no-restart-after`.
    test: `eval/tests.py`, the pin "tier-3 calibration". command: `uv run eval/tests.py`
 2. The matchers of `t3-chaos-low-rate-intermittent` match the journals that the pin names as stating the
    fact. The list of journals is the human judgment, made once, in the change request that adds the pin (the

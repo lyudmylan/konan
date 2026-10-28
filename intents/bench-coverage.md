@@ -17,10 +17,11 @@ A benchmark table that is short of its pre-registered plan says so on its face.
 - `eval/run.py`: writes `plan.json` at the first invocation of a run id, and stops with an error when a later
   invocation of the same run id names other fixtures or another repetition count: the plan is pre-registered.
   `eval/runs/bench-v1/plan.json` is backfilled by hand from the protocol (10 fixtures, N = 3).
-- `eval/tests.py`: four pins. A run directory with 27 of 30 planned runs renders `missing 3` for that model.
+- `eval/tests.py`: five pins. A run directory with 27 of 30 planned runs renders `missing 3` for that model.
   `eval/runs/bench-v1` renders `missing 0` for each of its three models. The quota stops of
   `quota-stops.jsonl` appear next to a missing count. A fixture added to `eval/scenarios/` leaves bench-v1 at
-  `missing 0`.
+  `missing 0`. A second invocation of a run id with other fixtures or another repetition count exits non-zero
+  and leaves `plan.json` unchanged.
 - `eval/BENCHMARK.md`, section "Protocol": a table carries its coverage line; a table with a missing count
   above zero is not published as complete.
 
@@ -44,9 +45,12 @@ format of `results.jsonl` and of the sidecars: unchanged.
 4. The plan comes from the run directory, not from the live fixtures: a fixture added to `eval/scenarios/`
    leaves bench-v1 at `missing 0`.
    test: `eval/tests.py`, the pin "coverage, plan source".
-5. The protocol names the coverage line.
+5. A second invocation of a run id with other fixtures or another `--repeat` exits non-zero and leaves
+   `plan.json` unchanged.
+   test: `eval/tests.py`, the pin "coverage, plan is pre-registered".
+6. The protocol names the coverage line.
    command: `grep -q 'coverage line' eval/BENCHMARK.md`
-6. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
+7. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks
 

@@ -62,7 +62,8 @@ committed journals under `journals/` and `eval/runs/`: they stay version 1.
 5. A version 2 journal with a cause id outside the list is a failing report, not an input error.
    test: `eval/tests.py`, the pin "journal cause id".
 6. The product document states the exception in the out-of-scope line of v0.2.
-   command: `grep 'Out of scope for v0.2' docs/product.md | grep -q 'cause field'`
+   command: `grep -A3 'Out of scope for v0.2' docs/product.md | grep -q 'cause field'` (it proves the phrase in
+   the line; the leader reads the sense at merge)
 7. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks

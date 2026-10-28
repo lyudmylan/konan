@@ -4,8 +4,8 @@ Work item: #81. Status: planned. Approval: a person merges the change request th
 
 ## Goal
 
-The benchmark table carries a model result for every tier, tier 3 included, from runs that a corrected corpus
-scores.
+The benchmark table carries a model result for every tier, or states for a tier why it carries no claim, from
+runs that a corrected corpus scores.
 
 ## In scope
 
@@ -49,9 +49,9 @@ the triage experiment (#26) — stay on the roadmap or come after the flip.
    command: `test "$(uv run eval/bench.py --runs eval/runs/bench-v2 | grep -c 'missing 0')" = 3`
 2. The committed table reproduces from the committed runs.
    command: `uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md && git diff --quiet -- eval/BENCHMARK-results.md`
-3. The pinned paths of the scope did not change across the round. The two commits are the ones the results
-   section names as the first and the last run.
-   command: `git diff --quiet <first-run commit> <last-run commit> -- skills/investigate skills/konan skills/oncall hooks/boundary.py eval/score.py eval/scenarios eval/fixture.schema.json`
+3. The pinned paths of the scope did not change across the round. The results section records both commits
+   as `first-run: <sha>` and `last-run: <sha>`; the command reads them from there.
+   command: `git diff --quiet $(grep -oE 'first-run: [0-9a-f]+' eval/BENCHMARK.md | tail -1 | cut -d' ' -f2) $(grep -oE 'last-run: [0-9a-f]+' eval/BENCHMARK.md | tail -1 | cut -d' ' -f2) -- skills/investigate skills/konan skills/oncall hooks/boundary.py eval/score.py eval/scenarios eval/fixture.schema.json`
 4. The README and the protocol carry the round, and the tier-3 caveat is gone from the README.
    command: `grep -q bench-v2 README.md && grep -q bench-v2 eval/BENCHMARK.md && ! grep -q 'tier-3 fixtures are not yet' README.md`
 5. The worktree path hides the round from the model: the path the runner builds for a worktree carries
