@@ -11,9 +11,13 @@ prose never scores as a false attribution.
 
 - `skills/investigate/report-contract.md`: `konan_journal: 2` adds `root_cause.cause`, one id from a closed
   list that the contract defines next to the incident classes. The list is target-generic: no name of a
-  target, an endpoint, or a seeded defect; each id belongs to one incident class. The list itself is the
-  design decision of the plan of this work item and is approved with the plan. The section "Versioning"
-  records the bump and the reason.
+  target, an endpoint, or a seeded defect; each id belongs to one incident class. The list is part of the
+  approval of this work item: `intents/cause-field.plan.md` states it in full before any code, the leader
+  accepts the plan with the list in it, and a later change to the list is a change to the contract that goes
+  through its own change request. `root_cause.cause` lives inside `root_cause`, which the schema requires
+  exactly when the verdict is `root-cause-identified`; a journal with another verdict has no cause, and the
+  fixture of such a scenario states `expected.cause: null`. The section "Versioning" records the bump and the
+  reason.
 - `skills/investigate/journal.schema.json`: the field and its enum under version 2; a version 1 journal
   stays valid against version 1.
 - `skills/investigate/SKILL.md`, and the lens or judge text that fills the root cause: the investigator
@@ -57,8 +61,8 @@ committed journals under `journals/` and `eval/runs/`: they stay version 1.
    test: `eval/tests.py`, the pin "fixture cause ids".
 5. A version 2 journal with a cause id outside the list is a failing report, not an input error.
    test: `eval/tests.py`, the pin "journal cause id".
-6. The product document states the exception.
-   command: `grep -q 'cause field' docs/product.md`
+6. The product document states the exception in the out-of-scope line of v0.2.
+   command: `grep 'Out of scope for v0.2' docs/product.md | grep -q 'cause field'`
 7. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks

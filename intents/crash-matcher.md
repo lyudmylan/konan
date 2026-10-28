@@ -23,7 +23,9 @@ words that the report contract lets an investigator use.
   calibration is pinned and not re-guessed. It includes one negative case: a root-cause statement that says
   the process restarted does not match `no-restart-after`.
 - `eval/README.md`: the sentence on the first-cut status of the tier-2 and tier-3 matchers reflects the
-  calibrated state.
+  calibrated state. Protocol item 8 of `eval/BENCHMARK.md` (a first-cut matcher may be calibrated after the
+  first run) stays: it governs the first-cut matchers of future fixtures; after this change no live fixture
+  is first-cut.
 
 ## Out of scope
 
@@ -38,8 +40,9 @@ and the fixture schema: #78. A new tier-3 fixture.
 1. Each bench-v1 journal of `t3-crash-hard-down` whose verdict is `root-cause-identified` matches
    `no-restart-after`; a statement that says the process restarted does not.
    test: `eval/tests.py`, the pin "tier-3 calibration". command: `uv run eval/tests.py`
-2. The matchers of `t3-chaos-low-rate-intermittent` match each of its bench-v1 journals that states the
-   fact (the class label is not part of this check; it is #77).
+2. The matchers of `t3-chaos-low-rate-intermittent` match the journals that the pin names as stating the
+   fact. The list of journals is the human judgment, made once, in the change request that adds the pin (the
+   class label is not part of this check; it is #77).
    test: the same pin.
 3. The first-cut marks are gone from the two fixtures.
    command: `! grep -q 'first-cut' eval/scenarios/t3-crash-hard-down.yaml eval/scenarios/t3-chaos-low-rate-intermittent.yaml`
@@ -47,4 +50,6 @@ and the fixture schema: #78. A new tier-3 fixture.
 
 ## Manual checks
 
-None: the committed journals are the ground of every check.
+5. The leader reads the recalibrated matchers against the journals the pin names, and confirms that no
+   alternation was widened beyond the wording of those journals. who: the leader. Not automatic: it is a
+   reading of meaning, and a calibration pinned on the same nine journals must not become overfitting.

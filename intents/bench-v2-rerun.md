@@ -15,9 +15,11 @@ scores.
 - The plan, pre-registered here: the 10 fixtures × 3 models × N = 3 = 90 runs under the run id `bench-v2`.
   The protocol of `eval/BENCHMARK.md` is unchanged: fixed inputs, blinding, a fresh lab per run, batches by
   quota window, a failed run counts and is not retried, a quota stop is retried.
-- The pinned paths of the round: `skills/investigate`, `skills/konan`, `skills/oncall`, `hooks/boundary.py`,
-  `eval/score.py`, `eval/scenarios/`, `eval/fixture.schema.json`, `skills/investigate/journal.schema.json`.
-  None of them changes between the first and the last run; a change restarts the round under a new run id.
+- The pinned paths of the round, named once here: `skills/investigate` (the report contract and the journal
+  schema are inside it), `skills/konan`, `skills/oncall`, `hooks/boundary.py`, `eval/score.py`,
+  `eval/scenarios/`, `eval/fixture.schema.json`. None of them changes between the first and the last run; a
+  change restarts the round under a new run id. `eval/run.py` and `eval/bench.py` are not pinned: their
+  changes precede the first run.
 - Models: the three of bench-v1 (`claude-fable-5`, `claude-opus-5`, `claude-sonnet-5`) when their ids still
   run, so the tier-3 delta measures the fixture fix and not a model change. When an id does not run, the
   current model of the same tier replaces it and the results section names the substitution.
@@ -42,19 +44,19 @@ the triage experiment (#26) — stay on the roadmap or come after the flip.
 
 ## Automatic checks
 
-1. The run directory covers the plan: 30 completed runs per model, `missing 0` on each of the three coverage
-   lines.
+1. The run directory covers the plan: `missing 0` on each of the three coverage lines (30 runs per model,
+   completed or failed; a failed run is reported, not retried).
    command: `test "$(uv run eval/bench.py --runs eval/runs/bench-v2 | grep -c 'missing 0')" = 3`
 2. The committed table reproduces from the committed runs.
    command: `uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md && git diff --quiet -- eval/BENCHMARK-results.md`
-3. The pinned paths did not change across the round. The two commits are the ones the results section
-   names as the first and the last run.
+3. The pinned paths of the scope did not change across the round. The two commits are the ones the results
+   section names as the first and the last run.
    command: `git diff --quiet <first-run commit> <last-run commit> -- skills/investigate skills/konan skills/oncall hooks/boundary.py eval/score.py eval/scenarios eval/fixture.schema.json`
 4. The README and the protocol carry the round, and the tier-3 caveat is gone from the README.
    command: `grep -q bench-v2 README.md && grep -q bench-v2 eval/BENCHMARK.md && ! grep -q 'tier-3 fixtures are not yet' README.md`
-5. The worktree path hides the round from the model: the prefix of the runner's temporary directory carries
-   neither `eval` nor the run id.
-   command: `! grep -qE 'mkdtemp\(prefix=.*(eval|run_id)' eval/run.py`
+5. The worktree path hides the round from the model: the path the runner builds for a worktree carries
+   neither `eval` nor the run id, whatever call builds it.
+   test: `eval/tests.py`, the pin "neutral worktree". command: `uv run eval/tests.py`
 6. The results section carries the false-fail table.
    command: `grep -qi 'false-fail' eval/BENCHMARK.md`
 7. The quality checks of the contract pass at the pin. command: `charter-gate quality --contract charter.toml`
@@ -72,3 +74,5 @@ the triage experiment (#26) — stay on the roadmap or come after the flip.
     comparison.
 11. The quota measures of the protocol — runs between quota stops, and the usage-panel deltas per model — are
     recorded in the results section. who: the engineer. Not automatic: the usage panel is read by a person.
+12. The false-fail table has one row per failed scenario of `eval/runs/bench-v2/scorecard.md`, with the
+    columns of the scope. who: the leader. Not automatic: whether the agent was wrong is a reading.
