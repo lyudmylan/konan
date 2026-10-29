@@ -18,8 +18,8 @@ words that the report contract lets an investigator use.
 - The other first-cut matchers of tier 3 — `process-died` in the same fixture, and the matchers of
   `t3-chaos-low-rate-intermittent` — are checked the same way against their committed bench-v1 journals (nine for the crash fixture,
   eight for the low-rate fixture). A matcher that
-  misses a journal which states the fact correctly is recalibrated in the same change. The `scoring_notes`
-  of both fixtures lose the "first-cut" mark.
+  misses a journal which states the fact correctly is recalibrated in the same change. The `scoring_notes` of the crash fixture lose the "first-cut" mark; the low-rate fixture carries
+  none.
 - `eval/tests.py`: one pin runs the two tier-3 fixtures over their committed bench-v1 journals, so the
   calibration is pinned and not re-guessed. It includes one negative case: a root-cause statement that says
   the process restarted does not match `no-restart-after`.
@@ -47,7 +47,8 @@ and the fixture schema: #78. A new tier-3 fixture.
    class label is not part of this check; it is #77); the pin also holds the one journal that sizes nothing
    (Opus r2) as a miss.
    test: the same pin.
-3. The first-cut marks are gone from the two fixtures.
+3. The first-cut mark is gone from the crash fixture; the low-rate fixture never carried one, and the command
+   keeps both files as a guard against the mark returning.
    command: `! grep -q 'first-cut' eval/scenarios/t3-crash-hard-down.yaml eval/scenarios/t3-chaos-low-rate-intermittent.yaml`
 4. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
