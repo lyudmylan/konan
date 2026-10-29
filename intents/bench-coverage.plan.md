@@ -26,8 +26,8 @@ conversation.
    "## Coverage" with one line per (run, model):
    `- bench-v1 claude-sonnet-5: planned 30, completed 24, failed 6, missing 0`, and when missing is above
    zero: `missing 3 (2 stopped by quota and not resumed, 1 never scheduled)`. The words `missing <n>` appear
-   on the per-model lines only, so the check of #81 (`grep -cE 'missing 0([^0-9]|$)'` equals the number of
-   models) reads them and nothing else.
+   on the per-model lines only, so check 1 of `intents/bench-v2-rerun.md` (the `grep -cE 'missing 0([^0-9]|$)'` count equals the
+   number of models) reads them and nothing else.
 3. `eval/runs/bench-v1/plan.json`, backfilled by hand from the protocol: the ten scenario ids, repeat 3, and
    `"backfilled": true` with the source (protocol items 2 and 3, the results section). The committed
    `eval/BENCHMARK-results.md` is not regenerated: it stays as published; #81 replaces it.
@@ -60,7 +60,8 @@ conversation.
    explain a gap — at its head; a table with a missing count above zero is not published as complete
    (check 6 greps "coverage line"). In "Reproduce", the comment "until `results.jsonl` covers the plan"
    becomes "until the coverage line says missing 0". The results section of bench-v1 does not change.
-6. The two commands of `AGENTS.md`, then the seven checks of the intent by hand. One change request,
+6. The two commands of `AGENTS.md`, then the seven checks of the intent: five by `uv run eval/tests.py`, then the two
+   commands (6, 7). One change request,
    `Closes #76`, on this branch. No file under a code path changes.
 
 ## Files
