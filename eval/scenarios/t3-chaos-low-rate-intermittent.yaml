@@ -63,7 +63,8 @@ expected:
     - id: switch-flipped
       all_of: ["(?i)enab"]
     - id: rare-but-real
-      all_of: ["(?i)intermittent|occasional|rare|low[\\s-]rate|small\\s+fraction|a\\s+few|sporadic|probabilist"]
+      # calibrated on the committed bench-v1 journals (#75): "a/random fraction" and a one-digit percentage added; pin 18 of eval/tests.py
+      all_of: ["(?i)intermittent|occasional|rare|low[\\s-]rate|\\b(a|small|random)\\s+fraction|a\\s+few|sporadic|probabilist|(?<![\\d.])\\d\\s*%"]
   must_not_claim:
     - id: not-code-defect
       any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]
@@ -75,4 +76,5 @@ scoring_notes: >-
   journal — but with a handful of 503s among dozens of successes; the gauge and the
   marker are decisive once looked at, and the report should size the impact honestly
   (a small fraction of requests). "Probably nothing" is the null-verdict pressure in
-  the other direction: dismissing a real, rare failure is the failure mode here.
+  the other direction: dismissing a real, rare failure is the failure mode here. The
+  matcher rare-but-real is calibrated on the committed bench-v1 journals (#75).
