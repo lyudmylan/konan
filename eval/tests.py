@@ -329,12 +329,8 @@ def _coverage_dir(tmp, model="test-model", present=27):
     return run_dir, pairs[present:]
 
 
-def _render(run_dir, fixtures=None):
-    fixtures = fixtures or bench.load_fixtures()
-    rows = bench.collect([run_dir], fixtures, JV)
-    cov = bench.coverage(rows, bench.load_plan(run_dir), run_dir)
-    bench.RUN_DIRS[:] = [str(run_dir)]
-    return bench.render(rows, bench.aggregate(rows), [Path(run_dir).name], cov)
+def _render(run_dir):
+    return bench.build([run_dir])[3]   # the path main() renders through
 
 
 def _missing_zero_lines(md):
@@ -346,11 +342,19 @@ def test_bench_coverage_short_plan():
     # table and on the model line, never only in a footnote.
     with tempfile.TemporaryDirectory() as tmp:
         run_dir, _ = _coverage_dir(Path(tmp))
+        (run_dir / "test-model" / "healthy-baseline-r4.meta.json").write_text(json.dumps(   # outside the plan
+            {"model": "test-model", "scenario": "healthy-baseline", "rep": 4, "status": "ok", "quota_error": False}))
         md = _render(run_dir)
+        (Path(tmp) / "no-plan" / "m").mkdir(parents=True)
+        try:
+            bench.load_plan(Path(tmp) / "no-plan")
+            raise AssertionError("a run directory without a plan was accepted")
+        except SystemExit as e:
+            assert e.code not in (0, None) and "plan.json" in str(e.code), e.code
     head = md.splitlines()[2]
     assert head.startswith("**Incomplete: 3 of 30 planned runs are missing** (test-model: 3)"), head
     assert ("- bench-t test-model: planned 30, completed 27, failed 0, missing 3 "
-            "(0 stopped by quota and not resumed, 3 never scheduled)") in md, md
+            "(0 stopped by quota and not resumed, 3 never scheduled); 1 outside the plan") in md, md
     assert md.index("## Coverage") < md.index("## Per tier")
 
 
@@ -394,12 +398,11 @@ def test_bench_coverage_plan_source():
         (scen / "zz-added-later.yaml").write_text(text.replace("  id: healthy-baseline\n", "  id: zz-added-later\n"))
         live = bench.SCEN
         try:
-            bench.SCEN = scen
-            fixtures = bench.load_fixtures()
+            bench.SCEN = scen   # the live directory, for build(): eleven fixtures
+            assert len(bench.load_fixtures()) == len(SCENARIO_IDS) + 1
+            md = _render(EVAL / "runs/bench-v1")
         finally:
             bench.SCEN = live
-        assert len(fixtures) == len(SCENARIO_IDS) + 1
-        md = _render(EVAL / "runs/bench-v1", fixtures)
     assert len(_missing_zero_lines(md)) == 3, md
     assert "Coverage: complete, 90 of 90 planned runs." in md
 

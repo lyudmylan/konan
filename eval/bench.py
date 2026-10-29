@@ -138,11 +138,12 @@ def coverage(rows, plan, run_dir):
     out = []
     for model, rs in sorted(by_model.items()):
         present = {(r["scenario"], r["rep"]) for r in rs}
+        in_plan = [r for r in rs if (r["scenario"], r["rep"]) in expected]
         missing = sorted(expected - present)
         quota = [p for p in missing if (model, p[0], p[1]) in stopped]
         out.append({"run": run_dir.name, "model": model, "planned": len(expected),
-                    "completed": sum(1 for r in rs if r["status"] == "ok"),
-                    "failed": sum(1 for r in rs if r["status"] != "ok"),
+                    "completed": sum(1 for r in in_plan if r["status"] == "ok"),
+                    "failed": sum(1 for r in in_plan if r["status"] != "ok"),
                     "missing": len(missing), "quota_stopped": len(quota),
                     "never_scheduled": len(missing) - len(quota),
                     "outside_plan": len(present - expected)})
@@ -288,6 +289,20 @@ def render(rows, table, run_names, cov=None):
 RUN_DIRS = []
 
 
+def build(run_dirs, plan=None):
+    """What main() renders — and what the pins render through: the rows, the table, the
+    coverage, and the markdown."""
+    RUN_DIRS[:] = [str(r) for r in run_dirs]
+    fixtures = load_fixtures()
+    jv = Draft202012Validator(json.loads((REPO / "skills/investigate/journal.schema.json").read_text()))
+    rows = collect(run_dirs, fixtures, jv)
+    table = aggregate(rows)
+    cov = []
+    for rd in run_dirs:
+        cov += coverage(rows, load_plan(rd, plan), rd)
+    return rows, table, cov, render(rows, table, [Path(r).name for r in run_dirs], cov)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs", nargs="+", required=True, help="eval/runs/<run-id> directories")
@@ -295,15 +310,7 @@ def main():
     ap.add_argument("--json", help="also write rows + table as JSON here")
     ap.add_argument("--plan", help="the pre-registered plan, for every run directory given (default: <run>/plan.json)")
     a = ap.parse_args()
-    RUN_DIRS.extend(a.runs)
-    fixtures = load_fixtures()
-    jv = Draft202012Validator(json.loads((REPO / "skills/investigate/journal.schema.json").read_text()))
-    rows = collect(a.runs, fixtures, jv)
-    table = aggregate(rows)
-    cov = []
-    for rd in a.runs:
-        cov += coverage(rows, load_plan(rd, a.plan), rd)
-    md = render(rows, table, [Path(r).name for r in a.runs], cov)
+    rows, table, cov, md = build(a.runs, a.plan)
     if a.output:
         Path(a.output).write_text(md)
         print(f"bench.py: wrote {a.output} ({len(rows)} runs)")

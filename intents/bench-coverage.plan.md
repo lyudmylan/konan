@@ -21,7 +21,7 @@ conversation.
    drops it today and keeps doing so); missing = the planned (scenario, repetition) pairs without a row; of
    the missing pairs, those with an entry in `quota-stops.jsonl` are "stopped by quota and not resumed", the
    rest "never scheduled"; pairs with a row outside the plan are counted apart and reported, not scored into
-   the plan. `render` writes, directly under the title and before every table: "Coverage: complete, 90 of 90
+   the plan. Both this count and the missing-plan error are held by the pin of check 1. `render` writes, directly under the title and before every table: "Coverage: complete, 90 of 90
    planned runs." or "**Incomplete: 3 of 90 planned runs are missing** (claude-x: 3)."; then a section
    "## Coverage" with one line per (run, model):
    `- bench-v1 claude-sonnet-5: planned 30, completed 24, failed 6, missing 0`, and when missing is above
@@ -35,20 +35,24 @@ conversation.
    `OK: 5 coverage pins hold`. Each cites its check of the intent:
    - `test_bench_coverage_short_plan` (check 1): a temporary run directory with a plan of the ten ids × 3 and
      27 synthetic sidecars of one model (status ok); the rendered text carries "Incomplete: 3 of 30" at its
-     head and `missing 3` on the model line.
+     head and `missing 3` on the model line. A run directory without a plan is an error, and a sidecar
+     outside the plan (a fourth repetition) is counted apart, `1 outside the plan`, not as completed or failed.
    - `test_bench_coverage_complete_plan` (check 2): `eval/runs/bench-v1` renders three lines with `missing 0`,
      one per model, and the Sonnet line says `failed 6`.
    - `test_bench_coverage_quota_stops` (check 3): the directory of check 1 plus a `quota-stops.jsonl` with
      stops for two of the three missing pairs, one of them twice (the backfill of bench-v1 has duplicates),
      and one quota-only sidecar: the line says `missing 3 (2 stopped by quota and not resumed, 1 never
      scheduled)`; the quota sidecar is not a run.
-   - `test_bench_coverage_plan_source` (check 4): the fixtures given to `collect` gain an eleventh id that no
-     file under `eval/scenarios/` has; bench-v1 still renders `missing 0` three times, because the coverage
-     reads the plan file. The live directory is not touched.
+   - `test_bench_coverage_plan_source` (check 4): a copy of `eval/scenarios/` with an eleventh file,
+     `zz-added-later.yaml`; `bench.SCEN` points at the copy while `bench.build`, the function `main()`
+     renders through, runs on bench-v1: `load_fixtures` returns eleven, and the table still renders
+     `missing 0` three times, because the coverage reads the plan file. The committed directory is not
+     touched.
    - `test_bench_coverage_plan_is_pre_registered` (check 5): `runner.register_plan` on a temporary directory
      writes the file; a second call with another repeat, and a third with one id fewer, each raise
      `SystemExit` with a non-zero code and leave the file byte-identical; a fourth call with the same plan
-     passes and leaves it unchanged.
+     passes and leaves it unchanged; a fifth call with `dry_run=True` on an empty directory leaves no
+     `plan.json`: a preview registers nothing.
    The 18 semantics pins and the 4 runner pins do not change.
 5. `eval/BENCHMARK.md`: protocol item 10, "Coverage.", after item 9: the runner pre-registers the plan of a
    run id in `plan.json` at the first invocation and refuses another plan under the same id; the table
@@ -68,7 +72,7 @@ and this file.
 
 The five coverage pins of step 4. Pin 16 keeps loading every fixture; the runner pins keep their four cases.
 
-## Facts the plan rests on
+## Facts the plan rests on (as of this plan, 2026-10-29)
 
 - `eval/scenarios/` holds ten fixtures; bench-v1 ran each three times per model: 30 sidecars per model, 90 in
   all, none of them a quota stop (the retries overwrote those sidecars; the stops live in `quota-stops.jsonl`,
@@ -78,5 +82,6 @@ The five coverage pins of step 4. Pin 16 keeps loading every fixture; the runner
   a model that was never started has no directory and no coverage line. The models of a round are named by
   the protocol and checked by hand (#81).
 - `collect` in `eval/bench.py` drops a sidecar with `quota_error` and reads the rest; `quota_windows` reads
-  `quota-stops.jsonl`; `render` reads the run directories from a module global. The coverage follows the
-  same inputs and adds no new file format.
+  `quota-stops.jsonl`; `render` reads the run directories from a module global; `build` is the one path from the run
+  directories to the markdown, for `main()` and for the pins. The coverage follows the same inputs and adds
+  no new file format.
