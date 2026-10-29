@@ -6,7 +6,7 @@
 """konan benchmark aggregator — turns eval runner output into the tier × model table.
 
     uv run eval/bench.py --runs eval/runs/<run-id> [eval/runs/<other-run-id> ...] \
-        [-o eval/BENCHMARK-results.md] [--json results.json]
+        [-o eval/BENCHMARK-results.md] [--json results.json] [--plan plan.json]
 
 Reads every `<run>/<model>/<scenario>-r<n>.md` journal with its `.meta.json` sidecar,
 re-scores each (fixture, journal) pair with eval/score.py (deterministic — the same
@@ -19,7 +19,10 @@ verdict the runner recorded), and aggregates per tier and model:
   API-equivalent cost median, headless permission denials median.
 
 Runs whose sidecar says status != ok (error, no journal) count as failed runs — a
-benchmark never drops its failures. Tier comes from the scenario id prefix
+benchmark never drops its failures. The coverage line per model (#76) — planned, completed,
+failed, missing — comes from the pre-registered plan of the run (`<run>/plan.json`, written
+by eval/run.py, or `--plan`), never from the live fixtures; a missing count above zero is
+stated at the head of the table. Tier comes from the scenario id prefix
 (`t2-`, `t3-`; everything else is tier 1), see eval/BENCHMARK.md.
 """
 import argparse
@@ -89,6 +92,87 @@ def collect(run_dirs, fixtures, jv):
                     row["status"] = f"unknown scenario {sid!r}"
                 rows.append(row)
     return rows
+
+
+PLAN_FILE = "plan.json"
+
+
+def load_plan(run_dir, explicit=None):
+    """The pre-registered plan of a run (#76): `<run>/plan.json` from eval/run.py, or an explicit
+    file; never the live eval/scenarios/, so a fixture added later does not turn an old table
+    into a short one."""
+    path = Path(explicit) if explicit else Path(run_dir) / PLAN_FILE
+    if not path.exists():
+        sys.exit(f"bench.py: no plan for {Path(run_dir).name}: {path} is missing; eval/run.py writes it "
+                 f"at the first invocation of a run id, or give one with --plan")
+    plan = json.loads(path.read_text())
+    return {"fixtures": sorted(plan["fixtures"]), "repeat": int(plan["repeat"])}
+
+
+def quota_stopped_pairs(run_dir):
+    """Distinct (model, scenario, rep) with a quota stop on record: the file keeps every stop,
+    and the backfill of bench-v1 has duplicate lines."""
+    pairs = set()
+    stops = Path(run_dir) / "quota-stops.jsonl"
+    if stops.exists():
+        for line in stops.read_text().splitlines():
+            try:
+                q = json.loads(line)
+            except ValueError:
+                continue
+            pairs.add((q.get("model"), q.get("scenario"), q.get("rep")))
+    return pairs
+
+
+def coverage(rows, plan, run_dir):
+    """One record per (run, model): planned, completed, failed, missing; of the missing pairs, how
+    many stopped by quota and were not resumed, and how many were never scheduled. Rows outside
+    the plan are counted apart. A quota stop is not a row: collect drops it."""
+    run_dir = Path(run_dir)
+    expected = {(sid, r) for sid in plan["fixtures"] for r in range(1, plan["repeat"] + 1)}
+    stopped = quota_stopped_pairs(run_dir)
+    by_model = {}
+    for row in rows:
+        if row["run"] == run_dir.name:
+            by_model.setdefault(row["model"], []).append(row)
+    out = []
+    for model, rs in sorted(by_model.items()):
+        present = {(r["scenario"], r["rep"]) for r in rs}
+        missing = sorted(expected - present)
+        quota = [p for p in missing if (model, p[0], p[1]) in stopped]
+        out.append({"run": run_dir.name, "model": model, "planned": len(expected),
+                    "completed": sum(1 for r in rs if r["status"] == "ok"),
+                    "failed": sum(1 for r in rs if r["status"] != "ok"),
+                    "missing": len(missing), "quota_stopped": len(quota),
+                    "never_scheduled": len(missing) - len(quota),
+                    "outside_plan": len(present - expected)})
+    return out
+
+
+def render_coverage(cov):
+    """The head line of the table and the section "Coverage". `missing <n>` appears on the
+    per-model lines only, so a reader (or a grep) finds one per model."""
+    planned = sum(c["planned"] for c in cov)
+    missing = sum(c["missing"] for c in cov)
+    if missing:
+        short = ", ".join(f"{c['model']}: {c['missing']}" for c in cov if c["missing"])
+        head = (f"**Incomplete: {missing} of {planned} planned runs are missing** ({short}). "
+                f"Not published as complete.")
+    else:
+        head = f"Coverage: complete, {planned} of {planned} planned runs."
+    lines = ["## Coverage", "",
+             "Planned = the pre-registered plan of the run (`plan.json`: fixtures × repetitions); "
+             "a quota stop is not a run.", ""]
+    for c in cov:
+        line = (f"- {c['run']} {c['model']}: planned {c['planned']}, completed {c['completed']}, "
+                f"failed {c['failed']}, missing {c['missing']}")
+        if c["missing"]:
+            line += (f" ({c['quota_stopped']} stopped by quota and not resumed, "
+                     f"{c['never_scheduled']} never scheduled)")
+        if c["outside_plan"]:
+            line += f"; {c['outside_plan']} outside the plan"
+        lines.append(line)
+    return head, lines
 
 
 def quota_windows(run_dirs):
@@ -163,13 +247,18 @@ def _num(v, fmt="{:.0f}"):
     return "—" if v is None else fmt.format(v)
 
 
-def render(rows, table, run_names):
-    out = ["# konan benchmark — results", "",
-           f"Runs: {', '.join(run_names)}. {len(rows)} investigations. Protocol and limits: `eval/BENCHMARK.md`.",
-           "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.",
-           "Pass rate is the pre-registered metric; the class-agnostic column ignores only the incident-class label (taxonomy issue tracked separately).",
-           "Medians cover completed investigations (status ok); failed runs count in Runs/Failed and their consumption stays in the sidecars.", "",
-           "## Per tier × model", "",
+def render(rows, table, run_names, cov=None):
+    head, cov_lines = render_coverage(cov) if cov is not None else (None, [])
+    out = ["# konan benchmark — results", ""]
+    if head:
+        out += [head, ""]
+    out += [f"Runs: {', '.join(run_names)}. {len(rows)} investigations. Protocol and limits: `eval/BENCHMARK.md`.",
+            "Deterministic scoring (eval/score.py); tokens = whole run incl. subagents; duration = harness wall clock.",
+            "Pass rate is the pre-registered metric; the class-agnostic column ignores only the incident-class label (taxonomy issue tracked separately).",
+            "Medians cover completed investigations (status ok); failed runs count in Runs/Failed and their consumption stays in the sidecars.", ""]
+    if cov_lines:
+        out += cov_lines + [""]
+    out += ["## Per tier × model", "",
            "| Tier | Model | Runs | Failed | Pass rate | Pass (class-agnostic) | Root-cause acc. | False attr. | Citations | Tokens (median) | Wall s (median) | Cost $ (median) | Denials (median) |",
            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for t in table:
@@ -204,20 +293,24 @@ def main():
     ap.add_argument("--runs", nargs="+", required=True, help="eval/runs/<run-id> directories")
     ap.add_argument("-o", "--output", help="write the markdown table here (default: stdout)")
     ap.add_argument("--json", help="also write rows + table as JSON here")
+    ap.add_argument("--plan", help="the pre-registered plan, for every run directory given (default: <run>/plan.json)")
     a = ap.parse_args()
     RUN_DIRS.extend(a.runs)
     fixtures = load_fixtures()
     jv = Draft202012Validator(json.loads((REPO / "skills/investigate/journal.schema.json").read_text()))
     rows = collect(a.runs, fixtures, jv)
     table = aggregate(rows)
-    md = render(rows, table, [Path(r).name for r in a.runs])
+    cov = []
+    for rd in a.runs:
+        cov += coverage(rows, load_plan(rd, a.plan), rd)
+    md = render(rows, table, [Path(r).name for r in a.runs], cov)
     if a.output:
         Path(a.output).write_text(md)
         print(f"bench.py: wrote {a.output} ({len(rows)} runs)")
     else:
         sys.stdout.write(md)
     if a.json:
-        Path(a.json).write_text(json.dumps({"rows": rows, "table": table}, indent=2) + "\n")
+        Path(a.json).write_text(json.dumps({"rows": rows, "table": table, "coverage": cov}, indent=2) + "\n")
     return 0
 
 

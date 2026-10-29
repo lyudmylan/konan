@@ -9,11 +9,14 @@ Each test pins one rule from eval/README.md or the report contract's scorer
 layer, so a future edit that drifts the semantics fails loudly here."""
 import copy
 import json
+import re
+import tempfile
 from pathlib import Path
 
 import yaml
 from jsonschema import Draft202012Validator
 
+import bench
 import run as runner
 import score
 
@@ -309,6 +312,118 @@ def test_runner_recognizes_quota_errors():
     assert not runner.looks_like_quota_error({"is_error": True, "result": "journal schema invalid"})
 
 
+# --- coverage (eval/bench.py, eval/run.py) — the pins of intents/bench-coverage.md ----------
+SCENARIO_IDS = sorted(p.stem for p in (EVAL / "scenarios").glob("*.yaml"))
+
+
+def _coverage_dir(tmp, model="test-model", present=27):
+    """A run directory with a plan of every fixture × 3 and the first `present` of the 30 pairs
+    as synthetic sidecars (status ok; the coverage needs no journal)."""
+    run_dir = tmp / "bench-t"
+    (run_dir / model).mkdir(parents=True)
+    pairs = [(sid, r) for sid in SCENARIO_IDS for r in (1, 2, 3)]
+    (run_dir / "plan.json").write_text(json.dumps({"run_id": "bench-t", "fixtures": SCENARIO_IDS, "repeat": 3}))
+    for sid, r in pairs[:present]:
+        (run_dir / model / f"{sid}-r{r}.meta.json").write_text(json.dumps(
+            {"model": model, "scenario": sid, "rep": r, "status": "ok", "quota_error": False}))
+    return run_dir, pairs[present:]
+
+
+def _render(run_dir, fixtures=None):
+    fixtures = fixtures or bench.load_fixtures()
+    rows = bench.collect([run_dir], fixtures, JV)
+    cov = bench.coverage(rows, bench.load_plan(run_dir), run_dir)
+    bench.RUN_DIRS[:] = [str(run_dir)]
+    return bench.render(rows, bench.aggregate(rows), [Path(run_dir).name], cov)
+
+
+def _missing_zero_lines(md):
+    return [l for l in md.splitlines() if re.search(r"missing 0(\D|$)", l)]
+
+
+def test_bench_coverage_short_plan():
+    # Check 1: a run directory short of its plan renders the missing count at the head of the
+    # table and on the model line, never only in a footnote.
+    with tempfile.TemporaryDirectory() as tmp:
+        run_dir, _ = _coverage_dir(Path(tmp))
+        md = _render(run_dir)
+    head = md.splitlines()[2]
+    assert head.startswith("**Incomplete: 3 of 30 planned runs are missing** (test-model: 3)"), head
+    assert ("- bench-t test-model: planned 30, completed 27, failed 0, missing 3 "
+            "(0 stopped by quota and not resumed, 3 never scheduled)") in md, md
+    assert md.index("## Coverage") < md.index("## Per tier")
+
+
+def test_bench_coverage_complete_plan():
+    # Check 2: the complete bench-v1 renders `missing 0` for each of its three models — on the
+    # model lines and nowhere else — and its failed runs stay counted.
+    md = _render(EVAL / "runs/bench-v1")
+    lines = _missing_zero_lines(md)
+    assert len(lines) == 3 and all(l.startswith("- bench-v1 claude-") for l in lines), lines
+    assert "- bench-v1 claude-sonnet-5: planned 30, completed 24, failed 6, missing 0" in md
+    assert md.splitlines()[2] == "Coverage: complete, 90 of 90 planned runs."
+
+
+def test_bench_coverage_quota_stops():
+    # Check 3: the quota stops that explain a gap are counted next to the missing count, as
+    # distinct pairs (the backfill of bench-v1 has duplicate lines); a quota stop is not a run.
+    with tempfile.TemporaryDirectory() as tmp:
+        run_dir, missing = _coverage_dir(Path(tmp))
+        (sid1, r1), (sid2, r2) = missing[0], missing[1]
+        stops = [{"model": "test-model", "scenario": sid1, "rep": r1, "at": "2026-08-19T00:00:00Z"}] * 2
+        stops.append({"model": "test-model", "scenario": sid2, "rep": r2, "at": "2026-08-19T01:00:00Z"})
+        (run_dir / "quota-stops.jsonl").write_text("\n".join(json.dumps(s) for s in stops) + "\n")
+        (run_dir / "test-model" / f"{sid1}-r{r1}.meta.json").write_text(json.dumps(
+            {"model": "test-model", "scenario": sid1, "rep": r1, "status": "error", "quota_error": True}))
+        md = _render(run_dir)
+    assert "missing 3 (2 stopped by quota and not resumed, 1 never scheduled)" in md, md
+    assert "completed 27, failed 0," in md, md
+
+
+def test_bench_coverage_plan_source():
+    # Check 4: the plan comes from the run directory, not from the live fixtures: an eleventh
+    # fixture in the scenarios directory leaves bench-v1 at `missing 0`. The directory is a
+    # copy, so the committed corpus is not touched.
+    with tempfile.TemporaryDirectory() as tmp:
+        scen = Path(tmp) / "scenarios"
+        scen.mkdir()
+        for p in (EVAL / "scenarios").glob("*.yaml"):
+            (scen / p.name).write_text(p.read_text())
+        text = (EVAL / "scenarios/healthy-baseline.yaml").read_text()
+        assert text.count("  id: healthy-baseline\n") == 1
+        (scen / "zz-added-later.yaml").write_text(text.replace("  id: healthy-baseline\n", "  id: zz-added-later\n"))
+        live = bench.SCEN
+        try:
+            bench.SCEN = scen
+            fixtures = bench.load_fixtures()
+        finally:
+            bench.SCEN = live
+        assert len(fixtures) == len(SCENARIO_IDS) + 1
+        md = _render(EVAL / "runs/bench-v1", fixtures)
+    assert len(_missing_zero_lines(md)) == 3, md
+    assert "Coverage: complete, 90 of 90 planned runs." in md
+
+
+def test_bench_coverage_plan_is_pre_registered():
+    # Check 5: a second invocation of a run id with other fixtures or another --repeat exits
+    # non-zero and leaves plan.json unchanged; the same plan passes; a dry run writes nothing.
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "bench-t"
+        runner.register_plan(out, SCENARIO_IDS, 3)
+        before = (out / "plan.json").read_bytes()
+        for ids, rep in ((SCENARIO_IDS, 2), (SCENARIO_IDS[:-1], 3)):
+            try:
+                runner.register_plan(out, ids, rep)
+                raise AssertionError("another plan was accepted under the same run id")
+            except SystemExit as e:
+                assert e.code not in (0, None), e.code
+            assert (out / "plan.json").read_bytes() == before
+        runner.register_plan(out, list(reversed(SCENARIO_IDS)), 3)   # the same plan, in any order
+        assert (out / "plan.json").read_bytes() == before
+        runner.register_plan(Path(tmp) / "bench-dry", SCENARIO_IDS, 3, dry_run=True)
+        assert not (Path(tmp) / "bench-dry" / "plan.json").exists()   # a preview registers nothing
+
+
 if __name__ == "__main__":
     run()
     for t in (test_runner_envelope_meta_sums_whole_run_tokens,
@@ -317,3 +432,8 @@ if __name__ == "__main__":
               test_runner_recognizes_quota_errors):
         t()
     print("OK: 4 runner pins hold")
+    for t in (test_bench_coverage_short_plan, test_bench_coverage_complete_plan,
+              test_bench_coverage_quota_stops, test_bench_coverage_plan_source,
+              test_bench_coverage_plan_is_pre_registered):
+        t()
+    print("OK: 5 coverage pins hold")

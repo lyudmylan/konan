@@ -91,6 +91,12 @@ Coverage and the classes this lab cannot exercise: `eval/README.md`.
 9. **Fairness of the boundary.** The hook treats a `cd <session cwd> &&` prefix as
    transparent (a harness idiom); every other compound shape prompts and is auto-denied
    headless — recorded per run as denials, identical for every model.
+10. **Coverage.** The runner pre-registers the plan of a run id in `plan.json` (the fixture
+    ids and the repetitions) at its first invocation and refuses another plan under the
+    same id. The table carries its coverage line per model — planned, completed, failed,
+    missing, with the quota stops that explain a gap — at its head, rendered from that
+    file and never from the live fixtures; a table with a missing count above zero is not
+    published as complete.
 
 ## What the benchmark is for, beyond ranking
 
@@ -108,7 +114,7 @@ reads a tiering config, the harness envelope attributes tokens and cost per mode
 uv run eval/run.py --run-id bench-v1 --model claude-sonnet-5 --repeat 3 --max-runs 5
 uv run eval/run.py --run-id bench-v1 --model claude-opus-5   --repeat 3 --max-runs 5
 uv run eval/run.py --run-id bench-v1 --model claude-fable-5  --repeat 3 --max-runs 5
-# … resume with the same --run-id until results.jsonl covers the plan, then:
+# … resume with the same --run-id until the coverage line says missing 0, then:
 uv run eval/bench.py --runs eval/runs/bench-v1 -o eval/BENCHMARK-results.md
 ```
 
