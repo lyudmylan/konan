@@ -9,7 +9,8 @@ conversation.
    `t2-red-herring-latency-latent-d1.yaml`, `t3-chaos-low-rate-intermittent.yaml`: the line
    `incident_class: [infra-process, interfaces]` with its three comment lines becomes
    `incident_class: infra-process`. Nothing else in the fixtures changes.
-2. `eval/tests.py`: pin 17, after pin 16 in `run()`, and the closing line says 17 pins. Two cases:
+2. `eval/tests.py`: pin 17, "Singular class", after pin 16 in `run()`; the closing line says 17 pins. Two
+   cases:
    - the four fixtures load through `score.load_fixture` with the string `infra-process` as
      `expected.incident_class` (check 1);
    - the committed journal `eval/runs/bench-v1/claude-opus-5/chaos-error-rate-r1.md`, whose root cause says
@@ -19,16 +20,14 @@ conversation.
    Pin 15 stays as it is: the set form is still valid for a fixture with a true ambiguity.
 3. `eval/BENCHMARK.md`, the bullet "Regenerating it" of the bench-v1 results section: one sentence after
    "was the label.": re-scoring the bench-v1 journals against the live fixtures fails those four scenarios on
-   class in 24 of their 36 journals, by design; bench-v1 is scored as pre-registered at its own commit, and
+   class in 24 of their 35 committed journals, by design; bench-v1 is scored as pre-registered at its own commit, and
    the live fixtures state the one class the contract decided (#77).
 4. The two commands of `AGENTS.md`, then the five checks of the intent by hand. One change request,
    `Closes #77`, on this branch. No file under a code path changes.
 
 ## Files
 
-`eval/scenarios/chaos-error-rate.yaml`, `eval/scenarios/chaos-latency.yaml`,
-`eval/scenarios/t2-red-herring-latency-latent-d1.yaml`, `eval/scenarios/t3-chaos-low-rate-intermittent.yaml`,
-`eval/tests.py`, `eval/BENCHMARK.md`, and this file.
+The four fixtures of the intent, `eval/tests.py`, `eval/BENCHMARK.md`, and this file.
 
 ## Tests
 
@@ -39,5 +38,6 @@ there. No other test changes.
 
 - The scorer accepts a string or a set for `expected.incident_class` and compares the root cause's class
   by membership (`eval/score.py`, `score_pair`); a string is the one-member case.
-- Of the 36 bench-v1 journals on the four scenarios, 24 name `interfaces` as the class of the root cause.
-  The pin uses one of them; the sentence of step 3 states the count.
+- The four scenarios have 35 committed bench-v1 journals, not 36: one Sonnet run of the low-rate chaos
+  scenario left no journal. Counted with `score.load_journal` over the committed files, 24 of the 35 name
+  `interfaces` as the class of the root cause. The pin uses one of them.

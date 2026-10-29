@@ -217,7 +217,7 @@ def run():
     for path in scenarios:
         score.load_fixture(path, FV)   # validates against the schema and compiles matchers
 
-    # 17. The chaos-switch fixtures state ONE class, infra-process (#77). The set of #63 was a
+    # 17. Singular class. The chaos-switch fixtures state ONE class, infra-process (#77). The set of #63 was a
     #     transition for the bench-v1 journals; a live set would score a model that ignores the
     #     lens definitions the same as one that follows them. A committed bench-v1 journal that
     #     answered `interfaces` fails on class against the live fixture.
