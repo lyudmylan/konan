@@ -13,7 +13,7 @@ version = "v1"
 
 # The version of Charter that this repo uses. The workflows fetch Charter at the tag charter--v<version>.
 [charter]
-version = "0.3.0"
+version = "0.3.1"
 
 [tools]
 issue_tracker = "github-issues"
