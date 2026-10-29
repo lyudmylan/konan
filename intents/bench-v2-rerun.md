@@ -46,7 +46,7 @@ the triage experiment (#26) — stay on the roadmap or come after the flip.
 
 1. The run directory covers the plan: `missing 0` on each of the three coverage lines (30 runs per model,
    completed or failed; a failed run is reported, not retried).
-   command: `test "$(uv run eval/bench.py --runs eval/runs/bench-v2 | grep -c 'missing 0')" = 3`
+   command: `test "$(uv run eval/bench.py --runs eval/runs/bench-v2 | grep -cE 'missing 0([^0-9]|$)')" = 3`
 2. The committed table reproduces from the committed runs.
    command: `uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md && git diff --quiet -- eval/BENCHMARK-results.md`
 3. The pinned paths of the scope did not change across the round. The results section records both commits

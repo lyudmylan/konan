@@ -56,8 +56,8 @@ committed journals under `journals/` and `eval/runs/`: they stay version 1.
 3. A version 1 journal scores as before: the existing pins pass unchanged, and the committed sample journal
    still passes the D1 fixture.
    test: `eval/tests.py`, pins 0 to 16. command: `uv run eval/tests.py`
-4. Every live fixture states an `expected.cause` from the list; a fixture with an id outside the list is
-   refused with exit 2.
+4. Every live fixture states an `expected.cause` that is an id of the list, or null exactly when its expected
+   verdict is not `root-cause-identified`; a fixture with an id outside the list is refused with exit 2.
    test: `eval/tests.py`, the pin "fixture cause ids".
 5. A version 2 journal with a cause id outside the list is a failing report, not an input error.
    test: `eval/tests.py`, the pin "journal cause id".

@@ -27,8 +27,8 @@ A benchmark table that is short of its pre-registered plan says so on its face.
 
 ## Out of scope
 
-The committed `eval/BENCHMARK-results.md` of bench-v1: it stays as published; the coverage line applies from
-bench-v2 on. The batching and resume rules of the runner: unchanged; the runner gains only the plan file. The
+The committed `eval/BENCHMARK-results.md` of bench-v1: it stays as published by this change, and #81 replaces
+it with the bench-v2 table; the coverage line applies from bench-v2 on. The batching and resume rules of the runner: unchanged; the runner gains only the plan file. The
 format of `results.jsonl` and of the sidecars: unchanged.
 
 ## Acceptance checks

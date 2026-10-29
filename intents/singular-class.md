@@ -39,7 +39,9 @@ The lens text of the investigate skill: it carries the definitions since #63 and
    test: the same pin, second case.
 3. No fixture carries the transition comment.
    command: `! grep -rq 'set accepted for bench-v1' eval/scenarios/`
-4. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
+4. The protocol states the failure by design.
+   command: `grep -A8 'Regenerating it' eval/BENCHMARK.md | grep -q 'fail'`
+5. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks
 
