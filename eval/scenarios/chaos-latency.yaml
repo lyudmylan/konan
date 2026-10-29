@@ -33,9 +33,7 @@ complaint: >-
   nothing errors out, it just takes forever. Health checks are green and fast.
 expected:
   verdict: root-cause-identified
-  incident_class: [infra-process, interfaces]   # set accepted for bench-v1 journals; the
-                                                #   definition (report contract) says infra-process;
-                                                #   singular again once bench-v2 pins the new lens text
+  incident_class: infra-process
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]

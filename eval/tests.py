@@ -217,7 +217,21 @@ def run():
     for path in scenarios:
         score.load_fixture(path, FV)   # validates against the schema and compiles matchers
 
-    print("OK: 16 semantics pins hold")
+    # 17. Singular class. The chaos-switch fixtures state ONE class, infra-process (#77). The set of #63 was a
+    #     transition for the bench-v1 journals; a live set would score a model that ignores the
+    #     lens definitions the same as one that follows them. A committed bench-v1 journal that
+    #     answered `interfaces` fails on class against the live fixture.
+    for sid in ("chaos-error-rate", "chaos-latency", "t2-red-herring-latency-latent-d1",
+                "t3-chaos-low-rate-intermittent"):
+        fx = score.load_fixture(EVAL / "scenarios" / f"{sid}.yaml", FV)
+        assert fx["expected"]["incident_class"] == "infra-process", sid
+    fx = score.load_fixture(EVAL / "scenarios" / "chaos-error-rate.yaml", FV)
+    j = score.load_journal(str(EVAL / "runs/bench-v1/claude-opus-5/chaos-error-rate-r1.md"))
+    assert j["root_cause"]["incident_class"] == "interfaces"   # the journal is what it was
+    r = score.score_pair(fx, j, JV)
+    assert r["class_ok"] is False and not r["passed"]
+
+    print("OK: 17 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------
