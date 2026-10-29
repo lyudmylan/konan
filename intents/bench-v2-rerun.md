@@ -52,8 +52,9 @@ the triage experiment (#26) — stay on the roadmap or come after the flip.
 3. The pinned paths of the scope did not change across the round. The results section records both commits
    as `first-run: <sha>` and `last-run: <sha>`; the command reads them from there.
    command: `git diff --quiet $(grep -oE 'first-run: [0-9a-f]+' eval/BENCHMARK.md | tail -1 | cut -d' ' -f2) $(grep -oE 'last-run: [0-9a-f]+' eval/BENCHMARK.md | tail -1 | cut -d' ' -f2) -- skills/investigate skills/konan skills/oncall hooks/boundary.py eval/score.py eval/scenarios eval/fixture.schema.json`
-4. The README and the protocol carry the round, and the tier-3 caveat is gone from the README.
-   command: `grep -q bench-v2 README.md && grep -q bench-v2 eval/BENCHMARK.md && ! grep -q 'tier-3 fixtures are not yet' README.md`
+4. The README carries the round and the tier-3 caveat is gone; the protocol carries the results section of the
+   round, as a heading.
+   command: `grep -q bench-v2 README.md && ! grep -q 'tier-3 fixtures are not yet' README.md && grep -qE '^#+ .*bench-v2' eval/BENCHMARK.md`
 5. The worktree path hides the round from the model: the path the runner builds for a worktree carries
    neither `eval` nor the run id, whatever call builds it.
    test: `eval/tests.py`, the pin "neutral worktree". command: `uv run eval/tests.py`
