@@ -149,6 +149,9 @@ uv run eval/bench.py --runs eval/runs/bench-v1 -o eval/BENCHMARK-results.md
   fix is exactly the widening the class-agnostic column was measuring. That delta is
   therefore the taxonomy artifact, quantified: roughly 26, 10 and 33 points of what
   looked like model failure was the label.
+  Since #77 the live fixtures state the one class the contract decided, and re-scoring the
+  bench-v1 journals against them fails those four scenarios on class — in 24 of their 36
+  journals — by design: bench-v1 is scored as pre-registered at its own commit.
   Which model leads depends on whether the class label counts. Opus leads the
   pre-registered rate; Fable leads once the ambiguous label is allowed its documented
   second value. Both orderings are stated because a benchmark that reports only the one
