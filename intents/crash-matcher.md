@@ -16,9 +16,10 @@ words that the report contract lets an investigator use.
   it", "no auto-restart", "not restarted" — and keeps the forms it accepts today. The fact stays the
   absence of a restart; a symptom ("refuses every connection") does not count as the fact.
 - The other first-cut matchers of tier 3 — `process-died` in the same fixture, and the matchers of
-  `t3-chaos-low-rate-intermittent` — are checked the same way against their nine journals. A matcher that
-  misses a journal which states the fact correctly is recalibrated in the same change. The `scoring_notes`
-  of both fixtures lose the "first-cut" mark.
+  `t3-chaos-low-rate-intermittent` — are checked the same way against their committed bench-v1 journals (nine for the crash fixture,
+  eight for the low-rate fixture). A matcher that
+  misses a journal which states the fact correctly is recalibrated in the same change. The `scoring_notes` of the crash fixture lose the "first-cut" mark; the low-rate fixture carries
+  none.
 - `eval/tests.py`: one pin runs the two tier-3 fixtures over their committed bench-v1 journals, so the
   calibration is pinned and not re-guessed. It includes one negative case: a root-cause statement that says
   the process restarted does not match `no-restart-after`.
@@ -43,9 +44,11 @@ and the fixture schema: #78. A new tier-3 fixture.
    test: `eval/tests.py`, the pin "tier-3 calibration". command: `uv run eval/tests.py`
 2. The matchers of `t3-chaos-low-rate-intermittent` match the journals that the pin names as stating the
    fact. The list of journals is the human judgment, made once, in the change request that adds the pin (the
-   class label is not part of this check; it is #77).
+   class label is not part of this check; it is #77); the pin also holds the one journal that sizes nothing
+   (Opus r2) as a miss.
    test: the same pin.
-3. The first-cut marks are gone from the two fixtures.
+3. The first-cut mark is gone from the crash fixture; the low-rate fixture never carried one, and the command
+   keeps both files as a guard against the mark returning.
    command: `! grep -q 'first-cut' eval/scenarios/t3-crash-hard-down.yaml eval/scenarios/t3-chaos-low-rate-intermittent.yaml`
 4. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
@@ -53,4 +56,4 @@ and the fixture schema: #78. A new tier-3 fixture.
 
 5. The leader reads the recalibrated matchers against the journals the pin names, and confirms that no
    alternation was widened beyond the wording of those journals. who: the leader. Not automatic: it is a
-   reading of meaning, and a calibration pinned on the same nine journals must not become overfitting.
+   reading of meaning, and a calibration pinned on the same journals must not become overfitting.

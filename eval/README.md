@@ -179,8 +179,9 @@ evidence, and the honest conclusion is "mechanism proven, user impact not eviden
 Tier 1 = single cause, evidenced (corpus v1, the regression gate). Tier 2 = attribution
 traps and a healthy battery (the null verdict under pressure, past vs present). Tier 3 =
 faint or dead surfaces. Tiers 2–3 landed with corpus v2 (#49); their matchers are
-calibrated on the tier-1 known-good journals where the mechanism is shared, and marked
-first-cut where no journal exists yet.
+calibrated on the tier-1 known-good journals where the mechanism is shared; the tier-3
+matchers were first-cut until bench-v1 and are calibrated on its committed journals since
+#75, pinned in `eval/tests.py`.
 
 | Tier | Scenario | Class exercised | Expected verdict |
 | --- | --- | --- | --- |

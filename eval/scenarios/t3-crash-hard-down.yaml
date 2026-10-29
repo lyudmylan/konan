@@ -31,7 +31,8 @@ expected:
     - id: process-died
       all_of: ["(?i)crash|exit(ed)?|died|terminat|not\\s+running|process\\s+(is\\s+)?(down|gone)"]
     - id: no-restart-after
-      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening"]
+      # calibrated on the committed bench-v1 journals (#75): five forms added, none removed; pin 18 of eval/tests.py
+      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+(been\\s+)?restarted|\\bnot\\s+restart\\b|nothing\\s+restart(ed|ing)\\s+it|no\\s+(supervisor|process)\\s+restarted|no\\s+auto[\\s-]restart|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening"]
   must_not_claim:
     - id: not-code-defect
       any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]
@@ -44,5 +45,5 @@ scoring_notes: >-
   evidence — cite the trailer), the last log lines carry the CRITICAL crash marker
   (SPEC I7) and no startup follows, the pid is gone. The report must state that the
   process exited and did not restart, from log evidence — not guess at network or
-  code causes it cannot see. Matchers are first-cut (no known-good journal yet);
-  calibrate on the first run and record the change.
+  code causes it cannot see. The matchers are calibrated on the committed bench-v1
+  journals (#75) and pinned in eval/tests.py.

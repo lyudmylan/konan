@@ -231,7 +231,45 @@ def run():
     r = score.score_pair(fx, j, JV)
     assert r["class_ok"] is False and not r["passed"]
 
-    print("OK: 17 semantics pins hold")
+    # 18. Tier-3 calibration (#75). The matchers of the two tier-3 fixtures were first-cut; they are
+    #     calibrated on their committed bench-v1 journals and pinned here, so the alternations are read
+    #     once, not re-guessed. Checks 1 and 2 of intents/crash-matcher.md. The pin reads claim_misses,
+    #     not passed: the class of these journals is the matter of #77.
+    runs = EVAL / "runs/bench-v1"
+    fx = score.load_fixture(EVAL / "scenarios" / "t3-crash-hard-down.yaml", FV)
+    crash = sorted(runs.glob("*/t3-crash-hard-down-r*.md"))
+    assert len(crash) == 9, len(crash)
+    identified = 0
+    for path in crash:
+        j = score.load_journal(str(path))
+        if j["verdict"] != "root-cause-identified":
+            continue
+        identified += 1
+        assert score.score_pair(fx, j, JV)["claim_misses"] == [], path.name
+    assert identified == 8, identified   # one Sonnet run stayed inconclusive
+    core = base_core()
+    core["root_cause"]["statement"] = ("The process crashed with exit code 1 and the supervisor restarted "
+                                       "it within two seconds; the operator cannot restart it by hand.")
+    core["hypotheses"][0]["statement"] = core["root_cause"]["statement"]
+    assert score.score_pair(fx, core, JV)["claim_misses"] == ["no-restart-after"]
+    fx = score.load_fixture(EVAL / "scenarios" / "t3-chaos-low-rate-intermittent.yaml", FV)
+    stated = {   # the judgment of the leader, made once in the change request of #75
+        "claude-fable-5/t3-chaos-low-rate-intermittent-r1.md": [],
+        "claude-fable-5/t3-chaos-low-rate-intermittent-r2.md": [],
+        "claude-fable-5/t3-chaos-low-rate-intermittent-r3.md": [],
+        "claude-opus-5/t3-chaos-low-rate-intermittent-r1.md": [],
+        "claude-opus-5/t3-chaos-low-rate-intermittent-r2.md": ["rare-but-real"],   # sizes nothing
+        "claude-opus-5/t3-chaos-low-rate-intermittent-r3.md": [],
+        "claude-sonnet-5/t3-chaos-low-rate-intermittent-r2.md": [],
+        "claude-sonnet-5/t3-chaos-low-rate-intermittent-r3.md": [],
+    }
+    found = sorted(p.relative_to(runs).as_posix()
+                   for p in runs.glob("*/t3-chaos-low-rate-intermittent-r*.md"))
+    assert found == sorted(stated), found   # eight committed journals; one Sonnet run left none
+    for rel, misses in stated.items():
+        assert score.score_pair(fx, score.load_journal(str(runs / rel)), JV)["claim_misses"] == misses, rel
+
+    print("OK: 18 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------
