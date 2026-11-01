@@ -28,7 +28,9 @@ Per (fixture, repetition):
      eval/score.py; per-run exit codes and failures land in `<out>/results.jsonl`.
 
 `<out>` = eval/runs/<run-id>. Runs already present there are skipped (resume). The batch
-stops on a rate-limit / quota error so a half-run never masquerades as a result.
+stops on a rate-limit / quota error so a half-run never masquerades as a result. The first
+invocation of a run id writes `<out>/plan.json` (the fixture ids and the repetitions); a later
+one with another plan is refused — the plan is pre-registered (#76).
 """
 import argparse
 import datetime as dt
@@ -177,6 +179,33 @@ def load_fixtures(patterns):
     return out
 
 
+PLAN_FILE = "plan.json"
+
+
+def register_plan(out, fixture_ids, repeat, dry_run=False):
+    """The plan of a run id is pre-registered (#76): the first invocation writes `<out>/plan.json`
+    (the scenario ids and the repetition count); a later invocation with another plan stops the
+    runner and leaves the file untouched. A dry run compares but writes nothing: a preview does
+    not pre-register a plan."""
+    out = Path(out)
+    want = {"fixtures": sorted(fixture_ids), "repeat": int(repeat)}
+    path = out / PLAN_FILE
+    if path.exists():
+        have = json.loads(path.read_text())
+        got = {"fixtures": sorted(have.get("fixtures", [])), "repeat": have.get("repeat")}
+        if got != want:
+            sys.exit(f"run {out.name}: the plan is pre-registered in {path}: "
+                     f"{len(got['fixtures'])} fixtures x {got['repeat']} ({', '.join(got['fixtures'])}); "
+                     f"this invocation says {len(want['fixtures'])} fixtures x {want['repeat']} "
+                     f"({', '.join(want['fixtures'])}). Use another --run-id for another plan.")
+        return have
+    plan = {"run_id": out.name, **want, "registered_at": now_iso()}
+    if not dry_run:
+        out.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(plan, indent=2) + "\n")
+    return plan
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run-id", required=True)
@@ -198,6 +227,7 @@ def main():
     fixtures = load_fixtures(a.fixtures)
     out = RUNS / a.run_id
     model_dir = out / re.sub(r"[^A-Za-z0-9._-]", "_", a.model)
+    register_plan(out, [fx["scenario"]["id"] for _, fx in fixtures], a.repeat, dry_run=a.dry_run)
 
     plan = [(fp, fx, r) for fp, fx in fixtures for r in range(1, a.repeat + 1)]
     def already_done(fx, r):

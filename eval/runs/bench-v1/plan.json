@@ -1,0 +1,18 @@
+{
+  "run_id": "bench-v1",
+  "fixtures": [
+    "chaos-error-rate",
+    "chaos-latency",
+    "d1-zero-stock-product-page",
+    "d2-null-price-order",
+    "healthy-baseline",
+    "t2-healthy-after-chaos-window",
+    "t2-quiet-d1-suggestive-complaint",
+    "t2-red-herring-latency-latent-d1",
+    "t3-chaos-low-rate-intermittent",
+    "t3-crash-hard-down"
+  ],
+  "repeat": 3,
+  "backfilled": true,
+  "source": "eval/BENCHMARK.md: protocol items 2 and 3 (ten fixtures, N = 3) and the results section (90 runs); written by hand for #76"
+}
