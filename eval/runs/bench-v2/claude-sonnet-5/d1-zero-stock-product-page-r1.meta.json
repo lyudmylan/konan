@@ -1,0 +1,43 @@
+{
+  "session_id": "79934548-384c-4655-91b6-89572512c643",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 36,
+  "duration_ms": 593847,
+  "duration_api_ms": 657511,
+  "total_cost_usd": 1.9066443000000004,
+  "tokens_total": 3191717,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 94,
+      "outputTokens": 57442,
+      "cacheReadInputTokens": 2901894,
+      "cacheCreationInputTokens": 232287,
+      "costUSD": 1.9066443000000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "led-exception`. Four real customer requests failed before the investigation even started; a fresh probe at the end reproduced the identical failure, so it's still live. All three lenses ran in parallel: `infra-process` and `interfaces` found nothing in their domains (clean single startup, no chaos, no malformed requests), and the adversarial judge validated the hypothesis, with one honestly-flagged gap \u2014 telemetry can't confirm *when* the stock hit zero, so \"no deploys that we know of\" is unaddressed rather than disproven.\n\nJournal written to `journals/2026-11-02-product-3-zero-stock-500s.md`.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 1,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-02T17:22:32Z",
+  "ended_at": "2026-11-02T17:32:27Z",
+  "restages": 0,
+  "wall_seconds_runner": 596,
+  "journal_source_name": "2026-11-02-product-3-zero-stock-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

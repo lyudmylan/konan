@@ -1,0 +1,51 @@
+{
+  "session_id": "548063bd-0b72-4063-a35b-af3d4d12bb00",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 42,
+  "duration_ms": 600688,
+  "duration_api_ms": 675730,
+  "total_cost_usd": 1.8813002,
+  "tokens_total": 3450833,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 96,
+      "outputTokens": 60459,
+      "cacheReadInputTokens": 3194886,
+      "cacheCreationInputTokens": 195392,
+      "costUSD": 1.8813002
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1; echo \"---\"; find .claude/skills/investigate -type f 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "ls /Users/lyudmylan/.claude/projects/-Users-lyudmylan-Projects-konan/memory/ 2>&1"
+    }
+  ],
+  "result_tail": "d exceptions and no restarts were found, ruling out a code defect or instability. All three triage lenses agreed; the finding was validated by an adversarial judge with no evidence against it.\n\n**Open gap worth your attention, separate from the investigation:** `git status` at session start showed nine existing journals under `journals/` deleted in the working tree but never committed (e.g. `2026-07-31-order-500s.md`, `2026-08-18-routine-handover-check.md`). I didn't touch them \u2014 just flagging in case that's unintentional, since they're still recoverable from git history if you want them back.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-02T18:33:30Z",
+  "ended_at": "2026-11-02T18:43:31Z",
+  "restages": 0,
+  "wall_seconds_runner": 601,
+  "journal_source_name": "2026-11-02-chaos-degradation-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
