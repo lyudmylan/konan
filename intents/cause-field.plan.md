@@ -102,15 +102,18 @@ contract table, the schema enum, and the six class pairs of the schema to one li
    does and does not change.
 7. `eval/tests.py`: `base_fx` gains `expected.cause` (`unhandled-exception`, null for the healthy form) and
    `konan_fixture: 2`; `base_core` keeps version 1, and `base_core_v2()` is version 2 with the cause
-   `unhandled-exception`. The 18 semantics pins, the runner pins and the coverage pins keep their asserts.
-   Five new pins, 19 to 23, each citing its check:
+   `unhandled-exception`. The semantics pins 0 to 18 (eighteen pins: there is no pin 13), the runner pins
+   and the coverage pins keep their asserts. Five new pins, 19 to 23, each citing its check:
    - 19 "cause equality, denial in prose" (check 1): a version 2 journal whose cause equals the expected
      cause and whose root-cause statement says "chaos is not the cause" and "not a chaos toggle" scores
      no false attribution and passes; the same statement in a version 1 journal fires `not-chaos`, which
      is the artifact the field removes.
    - 20 "cause inequality" (check 2): the fixture expects `wrong-result`, the journal says
      `unhandled-exception`, same class: one false attribution, `cause:unhandled-exception`, with
-     `cause_expected` `wrong-result` on the row; `passed` false; the class check still passes.
+     `cause_expected` `wrong-result` on the row; `passed` false; the class check still passes; the
+     scorecard prints the cause line. The same pin scores a version 2 root-cause journal against the
+     synthetic healthy fixture and against the live `healthy-baseline` fixture: a verdict miss and one
+     false attribution, `cause:unhandled-exception`, in both.
    - 21 "fixture cause ids" (check 4): every live fixture loads, its cause is in the list or null exactly
      when its verdict is not `root-cause-identified`; a fixture with the cause `made-up` raises
      `InputError`; a root-cause fixture with the cause null is schema-invalid and raises `InputError`.
@@ -122,7 +125,8 @@ contract table, the schema enum, and the six class pairs of the schema to one li
      the class `software-defect`.
    - 23 "versions" (check 3): the committed sample journal, version 1, still passes the D1 fixture with the
      field in it; version 3 is refused like version 99.
-   The closing line says 23 pins. Check 3 is the existing pins 0 to 18, unchanged in their asserts.
+   The closing line counts 23 pins (0 to 23, no 13). Check 3 is the existing pins 0 to 18, unchanged in
+   their asserts.
 8. `eval/README.md`: the fixture format shows `konan_fixture: 2` and `expected.cause`; the scoring
    semantics state the false attribution of version 2 as an inequality of ids and the version 1 rule as
    the rule for version 1 journals; the paragraph on the lookbehind guard becomes a note on version 1

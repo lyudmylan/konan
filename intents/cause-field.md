@@ -20,8 +20,8 @@ prose never scores as a false attribution.
   reason.
 - `skills/investigate/journal.schema.json`: the field and its enum under version 2; a version 1 journal
   stays valid against version 1.
-- `skills/investigate/SKILL.md`, and the lens or judge text that fills the root cause: the investigator
-  writes the field from the list, and the field agrees with `incident_class`.
+- `skills/investigate/SKILL.md`: the investigator writes the field from the list, and the field agrees with
+  `incident_class`. The lenses and the judge do not change: the orchestrator writes the journal.
 - `eval/fixture.schema.json` and the ten fixtures under `eval/scenarios/`: `expected.cause`, one id, or
   null when no root cause is expected; the fixture format goes to `konan_fixture: 2`, because a new
   required field is a breaking change of the format.

@@ -311,6 +311,8 @@ def run():
     assert "- cause: got `unhandled-exception`, want `wrong-result` — false attribution" in score.render_scorecard([r])
     r = score.score_pair(base_fx("no-active-incident"), base_core_v2(), JV)
     assert not r["verdict_ok"] and r["false_attributions"] == ["cause:unhandled-exception"], r
+    r = score.score_pair(score.load_fixture(EVAL / "scenarios/healthy-baseline.yaml", FV), base_core_v2(), JV)
+    assert not r["verdict_ok"] and r["false_attributions"] == ["cause:unhandled-exception"], r
 
     # 21. Fixture cause ids (check 4): every live fixture states a cause of the list, or null exactly
     #     when its verdict is not root-cause-identified; a fixture with an id outside the list is refused
