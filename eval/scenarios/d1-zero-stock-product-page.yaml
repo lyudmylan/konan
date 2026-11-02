@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: d1-zero-stock-product-page
   title: Seeded defect D1 — product detail page 500s on the zero-stock row (GET path)
@@ -35,6 +35,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: software-defect
+  cause: unhandled-exception
   must_claim:
     - id: mechanism
       all_of: ["(?i)zero.?division|divi\\w*[\\s-]+by[\\s-]+zero"]

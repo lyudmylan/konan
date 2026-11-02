@@ -11,6 +11,11 @@ no interpretation. A journal that violates the report contract is a FAILING
 REPORT (scored, citation-noncompliant); a broken fixture or an unreadable
 journal is a broken harness (refused, exit 2).
 
+Journal contract versions 1 and 2 are scored. On a version 2 journal a false
+attribution is an inequality of cause ids (`root_cause.cause` against the fixture's
+`expected.cause`); on a version 1 journal it is a `must_not_claim` hit on the claim
+surface. The cause list is read from the journal schema, the one machine copy.
+
 Usage:
     uv run eval/score.py --pair <fixture.yaml> <journal.md> [--pair ...] [-o scorecard.md]
 
@@ -29,7 +34,8 @@ from jsonschema import Draft202012Validator
 EVAL_DIR = Path(__file__).resolve().parent
 FIXTURE_SCHEMA = EVAL_DIR / "fixture.schema.json"
 JOURNAL_SCHEMA = EVAL_DIR.parent / "skills" / "investigate" / "journal.schema.json"
-JOURNAL_VERSION = 1
+JOURNAL_VERSIONS = (1, 2)
+CAUSE_IDS = frozenset(json.loads(JOURNAL_SCHEMA.read_text())["$defs"]["cause"]["enum"])
 
 
 class InputError(Exception):
@@ -51,6 +57,11 @@ def load_fixture(path, validator):
                 re.compile(pat)
             except re.error as e:
                 raise InputError(f"fixture {path}: bad regex {pat!r} ({e})")
+    cause = fx["expected"].get("cause")
+    if isinstance(cause, str) and cause not in CAUSE_IDS:
+        raise InputError(
+            f"fixture {path}: expected.cause {cause!r} is not in the cause list of the journal schema"
+        )
     return fx
 
 
@@ -83,10 +94,10 @@ def load_journal(path):
         raise InputError(f"journal {path}: frontmatter is not YAML ({e})")
     if not isinstance(core, dict):
         raise InputError(f"journal {path}: frontmatter is not a mapping")
-    if core.get("konan_journal") != JOURNAL_VERSION:
+    if core.get("konan_journal") not in JOURNAL_VERSIONS:
         raise InputError(
             f"journal {path}: contract version {core.get('konan_journal')!r} "
-            f"(this scorer knows only {JOURNAL_VERSION})"
+            f"(this scorer knows {' and '.join(map(str, JOURNAL_VERSIONS))})"
         )
     return core
 
@@ -179,11 +190,19 @@ def score_pair(fixture, core, journal_validator):
             claim_misses.append(entry["id"])
     rc_hit = None if not expected["must_claim"] else not claim_misses
 
+    # False attribution: contract v2 compares the cause ids by equality (a denial in prose
+    # is never a hit); contract v1 searches the claim surface for the tripwires.
+    cause_got = rc.get("cause")
+    cause_expected = expected.get("cause")
     false_attributions = []
     if verdict_got == "root-cause-identified":
-        for entry in expected["must_not_claim"]:
-            if any(re.search(p, surface) for p in entry["any_of"]):
-                false_attributions.append(entry["id"])
+        if core.get("konan_journal") == 2:
+            if cause_got != cause_expected:
+                false_attributions.append(f"cause:{cause_got}")
+        else:
+            for entry in expected["must_not_claim"]:
+                if any(re.search(p, surface) for p in entry["any_of"]):
+                    false_attributions.append(entry["id"])
 
     usage = core.get("usage") or {}
     passed = (
@@ -202,6 +221,8 @@ def score_pair(fixture, core, journal_validator):
         "verdict_expected": expected["verdict"],
         "class_ok": class_ok,
         "class_got": rc.get("incident_class"),
+        "cause_got": cause_got,
+        "cause_expected": cause_expected,
         "rc_hit": rc_hit,
         "claim_misses": claim_misses,
         "false_attributions": false_attributions,
@@ -276,7 +297,12 @@ def render_scorecard(rows):
             for m in r["claim_misses"]:
                 lines.append(f"- must_claim `{m}`: no match in the claim surface")
             for f in r["false_attributions"]:
-                lines.append(f"- must_not_claim `{f}`: FIRED — false attribution")
+                if f.startswith("cause:"):
+                    lines.append(
+                        f"- cause: got `{r['cause_got']}`, want `{r['cause_expected']}` — false attribution"
+                    )
+                else:
+                    lines.append(f"- must_not_claim `{f}`: FIRED — false attribution")
             for c in r["citation_errors"]:
                 lines.append(f"- citation: {c}")
             lines.append("")

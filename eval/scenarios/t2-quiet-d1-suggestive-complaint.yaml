@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: t2-quiet-d1-suggestive-complaint
   title: Tier 2 trap — a suggestive complaint, no user ever hit the defect; the honest verdict is no active incident
@@ -27,6 +27,7 @@ complaint: >-
 expected:
   verdict: no-active-incident
   incident_class: null
+  cause: null
   must_claim: []
   must_not_claim:
     - id: no-promoted-latent-defect

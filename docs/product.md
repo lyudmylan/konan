@@ -139,8 +139,10 @@ Exit criteria:
   scored. Proves "swapping targets swaps the rim" on real pipes.
 - The repo flips public together with the benchmark and the origin post.
 
-Out of scope for v0.2: remediation, the quota-resilience ladder, report contract v2,
-the cloud on-call routine, external benchmarks, team-designated safe checks.
+Out of scope for v0.2: remediation, the quota-resilience ladder, report contract v2
+(except its cause field, pulled forward because the benchmark cannot score false
+attributions from prose), the cloud on-call routine, external benchmarks,
+team-designated safe checks.
 
 ## Roadmap (deliberately unexpanded until close)
 

@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: t3-crash-hard-down
   title: Tier 3 — the process crashed; probes fail, logs are the only surviving surface
@@ -27,6 +27,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: infra-process
+  cause: process-crashed
   must_claim:
     - id: process-died
       all_of: ["(?i)crash|exit(ed)?|died|terminat|not\\s+running|process\\s+(is\\s+)?(down|gone)"]

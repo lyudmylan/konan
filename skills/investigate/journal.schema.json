@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/lyudmylan/konan/blob/main/skills/investigate/journal.schema.json",
-  "title": "konan investigation journal — machine core (v1)",
-  "description": "Validates the YAML frontmatter of an investigation journal. Shape only; referential integrity (evidence references resolve, root_cause points at a validated hypothesis, wall clock matches timestamps) is the scorer's layer. See report-contract.md.",
+  "title": "konan investigation journal — machine core (v1 and v2)",
+  "description": "Validates the YAML frontmatter of an investigation journal. Shape only; referential integrity (evidence references resolve, root_cause points at a validated hypothesis, wall clock matches timestamps) is the scorer's layer. See report-contract.md. Version 2 adds root_cause.cause, one id of $defs/cause in the class of the root cause (the pairs are enforced here); a version 1 journal carries no cause.",
   "type": "object",
   "additionalProperties": false,
   "required": ["konan_journal", "investigation", "target", "verdict", "hypotheses", "evidence", "gaps", "usage"],
   "properties": {
-    "konan_journal": { "const": 1 },
+    "konan_journal": { "enum": [1, 2] },
     "investigation": {
       "type": "object",
       "additionalProperties": false,
@@ -37,8 +37,23 @@
       "properties": {
         "hypothesis": { "$ref": "#/$defs/hypothesisId" },
         "statement": { "type": "string", "minLength": 1 },
-        "incident_class": { "$ref": "#/$defs/incidentClass" }
-      }
+        "incident_class": { "$ref": "#/$defs/incidentClass" },
+        "cause": { "$ref": "#/$defs/cause" }
+      },
+      "allOf": [
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["unhandled-exception", "wrong-result", "resource-leak"] } } },
+          "then": { "properties": { "incident_class": { "const": "software-defect" } } } },
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["cpu-saturated", "memory-exhausted", "connections-exhausted", "workers-exhausted", "bandwidth-saturated"] } } },
+          "then": { "properties": { "incident_class": { "const": "load-saturation" } } } },
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["process-crashed", "process-hung", "platform-limit", "degradation-switch", "config-change", "deployment-error"] } } },
+          "then": { "properties": { "incident_class": { "const": "infra-process" } } } },
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["provider-outage", "provider-latency", "provider-quota", "provider-wrong-result"] } } },
+          "then": { "properties": { "incident_class": { "const": "third-party" } } } },
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["contract-mismatch", "gateway-failure", "auth-failure", "certificate-expired", "connectivity-loss"] } } },
+          "then": { "properties": { "incident_class": { "const": "interfaces" } } } },
+        { "if": { "required": ["cause"], "properties": { "cause": { "enum": ["database-unavailable", "slow-queries", "database-limit", "data-inconsistency", "schema-mismatch"] } } },
+          "then": { "properties": { "incident_class": { "const": "data-db" } } } }
+      ]
     },
     "hypotheses": {
       "type": "array",
@@ -102,12 +117,50 @@
       }
     }
   },
-  "if": { "properties": { "verdict": { "const": "root-cause-identified" } } },
-  "then": { "required": ["root_cause"] },
-  "else": { "not": { "required": ["root_cause"] } },
+  "allOf": [
+    { "if": { "properties": { "verdict": { "const": "root-cause-identified" } } },
+      "then": { "required": ["root_cause"] },
+      "else": { "not": { "required": ["root_cause"] } } },
+    { "if": { "properties": { "konan_journal": { "const": 2 } } },
+      "then": { "properties": { "root_cause": { "required": ["cause"] } } },
+      "else": { "properties": { "root_cause": { "not": { "required": ["cause"] } } } } }
+  ],
   "$defs": {
     "hypothesisId": { "type": "string", "pattern": "^H[1-9][0-9]*$" },
     "incidentClass": { "type": "string", "minLength": 1 },
+    "cause": {
+      "description": "The closed list of root-cause mechanisms of report-contract.md, 'Causes, defined'; each id belongs to one incident class.",
+      "enum": [
+        "unhandled-exception",
+        "wrong-result",
+        "resource-leak",
+        "cpu-saturated",
+        "memory-exhausted",
+        "connections-exhausted",
+        "workers-exhausted",
+        "bandwidth-saturated",
+        "process-crashed",
+        "process-hung",
+        "platform-limit",
+        "degradation-switch",
+        "config-change",
+        "deployment-error",
+        "provider-outage",
+        "provider-latency",
+        "provider-quota",
+        "provider-wrong-result",
+        "contract-mismatch",
+        "gateway-failure",
+        "auth-failure",
+        "certificate-expired",
+        "connectivity-loss",
+        "database-unavailable",
+        "slow-queries",
+        "database-limit",
+        "data-inconsistency",
+        "schema-mismatch"
+      ]
+    },
     "evidenceRefs": {
       "type": "array",
       "items": { "type": "string", "pattern": "^E[1-9][0-9]*$" }

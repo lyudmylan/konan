@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: t3-chaos-low-rate-intermittent
   title: Tier 3 — a low-rate degradation switch; failures are rare enough to miss
@@ -57,6 +57,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: infra-process
+  cause: degradation-switch
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]

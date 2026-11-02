@@ -33,7 +33,7 @@ or into faultline are denied too; a second denial freezes the session. The pins 
 ## Fixture format
 
 ```yaml
-konan_fixture: 1                # fixture contract version
+konan_fixture: 2                # fixture contract version
 scenario:
   id: d1-zero-stock-product-page
   title: ...                    # one line, human
@@ -50,10 +50,13 @@ expected:
   verdict: root-cause-identified    # | no-active-incident | inconclusive
   incident_class: software-defect   # expected root_cause.incident_class; null when
                                     #   verdict is not root-cause-identified
+  cause: unhandled-exception        # expected root_cause.cause of a journal contract v2:
+                                    #   one id of the contract's list ("Causes, defined");
+                                    #   null when no root cause is expected
   must_claim:                   # ALL entries must match for a root-cause hit
     - id: mechanism
       all_of: ["(?i)zero.?division"]   # every regex in all_of must match the claim surface
-  must_not_claim:               # ANY match = a false attribution
+  must_not_claim:               # ANY match = a false attribution on a journal contract v1
     - id: not-chaos             # carry the negation lookbehinds (see Scoring semantics)
       any_of: ["(?i)(?<!not )(?<!no )(?<!than )chaos"]
 scoring_notes: ...              # nuances the scorer implementer must honor, optional
@@ -72,12 +75,20 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   definitions live in the report contract).
 - **Root-cause hit**: every `must_claim` entry matches — an entry matches when each
   regex in its `all_of` finds a match somewhere in the claim surface.
-- **False attribution**: any `must_not_claim` entry with any `any_of` regex matching
-  the claim surface — evaluated only on journals whose verdict is
+- **False attribution** — evaluated only on journals whose verdict is
   `root-cause-identified`, because only then does the machine core claim an active
   cause. (A correct no-active-incident journal may legitimately *mention* defect
   vocabulary in a validated "checks performed" hypothesis; promoting a phantom cause
-  flips the verdict, and the tripwires fire on the root cause it then has to state.)
+  flips the verdict, and the check then runs on the root cause it has to state.)
+  - Journal contract **v2**: `root_cause.cause != expected.cause` is one false
+    attribution, named `cause:<got>`; the `must_not_claim` entries are not evaluated.
+    Equality of ids, never a reading of prose — a report may deny a cause in words
+    freely. A v2 root-cause journal on a fixture that expects no root cause is a verdict
+    miss and one false attribution. A fixture whose `cause` is not in the contract's list
+    is broken input (exit 2); a journal whose `cause` is not in the list, or not in the
+    class of its `incident_class`, is schema-invalid — a failing report.
+  - Journal contract **v1**: any `must_not_claim` entry with any `any_of` regex matching
+    the claim surface.
 - **Citation compliance** is fixture-independent: schema validity of the journal plus
   referential integrity (every cited `E<n>` resolves; `root_cause.hypothesis` names a
   validated hypothesis) — per the report contract's enforcement layers. The loader
@@ -87,9 +98,10 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   in the pattern (`(?i)`), never assumed. Note `(?i)` is a global inline flag in
   Python: it applies to lookbehinds too, so `(?<!not )` already blocks "Not" and "NOT"
   and a separate `(?<!Not )` is dead weight.
-  Tripwire convention: `must_not_claim` vocabulary carries fixed-width negation
-  lookbehinds (`(?<!not )(?<!no )(?<!than )`) so a correct report may *deny* a cause
-  ("a defect, not chaos") without firing them.
+  Tripwire convention (v1 journals — the committed bench-v1 journals among them):
+  `must_not_claim` vocabulary carries fixed-width negation lookbehinds
+  (`(?<!not )(?<!no )(?<!than )`) so a correct report may *deny* a cause ("a defect, not
+  chaos") without firing them.
   **Know what that guard does not cover.** Python requires a fixed-width lookbehind, so
   it only sees the characters immediately before the term. "not chaos" is blocked;
   "not **a** chaos toggle", "not **the** chaos switch" and "not resource saturation"
@@ -97,11 +109,11 @@ scoring_notes: ...              # nuances the scorer implementer must honor, opt
   real report. Nor can a lookbehind see a negation that *trails* the term ("chaos is not
   the cause"). Widening the alternation cannot fix this: it trades false positives for
   false negatives and never converges, because scoring prose for the *absence* of a
-  claim is the wrong shape for a regex. The structural fix — a machine-matchable cause
-  field the scorer compares by equality — is #78, and until it lands a `must_not_claim`
-  hit on a report that reads as a denial is a known artifact, not a verdict. Matchers
-  live in fixtures so the scorer stays target-generic — no target string ever appears in
-  scorer code.
+  claim is the wrong shape for a regex. The structural fix is the cause field of journal
+  contract v2 (#78): the scorer compares ids by equality, and the guard matters only to
+  v1 journals, where a `must_not_claim` hit on a report that reads as a denial is a known
+  artifact, not a verdict. Matchers live in fixtures so the scorer stays target-generic —
+  no target string ever appears in scorer code.
 
 ## Scoring a run
 
@@ -117,7 +129,8 @@ uv run eval/score.py --pair eval/scenarios/<id>.yaml journals/<id>.md [--pair ..
   unreadable/unknown-version journal is a broken harness (refused, nothing rendered);
   a schema-invalid **journal** is a failing report (scored, citation-noncompliant).
 - A scenario passes when the verdict matches, the class matches (when one is
-  expected), every `must_claim` entry hits, no `must_not_claim` fires, and the
+  expected), every `must_claim` entry hits, no false attribution is scored (v2: the
+  cause id equals the expected one; v1: no `must_not_claim` fires), and the
   journal is citation-compliant (contract schema + referential integrity: references
   resolve, the root cause names a validated hypothesis, wall clock matches the
   timestamps).
@@ -165,8 +178,9 @@ runs live under `eval/runs/`.
 seeded defects are permanently latent — a competent read-only investigator will find
 D1 on a perfectly healthy system. The healthy scenario therefore expects
 `no-active-incident` with latent findings *permitted and unpenalized* (the claim
-surface excludes `latent_findings` by construction), while its `must_not_claim`
-entries fire if a latent defect is promoted to the active incident. "Found nothing"
+surface excludes `latent_findings` by construction), while a promoted latent defect
+is a false attribution (v2: a cause stated against an expected null; v1: its
+`must_not_claim` entries fire). "Found nothing"
 is not the bar; "didn't invent an incident" is.
 
 **The observer effect**: scenarios asserting user impact seed non-investigator

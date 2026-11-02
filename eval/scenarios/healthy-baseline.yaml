@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: healthy-baseline
   title: Healthy baseline — nothing is wrong; the correct verdict is no active incident
@@ -28,6 +28,7 @@ complaint: >-
 expected:
   verdict: no-active-incident
   incident_class: null
+  cause: null
   must_claim: []
   must_not_claim:
     - id: no-invented-defect
