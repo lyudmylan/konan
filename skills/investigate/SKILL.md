@@ -103,7 +103,9 @@ human body. While writing it:
 
 - **Verdict**: root-cause-identified / no-active-incident (latent findings ride along)
   / inconclusive. The machine core carries the complete tested-hypothesis list with
-  the judge's states — killed hypotheses are results too.
+  the judge's states — killed hypotheses are results too. A root cause names its
+  `cause`: one id of the contract's list ("Causes, defined"), in the class of the root
+  cause — the id states the mechanism, the statement the instance.
 - **Evidence ledger**: every quote verbatim; hypotheses cite by `E<n>` reference. No
   citation, no claim — the schema rejects an uncited hypothesis.
 - **Timeline** anchored to evidence ids, including any configuration/deploy/flag-change

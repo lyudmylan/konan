@@ -62,15 +62,25 @@ def base_core(verdict="root-cause-identified"):
     return core
 
 
+def base_core_v2(verdict="root-cause-identified"):
+    """The base journal under contract v2: the root cause names its cause (#78)."""
+    core = base_core(verdict)
+    core["konan_journal"] = 2
+    if verdict == "root-cause-identified":
+        core["root_cause"]["cause"] = "unhandled-exception"
+    return core
+
+
 def base_fx(verdict="root-cause-identified"):
     return {
-        "konan_fixture": 1,
+        "konan_fixture": 2,
         "scenario": {"id": "test-scenario", "title": "t"},
         "setup": {"lab": "fresh", "stage": ["scripts/scenario.sh get /x"]},
         "complaint": "things are broken",
         "expected": {
             "verdict": verdict,
             "incident_class": "software-defect" if verdict == "root-cause-identified" else None,
+            "cause": "unhandled-exception" if verdict == "root-cause-identified" else None,
             "must_claim": (
                 [{"id": "mech", "all_of": ["(?i)divides?\\s+by\\s+zero"]}]
                 if verdict == "root-cause-identified"
@@ -272,7 +282,110 @@ def run():
     for rel, misses in stated.items():
         assert score.score_pair(fx, score.load_journal(str(runs / rel)), JV)["claim_misses"] == misses, rel
 
-    print("OK: 18 semantics pins hold")
+    # 19. Cause equality, denial in prose (check 1 of intents/cause-field.md). A version 2 journal whose
+    #     cause equals the expected cause scores no false attribution whatever its prose says; the same
+    #     statement in a version 1 journal fires the tripwire — the artifact the field removes (#78).
+    denial = ("the widget frobnicator divides by zero on row 3; chaos is not the cause, and this is "
+              "not a chaos toggle")
+    core, fx = base_core_v2(), base_fx()
+    core["root_cause"]["statement"] = denial
+    core["hypotheses"][0]["statement"] = denial
+    check_valid(core, fx)
+    r = score.score_pair(fx, core, JV)
+    assert r["passed"] and r["false_attributions"] == [] and r["cause_got"] == "unhandled-exception", r
+    core = base_core()
+    core["root_cause"]["statement"] = denial
+    core["hypotheses"][0]["statement"] = denial
+    assert score.score_pair(fx, core, JV)["false_attributions"] == ["not-chaos"]
+
+    # 20. Cause inequality (check 2): one false attribution, named by the two ids; the class and the
+    #     must_claim entries still pass, so the cause is the one thing that failed. A version 2
+    #     root-cause journal on a fixture that expects no root cause is a verdict miss and one false
+    #     attribution, as the prose tripwires were under version 1 (pin 4).
+    core, fx = base_core_v2(), base_fx()
+    fx["expected"]["cause"] = "wrong-result"
+    check_valid(core, fx)
+    r = score.score_pair(fx, core, JV)
+    assert not r["passed"] and r["false_attributions"] == ["cause:unhandled-exception"], r
+    assert r["cause_expected"] == "wrong-result" and r["class_ok"] and r["rc_hit"], r
+    assert "- cause: got `unhandled-exception`, want `wrong-result` — false attribution" in score.render_scorecard([r])
+    r = score.score_pair(base_fx("no-active-incident"), base_core_v2(), JV)
+    assert not r["verdict_ok"] and r["false_attributions"] == ["cause:unhandled-exception"], r
+    r = score.score_pair(score.load_fixture(EVAL / "scenarios/healthy-baseline.yaml", FV), base_core_v2(), JV)
+    assert not r["verdict_ok"] and r["false_attributions"] == ["cause:unhandled-exception"], r
+
+    # 21. Fixture cause ids (check 4): every live fixture states a cause of the list, or null exactly
+    #     when its verdict is not root-cause-identified; a fixture with an id outside the list is refused
+    #     as broken input; a root-cause fixture with the cause null is schema-invalid, refused the same.
+    assert len(score.CAUSE_IDS) == 28, len(score.CAUSE_IDS)
+    for path in scenarios:
+        exp = score.load_fixture(path, FV)["expected"]
+        if exp["verdict"] == "root-cause-identified":
+            assert exp["cause"] in score.CAUSE_IDS, path.name
+        else:
+            assert exp["cause"] is None, path.name
+    # One list, four copies: the contract table under "Causes, defined", $defs.cause, the six class
+    # pairs of the schema, and the plan. The table and the schema are held to each other here.
+    contract = (EVAL.parent / "skills/investigate/report-contract.md").read_text()
+    section = contract.split("### Causes, defined", 1)[1].split("\n## ", 1)[0]
+    table = {cid: cls for cls, cid in re.findall(r"^\| ([a-z-]+) \| `([a-z-]+)` \|", section, re.M)}
+    assert set(table) == score.CAUSE_IDS, set(table) ^ score.CAUSE_IDS
+    schema = json.loads((EVAL.parent / "skills/investigate/journal.schema.json").read_text())
+    pairs = {}
+    for rule in schema["properties"]["root_cause"]["allOf"]:
+        cls = rule["then"]["properties"]["incident_class"]["const"]
+        for cid in rule["if"]["properties"]["cause"]["enum"]:
+            assert cid not in pairs, cid   # one class per id
+            pairs[cid] = cls
+    assert pairs == table, {k: (pairs.get(k), table.get(k)) for k in pairs.keys() | table.keys()
+                            if pairs.get(k) != table.get(k)}
+    for bad in ("made-up", None):
+        fx = base_fx()
+        fx["expected"]["cause"] = bad
+        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False) as f:
+            yaml.safe_dump(fx, f)
+        try:
+            score.load_fixture(f.name, FV)
+            raise AssertionError(f"cause {bad!r} was not refused")
+        except score.InputError as e:
+            assert bad is None or "made-up" in str(e), e
+
+    # 22. Journal cause id (check 5): a version 2 journal with a cause outside the list, or in another
+    #     class than its incident_class, or without the field, fails citation compliance — a failing
+    #     report, no InputError. A version 1 journal with the field fails the same way.
+    for cause in ("made-up", "process-crashed"):
+        core = base_core_v2()
+        core["root_cause"]["cause"] = cause
+        r = score.score_pair(base_fx(), core, JV)
+        assert not r["citations_ok"] and not r["passed"], (cause, r)
+        assert any(e.startswith("root_cause") for e in r["citation_errors"]), r["citation_errors"]
+    core = base_core_v2()
+    del core["root_cause"]["cause"]
+    assert not score.score_pair(base_fx(), core, JV)["citations_ok"]
+    core = base_core()
+    core["root_cause"]["cause"] = "unhandled-exception"
+    assert not score.score_pair(base_fx(), core, JV)["citations_ok"]
+
+    # 23. Versions (check 3): the committed sample journal, version 1, still passes the D1 fixture now
+    #     that the fixture states a cause; a version 2 journal loads and passes; version 3 is refused
+    #     like 99 (pin 10).
+    fx = score.load_fixture(EVAL / "scenarios/d1-zero-stock-product-page.yaml", FV)
+    assert fx["expected"]["cause"] == "unhandled-exception"
+    core = score.load_journal(EVAL.parent / "journals/2026-07-30-products-3-500s.md")
+    assert core["konan_journal"] == 1 and score.score_pair(fx, core, JV)["passed"]
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        f.write("---\n" + yaml.safe_dump(base_core_v2(), sort_keys=False) + "---\n\nbody\n")
+    loaded = score.load_journal(f.name)
+    assert loaded["konan_journal"] == 2 and score.score_pair(base_fx(), loaded, JV)["passed"]
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        f.write("---\nkonan_journal: 3\n---\nbody\n")
+    try:
+        score.load_journal(f.name)
+        raise AssertionError("version 3 was not refused")
+    except score.InputError:
+        pass
+
+    print("OK: 23 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------

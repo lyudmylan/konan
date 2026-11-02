@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/lyudmylan/konan/blob/main/eval/fixture.schema.json",
-  "title": "konan eval scenario fixture (v1)",
-  "description": "Validates a scenario ground-truth fixture under eval/scenarios/. Scoring semantics live in eval/README.md; the scorer applies fixture matchers to a journal's machine core.",
+  "title": "konan eval scenario fixture (v2)",
+  "description": "Validates a scenario ground-truth fixture under eval/scenarios/. Scoring semantics live in eval/README.md; the scorer applies fixture matchers to a journal's machine core. Version 2 adds expected.cause: the expected root_cause.cause of a journal contract v2, a string exactly when a root cause is expected, else null; its membership in the contract's list is the scorer's check.",
   "type": "object",
   "additionalProperties": false,
   "required": ["konan_fixture", "scenario", "setup", "complaint", "expected"],
   "properties": {
-    "konan_fixture": { "const": 1 },
+    "konan_fixture": { "const": 2 },
     "scenario": {
       "type": "object",
       "additionalProperties": false,
@@ -35,7 +35,7 @@
     "expected": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["verdict", "incident_class", "must_claim", "must_not_claim"],
+      "required": ["verdict", "incident_class", "cause", "must_claim", "must_not_claim"],
       "properties": {
         "verdict": { "enum": ["root-cause-identified", "no-active-incident", "inconclusive"] },
         "incident_class": {
@@ -46,6 +46,7 @@
               "items": { "type": "string", "minLength": 1 } }
           ]
         },
+        "cause": { "type": ["string", "null"], "minLength": 1 },
         "must_claim": {
           "type": "array",
           "items": {
@@ -75,11 +76,12 @@
       "then": {
         "properties": {
           "incident_class": { "type": ["string", "array"] },
+          "cause": { "type": "string" },
           "must_claim": { "minItems": 1 }
         }
       },
       "else": {
-        "properties": { "incident_class": { "type": "null" } }
+        "properties": { "incident_class": { "type": "null" }, "cause": { "type": "null" } }
       }
     },
     "scoring_notes": { "type": "string", "minLength": 1 }

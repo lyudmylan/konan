@@ -24,7 +24,7 @@ content, not the location.
 ## Machine core
 
 ```yaml
-konan_journal: 1                # contract version; scorers refuse versions they don't know
+konan_journal: 2                # contract version (1 or 2); scorers refuse versions they don't know
 investigation:
   id: 2026-07-30-example        # matches the filename
   trigger: manual               # what started this, as text: manual | alert-inbox (profile,
@@ -40,6 +40,7 @@ root_cause:                     # required iff verdict is root-cause-identified
   hypothesis: H1                # must point at a validated hypothesis
   statement: "..."              # one sentence, the causal mechanism
   incident_class: software-defect
+  cause: unhandled-exception    # v2: one id of the list "Causes, defined", in the class of the root cause
 hypotheses:
   - id: H1                      # H1, H2, ... in the order first formed
     statement: "..."            # cause statement: what broke, by what mechanism
@@ -91,10 +92,69 @@ Field notes:
 - **`incident_class`** comes from the taxonomy: `software-defect`, `load-saturation`,
   `infra-process`, `third-party`, `interfaces`, `data-db`. A new lens may extend the
   taxonomy; scenario fixtures pin the expected class per scenario, so an invented class
-  scores as a miss.
+  scores as a miss. Under contract v2 the root cause also names its `cause` (the list
+  under "Causes, defined", below).
 - **`usage.tokens`** is `null` only when the run genuinely could not capture totals
   (interactive sessions); eval runs must fill it — cost-per-investigation is a
   first-class output.
+
+### Causes, defined
+
+Contract v2 (#78). `root_cause.cause` names the mechanism of the root cause with one id of
+the list below, in the class of the root cause: the schema rejects a cause outside its
+class, and the eval scorer compares the id with the fixture's expected cause by equality —
+a false attribution is an inequality of ids, never a reading of prose, so a report may deny
+a cause in words freely. The id states the mechanism; the statement states the instance.
+
+The two fields have two dimensions. The incident class is the discipline that finds and
+fixes the cause: one class per lens (a software engineer, an SRE, an integration engineer,
+and so on). The cause id is the mechanism the evidence proves: what broke and how, at the
+granularity of one resource, one process event, one boundary, or one database behaviour.
+Three rules keep neighbouring ids apart:
+
+- **A resource that ran out.** When demand rose, it is `load-saturation` and the id names
+  the resource. When the target's own code grows without demand, it is `software-defect`
+  `resource-leak`. When a cap of the platform was hit with neither, it is `infra-process`
+  `platform-limit`.
+- **A third party.** konan reads the target from outside and never sees inside a provider,
+  so the `third-party` ids name what the boundary shows (errors, slowness, a quota, a wrong
+  answer), not the provider's internal cause.
+- **The data layer.** The `data-db` ids name what the database did: did not answer,
+  answered slowly, hit a limit, held wrong data, disagreed with the code on the schema.
+
+| Class | Cause id | Meaning |
+| --- | --- | --- |
+| software-defect | `unhandled-exception` | the target's own code raises on some input and the request fails |
+| software-defect | `wrong-result` | the target's own code returns a wrong value without an error |
+| software-defect | `resource-leak` | the target's own code holds memory, handles, or connections it never frees; growth without demand |
+| load-saturation | `cpu-saturated` | demand exhausts the CPU |
+| load-saturation | `memory-exhausted` | demand exhausts the memory |
+| load-saturation | `connections-exhausted` | demand exhausts a connection pool, sockets, or descriptors |
+| load-saturation | `workers-exhausted` | demand exhausts the threads or workers; queues back up |
+| load-saturation | `bandwidth-saturated` | demand exhausts the network throughput |
+| infra-process | `process-crashed` | the process exited, once and not restarted, or in a loop |
+| infra-process | `process-hung` | the process is alive and does not serve |
+| infra-process | `platform-limit` | the platform refused the process a resource with no rise in demand: disk full, a descriptor limit, a memory cap |
+| infra-process | `degradation-switch` | an operational switch inside the target (chaos, kill switch, feature flag) injects errors or latency while on |
+| infra-process | `config-change` | a changed configuration value altered the runtime behaviour |
+| infra-process | `deployment-error` | a rollout put the wrong build, a partial rollout, or a missing dependency in place |
+| third-party | `provider-outage` | an external provider returns errors or does not answer |
+| third-party | `provider-latency` | an external provider answers slowly |
+| third-party | `provider-quota` | an external provider rejects on a quota or a rate limit |
+| third-party | `provider-wrong-result` | an external provider answers with wrong content |
+| interfaces | `contract-mismatch` | a payload, schema, or version mismatch between two parties |
+| interfaces | `gateway-failure` | a proxy, load balancer, or gateway tier fails on its own |
+| interfaces | `auth-failure` | a boundary rejects credentials, a token, or a permission |
+| interfaces | `certificate-expired` | a certificate at a boundary expired or was not rotated |
+| interfaces | `connectivity-loss` | the network path between two parties is broken: DNS, routing, a firewall |
+| data-db | `database-unavailable` | the database does not answer: down, refusing connections, in failover |
+| data-db | `slow-queries` | queries answer slowly: a missing index, a bad plan, lock contention |
+| data-db | `database-limit` | the database hit a limit of its own: storage, connections, throughput |
+| data-db | `data-inconsistency` | a record or a state is wrong, missing, duplicated, corrupt, or out of sync |
+| data-db | `schema-mismatch` | the schema of the database and the code disagree, after a migration or before one |
+
+The list is target-generic: no name of a target, an endpoint, or a seeded defect. A change
+to the list is a change to this contract, through its own change request.
 
 ## Citation discipline
 
@@ -136,8 +196,8 @@ After the frontmatter, these sections in order:
 2. **Scorer** (deterministic, eval-side): referential integrity — every `E<n>`
    reference resolves, `root_cause.hypothesis` names a `validated` hypothesis,
    `wall_clock_seconds` matches the timestamps — then ground-truth comparison against
-   the scenario fixture's expected class, must-claim and must-not-claim lists, applied
-   to the machine core only.
+   the scenario fixture's expected class, expected cause (v2: equality of ids),
+   must-claim list, and must-not-claim list (v1 only), applied to the machine core only.
 
 The in-loop judge is part of the system being measured; it never fills the scorecard.
 The scorer never interprets; it parses and compares. That separation is why the
@@ -147,3 +207,9 @@ machine core exists.
 
 Breaking changes bump `konan_journal`. A scorer refuses a version it does not know —
 a wrong score is worse than no score.
+
+- **v2** (#78): `root_cause.cause`, one id of the list under "Causes, defined", required
+  when the verdict is `root-cause-identified`. The reason: the benchmark cannot score a
+  false attribution from prose — a correct report that denied a cause in words was scored
+  as if it had claimed it. A version 1 journal stays valid against version 1: the schema
+  validates both versions, and a version 1 journal carries no `cause`.

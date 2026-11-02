@@ -20,10 +20,11 @@ prose never scores as a false attribution.
   reason.
 - `skills/investigate/journal.schema.json`: the field and its enum under version 2; a version 1 journal
   stays valid against version 1.
-- `skills/investigate/SKILL.md`, and the lens or judge text that fills the root cause: the investigator
-  writes the field from the list, and the field agrees with `incident_class`.
+- `skills/investigate/SKILL.md`: the investigator writes the field from the list, and the field agrees with
+  `incident_class`. The lenses and the judge do not change: the orchestrator writes the journal.
 - `eval/fixture.schema.json` and the ten fixtures under `eval/scenarios/`: `expected.cause`, one id, or
-  null when no root cause is expected.
+  null when no root cause is expected; the fixture format goes to `konan_fixture: 2`, because a new
+  required field is a breaking change of the format.
 - `eval/score.py`: it reads versions 1 and 2. A version 1 journal scores as today. On a version 2 journal
   with the verdict `root-cause-identified`, a false attribution is `root_cause.cause` not equal to
   `expected.cause`, and the `must_not_claim` prose entries are not evaluated. `must_claim` stays a prose
@@ -32,7 +33,8 @@ prose never scores as a false attribution.
   and so a failing report.
 - `eval/tests.py`: the pins of the version 2 semantics, below; the version 1 pins unchanged.
 - `eval/README.md`: the scoring semantics of version 2; the paragraph on the limits of the lookbehind guard
-  becomes a note on version 1 journals.
+  becomes a note on version 1 journals. `eval/BENCHMARK.md`: the lines on passed and false attributions
+  name the version 2 rule next to the version 1 rule.
 - `docs/product.md`, section v0.2: report contract v2 stays out of scope except this field, pulled forward
   because the benchmark cannot score false attributions from prose.
 
@@ -40,7 +42,8 @@ prose never scores as a false attribution.
 
 The rest of report contract v2 — severity (#24), routing (#23), memory (#28), pacing (#29), epic #37: one
 field, not the set. A negation pass over prose in the scorer. Re-scoring bench-v1 under version 2. The
-committed journals under `journals/` and `eval/runs/`: they stay version 1.
+existing committed journals under `journals/` and `eval/runs/` stay version 1; the smoke run of check 8 adds
+one version 2 journal.
 
 ## Acceptance checks
 
@@ -55,7 +58,7 @@ committed journals under `journals/` and `eval/runs/`: they stay version 1.
    test: `eval/tests.py`, the pin "cause inequality".
 3. A version 1 journal scores as before: the existing pins pass unchanged, and the committed sample journal
    still passes the D1 fixture.
-   test: `eval/tests.py`, pins 0 to 16. command: `uv run eval/tests.py`
+   test: `eval/tests.py`, pins 0 to 18. command: `uv run eval/tests.py`
 4. Every live fixture states an `expected.cause` that is an id of the list, or null exactly when its expected
    verdict is not `root-cause-identified`; a fixture with an id outside the list is refused with exit 2.
    test: `eval/tests.py`, the pin "fixture cause ids".

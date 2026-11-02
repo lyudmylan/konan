@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: chaos-error-rate
   title: Degradation switch — intermittent 503s across business endpoints, health green
@@ -47,6 +47,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: infra-process
+  cause: degradation-switch
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]

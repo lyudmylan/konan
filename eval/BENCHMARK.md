@@ -19,9 +19,10 @@ Per investigation (one fixture, one model, one repetition), the scorer semantics
 `eval/README.md` apply unchanged:
 
 - **Passed** — verdict matches, class matches when a root cause is expected, every
-  `must_claim` hits, no `must_not_claim` fires, and the journal is citation-compliant.
+  `must_claim` hits, no false attribution, and the journal is citation-compliant.
 - **Root-cause accuracy** — over runs whose fixture expects a root cause.
-- **False attributions** — `must_not_claim` hits on root-cause-identified journals.
+- **False attributions** — on root-cause-identified journals: the cause id differs from
+  the fixture's expected cause (journal contract v2), or a `must_not_claim` hits (v1).
 - **Citation compliance** — schema + referential integrity (no citation, no claim).
 - **Tokens** — the whole run, subagents included: input + output + cache-read +
   cache-creation, from the harness envelope's `modelUsage` (`.meta.json` sidecar; the

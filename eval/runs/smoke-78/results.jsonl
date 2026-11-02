@@ -1,0 +1,1 @@
+{"run_id": "smoke-78", "model": "claude-sonnet-5", "scenario": "d1-zero-stock-product-page", "rep": 1, "status": "ok", "session_id": "a9f189e7-a0b9-41fb-8bf1-be8ded58ba3a", "num_turns": 36, "duration_ms": 650170, "tokens_total": 3025278, "total_cost_usd": 1.8208094999999997, "quota_error": false}

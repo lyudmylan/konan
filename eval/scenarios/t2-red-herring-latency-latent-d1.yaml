@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: t2-red-herring-latency-latent-d1
   title: Tier 2 trap — injected latency is the incident; a latent code defect sits in plain sight
@@ -33,6 +33,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: infra-process
+  cause: degradation-switch
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]

@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: t2-healthy-after-chaos-window
   title: Tier 2 trap — a degradation window that already closed; counters and old logs still show it
@@ -43,6 +43,7 @@ complaint: >-
 expected:
   verdict: no-active-incident
   incident_class: null
+  cause: null
   must_claim: []
   must_not_claim:
     - id: past-window-not-active

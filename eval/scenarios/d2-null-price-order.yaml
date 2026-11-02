@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: d2-null-price-order
   title: Seeded defect D2 — order creation 500s for the null-price product (write path)
@@ -33,6 +33,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: software-defect
+  cause: unhandled-exception
   must_claim:
     - id: mechanism
       all_of: ["(?i)type.?error|nonetype"]
@@ -53,3 +54,6 @@ scoring_notes: >-
   order path) plus catalog reads (the null-price row is visible on the product
   detail/list routes). Latent discovery of D1 while browsing is possible and
   unpenalized — the claim surface excludes latent findings.
+  The two seeded defects share the cause id unhandled-exception, so a version 2
+  journal that blames the other defect is caught by the must_claim entries on the
+  mechanism and the operation, not by the cause.

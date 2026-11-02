@@ -1,4 +1,4 @@
-konan_fixture: 1
+konan_fixture: 2
 scenario:
   id: chaos-latency
   title: Degradation switch, latency-only — everything slow, nothing errors
@@ -34,6 +34,7 @@ complaint: >-
 expected:
   verdict: root-cause-identified
   incident_class: infra-process
+  cause: degradation-switch
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
