@@ -1,0 +1,8 @@
+{
+  "run_id": "smoke-78",
+  "fixtures": [
+    "d1-zero-stock-product-page"
+  ],
+  "repeat": 1,
+  "registered_at": "2026-11-02T12:16:35Z"
+}

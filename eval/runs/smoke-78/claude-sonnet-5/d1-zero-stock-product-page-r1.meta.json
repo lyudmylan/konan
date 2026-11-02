@@ -1,0 +1,55 @@
+{
+  "session_id": "a9f189e7-a0b9-41fb-8bf1-be8ded58ba3a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 36,
+  "duration_ms": 650170,
+  "duration_api_ms": 686095,
+  "total_cost_usd": 1.8208094999999997,
+  "tokens_total": 3025278,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 86,
+      "outputTokens": 61024,
+      "cacheReadInputTokens": 2766070,
+      "cacheCreationInputTokens": 198098,
+      "costUSD": 1.8208094999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "ls .claude/skills/investigate/lenses/ && echo --- && scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "for e in 1793621983 1793622140 1793622146 1793622149; do date -u -r \"$e\" +\"%Y-%m-%dT%H:%M:%SZ\"; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"import yaml, jsonschema; print('ok')\" 2>&1"
+    }
+  ],
+  "result_tail": "t restart or crash during the window. No deploy or config-change marker appears in the log. This is not an infrastructure problem.\n\n**Verdict:** root-cause-identified \u2014 class `software-defect`, cause `unhandled-exception`.\n\n**Gaps (honest, listed in the journal):**\n- No log history before the one visible server start \u2014 can't rule out an earlier restart.\n- No access to the database \u2014 can't say why product 3's stock went to zero.\n- No per-customer data on this surface \u2014 \"several customers\" is confirmed only at the HTTP level.\n\nThe journal is not yet committed to git. Do you want me to commit it?",
+  "run_id": "smoke-78",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 1,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-02T12:16:49Z",
+  "ended_at": "2026-11-02T12:27:40Z",
+  "restages": 0,
+  "wall_seconds_runner": 651,
+  "journal_source_name": "2026-11-02-product-3-zero-stock-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
