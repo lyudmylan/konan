@@ -31,7 +31,8 @@ prose never scores as a false attribution.
   check on the claim surface, where a hit is the thing measured. A fixture whose `expected.cause` is not in
   the list is refused as broken input (exit 2); a journal whose `cause` is not in the list is schema-invalid,
   and so a failing report.
-- `eval/tests.py`: the pins of the version 2 semantics, below; the version 1 pins unchanged.
+- `eval/tests.py`: the pins of the version 2 semantics named in the acceptance checks; the version 1 pins
+  unchanged.
 - `eval/README.md`: the scoring semantics of version 2; the paragraph on the limits of the lookbehind guard
   becomes a note on version 1 journals. `eval/BENCHMARK.md`: the lines on passed and false attributions
   name the version 2 rule next to the version 1 rule.
