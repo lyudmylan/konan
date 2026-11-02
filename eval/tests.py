@@ -322,6 +322,21 @@ def run():
             assert exp["cause"] in score.CAUSE_IDS, path.name
         else:
             assert exp["cause"] is None, path.name
+    # One list, four copies: the contract table under "Causes, defined", $defs.cause, the six class
+    # pairs of the schema, and the plan. The table and the schema are held to each other here.
+    contract = (EVAL.parent / "skills/investigate/report-contract.md").read_text()
+    section = contract.split("### Causes, defined", 1)[1].split("\n## ", 1)[0]
+    table = {cid: cls for cls, cid in re.findall(r"^\| ([a-z-]+) \| `([a-z-]+)` \|", section, re.M)}
+    assert set(table) == score.CAUSE_IDS, set(table) ^ score.CAUSE_IDS
+    schema = json.loads((EVAL.parent / "skills/investigate/journal.schema.json").read_text())
+    pairs = {}
+    for rule in schema["properties"]["root_cause"]["allOf"]:
+        cls = rule["then"]["properties"]["incident_class"]["const"]
+        for cid in rule["if"]["properties"]["cause"]["enum"]:
+            assert cid not in pairs, cid   # one class per id
+            pairs[cid] = cls
+    assert pairs == table, {k: (pairs.get(k), table.get(k)) for k in pairs.keys() | table.keys()
+                            if pairs.get(k) != table.get(k)}
     for bad in ("made-up", None):
         fx = base_fx()
         fx["expected"]["cause"] = bad

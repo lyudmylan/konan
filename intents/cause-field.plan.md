@@ -1,7 +1,7 @@
 # Plan: the cause field of the journal (#78)
 
-Intent: `intents/cause-field.md`. Written 2026-11-01; the code starts after the leader accepts it in the
-conversation, with the list below in it.
+Intent: `intents/cause-field.md`. Written 2026-11-01; accepted by the leader on 2026-11-02, with the list
+below in it.
 
 ## The closed list of causes
 
@@ -59,7 +59,9 @@ The ids are target-generic and come from the published incident studies named un
 sub-categories of the Microsoft Teams study map onto the six classes, trimmed to what a read-only
 investigator can prove from outside the target.
 
-A later change to the list is a change to the report contract, through its own change request.
+A later change to the list is a change to the report contract, through its own change request. After the
+merge the contract table is the reference; this table is the record of the approval, and pin 21 holds the
+contract table, the schema enum, and the six class pairs of the schema to one list.
 
 ## Steps
 
@@ -112,6 +114,9 @@ A later change to the list is a change to the report contract, through its own c
    - 21 "fixture cause ids" (check 4): every live fixture loads, its cause is in the list or null exactly
      when its verdict is not `root-cause-identified`; a fixture with the cause `made-up` raises
      `InputError`; a root-cause fixture with the cause null is schema-invalid and raises `InputError`.
+     The same pin reads the table under "Causes, defined" in the contract and asserts that its ids equal
+     `$defs.cause`, that the union of the six class enums of the schema equals `$defs.cause`, and that
+     the class of each id is the same in the table and in the schema pair: one list, four copies.
    - 22 "journal cause id" (check 5): a version 2 journal with the cause `made-up` fails citation
      compliance and does not pass, with no `InputError`; so does one whose cause is `process-crashed` under
      the class `software-defect`.
