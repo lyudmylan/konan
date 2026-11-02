@@ -1,0 +1,39 @@
+{
+  "session_id": "c1c6e012-9875-4f0e-98dd-2d17244cfd01",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 19,
+  "duration_ms": 1154988,
+  "duration_api_ms": 1712439,
+  "total_cost_usd": 3.5350632,
+  "tokens_total": 5519175,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 176,
+      "outputTokens": 147756,
+      "cacheReadInputTokens": 5020741,
+      "cacheCreationInputTokens": 350502,
+      "costUSD": 3.5350632
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": \"request\"' lab/logs/app.log | grep -v '\"status\": 200\\|\"status\": 201' ; echo \"---all request lines (compact)---\"; python3 -c \"\nimport json\nwith open('lab/logs/app.log') as f:\n    for line in f:\n        d = json.loads(line)\n        if d.get('event') == 'request':\n            print(d['ts'], d['method'], d['path'], d['status'], d['duration_ms'], d['request_id'])\n\"\n"
+    }
+  ],
+  "result_tail": "d by an adversarial judge across two rounds of targeted probing.\n\nSeparately, a real bug surfaced: `GET /products/3` deterministically throws a `ZeroDivisionError` (zero stock) and returns a 500. It's a plausible explanation for the \"error page once\" detail, but every occurrence in telemetry postdates the complaint and was triggered only by this investigation's own probes \u2014 so it's recorded as a **latent finding**, not the confirmed cause. No source in this lab's surface can tie a real customer request to that path during the complaint window \u2014 that's logged as an honest gap, not papered over.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-02T21:11:38Z",
+  "ended_at": "2026-11-02T21:38:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 1600,
+  "journal_source_name": "2026-11-02-chaos-mode-latency-slowdown.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

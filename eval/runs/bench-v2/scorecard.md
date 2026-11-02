@@ -1,16 +1,16 @@
 # konan scorecard
 
-Generated 2026-11-02T21:24:33+02:00 — 20 scenario(s) scored, model(s): claude-fable-5, claude-sonnet-5.
+Generated 2026-11-02T23:38:20+02:00 — 30 scenario(s) scored, model(s): claude-fable-5, claude-sonnet-5.
 Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 
 ## Summary
 
-- **Scenarios passed: 15/20**
-- Root-cause accuracy: 15/20 (scenarios expecting a root cause)
-- False attributions: 0
-- Evidence-citation compliance: 20/20
-- Tokens: 53893008
-- Wall clock: 9201s total
+- **Scenarios passed: 23/30**
+- Root-cause accuracy: 19/24 (scenarios expecting a root cause)
+- False attributions: 1
+- Evidence-citation compliance: 30/30
+- Tokens: 94483501
+- Wall clock: 14984s total
 
 ## Scenarios
 
@@ -30,12 +30,22 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 | chaos-error-rate | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5902420 | 488 |
 | chaos-error-rate | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3381155 | 518 |
 | chaos-latency | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5501939 | 552 |
+| chaos-latency | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3376881 | 536 |
+| chaos-latency | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 6485960 | 764 |
 | d1-zero-stock-product-page | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3191717 | 434 |
 | d1-zero-stock-product-page | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1788749 | 314 |
 | d1-zero-stock-product-page | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 3222963 | 571 |
 | d2-null-price-order | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 4706238 | 817 |
 | d2-null-price-order | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2758669 | 522 |
 | d2-null-price-order | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2544903 | 390 |
+| healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 3733117 | 241 |
+| healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 2547705 | 340 |
+| healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 4391321 | 240 |
+| t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 4468802 | 557 |
+| t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 2783102 | 464 |
+| t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✗ inconclusive (want no-active-incident) | — | — | 0 | ✓ | 3556550 | 478 |
+| t2-red-herring-latency-latent-d1 | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3727880 | 793 |
+| t2-red-herring-latency-latent-d1 | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5519175 | 1370 |
 
 ## Failure detail
 
@@ -58,3 +68,12 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 ### d1-zero-stock-product-page
 
 - must_claim `data-condition`: no match in the claim surface
+
+### t2-quiet-d1-suggestive-complaint
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `unhandled-exception`, want `None` — false attribution
+
+### t2-quiet-d1-suggestive-complaint
+
+- verdict: got `inconclusive`, want `no-active-incident`

@@ -1,0 +1,47 @@
+{
+  "session_id": "887499c1-735e-4a96-ba47-9aefc7754d7e",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 410975,
+  "duration_api_ms": 467757,
+  "total_cost_usd": 1.2935752999999997,
+  "tokens_total": 2547705,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 84,
+      "outputTokens": 36968,
+      "cacheReadInputTokens": 2366639,
+      "cacheCreationInputTokens": 144014,
+      "costUSD": 1.2935752999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, re\nwith open('journals/2026-11-02-routine-handover-check.md') as f:\n    content = f.read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', content, re.S)\ndata = yaml.safe_load(m.group(1))\nprint('parsed OK')\nprint(list(data.keys()))\nprint(data['usage'])\nprint(data['evidence'][0])\n\"\n"
+    }
+  ],
+  "result_tail": "s clean 404s, not errors.\n\nVerdict: **no-active-incident**. No hypothesis was even formed \u2014 nothing anomalous turned up to investigate further.\n\nI wrote the full report to `journals/2026-11-02-routine-handover-check.md` (machine-readable YAML core + human narrative, per the report contract).\n\nTwo honest gaps, noted in the journal: the process has only a few minutes of history with near-zero real traffic, so a slow trend (e.g. a leak) wouldn't show yet; and coverage was spot-checks, not an exhaustive sweep of every endpoint.\n\nI did not commit this journal \u2014 let me know if you want it committed.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-02T20:05:55Z",
+  "ended_at": "2026-11-02T20:12:46Z",
+  "restages": 0,
+  "wall_seconds_runner": 412,
+  "journal_source_name": "2026-11-02-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
