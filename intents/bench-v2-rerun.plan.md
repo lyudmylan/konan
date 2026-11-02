@@ -41,13 +41,13 @@ which exist only after the last run, and a change request for the runner alone c
    percent of the Fable week, with the reset on 2026-11-03 at 22:00 (Asia/Jerusalem). The order Sonnet,
    Opus, Fable; inside each model the tier-1 fixtures first, then tier 2, then tier 3 (the order of
    `--fixtures`); batches of ten (`--max-runs 10`), one model at a time, for the granularity of the
-   commits, resumed until the model's thirty runs are done; the weekly meter read before and after each
+   commits, resumed until the model's thirty runs are done; the weekly meters read before and after each
    model's runs, and after the first batch of ten, which sizes the share of one investigation on the
-   current plan (check 11). Sonnet and Opus run before the reset; Fable runs after it, on a fresh Fable
-   week (bench-v1 measured 2.2 to 3.3 percent of the weekly Fable quota per investigation, so the thirty
-   Fable runs are most of a week, and 71 percent of the old week would not hold them with margin for the
-   leader's own sessions). The leader states what else the pool must serve, and the batches move
-   accordingly.
+   current plan (check 11). The order of the models, decided by the leader at the go on 2026-11-02:
+   Fable first, before the reset, because the 71 percent left of the Fable week may hold its thirty runs
+   (bench-v1 measured 2.2 to 3.3 percent of the weekly Fable quota per investigation); a quota stop
+   before the thirtieth run is resumed after the reset. Then Sonnet, then Opus. The leader states what
+   else the pool must serve, and the batches move accordingly.
 5. The batches: `uv run eval/run.py --run-id bench-v2 --model <m> --repeat 3 --max-runs <k> --fixtures
    <the ten fixtures in tier order>`. The first invocation registers the plan (ten ids, three
    repetitions). The runner resumes by run id; a quota stop is retried; a failed run counts and is not
