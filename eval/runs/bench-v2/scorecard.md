@@ -1,16 +1,16 @@
 # konan scorecard
 
-Generated 2026-11-02T23:38:20+02:00 — 30 scenario(s) scored, model(s): claude-fable-5, claude-sonnet-5.
+Generated 2026-11-03T01:32:59+02:00 — 40 scenario(s) scored, model(s): claude-fable-5, claude-sonnet-5.
 Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 
 ## Summary
 
-- **Scenarios passed: 23/30**
-- Root-cause accuracy: 19/24 (scenarios expecting a root cause)
-- False attributions: 1
-- Evidence-citation compliance: 30/30
-- Tokens: 94483501
-- Wall clock: 14984s total
+- **Scenarios passed: 29/40**
+- Root-cause accuracy: 25/31 (scenarios expecting a root cause)
+- False attributions: 4
+- Evidence-citation compliance: 40/40
+- Tokens: 125465317
+- Wall clock: 19807s total
 
 ## Scenarios
 
@@ -41,11 +41,21 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 | healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 3733117 | 241 |
 | healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 2547705 | 340 |
 | healthy-baseline | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 4391321 | 240 |
+| t2-healthy-after-chaos-window | claude-sonnet-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 3161057 | 356 |
+| t2-healthy-after-chaos-window | claude-sonnet-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 2585819 | 471 |
+| t2-healthy-after-chaos-window | claude-sonnet-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 3660641 | 658 |
 | t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✓ no-active-incident | — | — | 0 | ✓ | 4468802 | 557 |
 | t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 2783102 | 464 |
 | t2-quiet-d1-suggestive-complaint | claude-sonnet-5 | ✗ inconclusive (want no-active-incident) | — | — | 0 | ✓ | 3556550 | 478 |
 | t2-red-herring-latency-latent-d1 | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3727880 | 793 |
 | t2-red-herring-latency-latent-d1 | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5519175 | 1370 |
+| t2-red-herring-latency-latent-d1 | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3150468 | 719 |
+| t3-chaos-low-rate-intermittent | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2191465 | 360 |
+| t3-chaos-low-rate-intermittent | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5179120 | 901 |
+| t3-chaos-low-rate-intermittent | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1905211 | 283 |
+| t3-crash-hard-down | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3105120 | 410 |
+| t3-crash-hard-down | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3902509 | 422 |
+| t3-crash-hard-down | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 2140406 | 243 |
 
 ## Failure detail
 
@@ -69,6 +79,21 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 
 - must_claim `data-condition`: no match in the claim surface
 
+### t2-healthy-after-chaos-window
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `degradation-switch`, want `None` — false attribution
+
+### t2-healthy-after-chaos-window
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `degradation-switch`, want `None` — false attribution
+
+### t2-healthy-after-chaos-window
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `degradation-switch`, want `None` — false attribution
+
 ### t2-quiet-d1-suggestive-complaint
 
 - verdict: got `root-cause-identified`, want `no-active-incident`
@@ -77,3 +102,7 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 ### t2-quiet-d1-suggestive-complaint
 
 - verdict: got `inconclusive`, want `no-active-incident`
+
+### t3-crash-hard-down
+
+- must_claim `no-restart-after`: no match in the claim surface

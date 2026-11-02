@@ -1,0 +1,39 @@
+{
+  "session_id": "49712119-918e-481b-accb-5758daa4a9e7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 473759,
+  "duration_api_ms": 523545,
+  "total_cost_usd": 1.3966621000000001,
+  "tokens_total": 1905211,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 60,
+      "outputTokens": 48438,
+      "cacheReadInputTokens": 1673943,
+      "cacheCreationInputTokens": 182770,
+      "costUSD": 1.3966621000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "thesis. No code defect, crash, or resource issue found. One open gap: client-side \"succeeds on retry\" could not be confirmed from this surface \u2014 only aggregate counters are available.\n\nJournal: `journals/2026-11-02-shop-intermittent-errors-chaos-toggle.md` (not committed \u2014 see note below).\n\nTwo things outside the investigation itself, for your attention:\n- This worktree has **13 journal files deleted on disk but not committed**, and HEAD is **detached** (not on any branch). Neither blocked this task, but you may want to check that state before it is lost or before anything gets committed here.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-02T23:25:03Z",
+  "ended_at": "2026-11-02T23:32:57Z",
+  "restages": 0,
+  "wall_seconds_runner": 475,
+  "journal_source_name": "2026-11-02-shop-intermittent-errors-chaos-toggle.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,43 @@
+{
+  "session_id": "37f51f13-6d78-470b-ae1a-9ffe1ba6ebb0",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 11,
+  "duration_ms": 376126,
+  "duration_api_ms": 707178,
+  "total_cost_usd": 2.0202611,
+  "tokens_total": 3902509,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 112,
+      "outputTokens": 60546,
+      "cacheReadInputTokens": 3627663,
+      "cacheCreationInputTokens": 214188,
+      "costUSD": 2.0202611
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "git add journals/2026-11-02-shop-down-process-crash.md && git status"
+    },
+    {
+      "tool": "Bash",
+      "command": "git commit -m \"investigate: shop fully down, faultline process crashed via /simulate/crash\""
+    }
+  ],
+  "result_tail": "eption trace. The exit was deliberate, not a code bug.\n\nAn adversarial judge reviewed the evidence. The judge confirmed the process-crash cause. The judge rejected three other explanations: an internal toggle, a code exception, and a gateway failure.\n\nOpen gaps (in the journal): I could not check OS-level process status \u2014 that is outside my read-only surface. I could not confirm how far back \"fine ten minutes ago\" goes \u2014 the log only covers the last 6 seconds before the crash.\n\nNext step: restart the service. That is an operator action, not something I can do from this read-only investigation.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-02T22:41:08Z",
+  "ended_at": "2026-11-02T22:51:40Z",
+  "restages": 0,
+  "wall_seconds_runner": 632,
+  "journal_source_name": "2026-11-02-shop-down-process-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

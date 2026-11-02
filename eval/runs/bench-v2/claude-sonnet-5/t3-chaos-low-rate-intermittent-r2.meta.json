@@ -1,0 +1,75 @@
+{
+  "session_id": "422e0d4d-0a4d-4ea6-b8d0-f03ce5c6d8e5",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 43,
+  "duration_ms": 1108626,
+  "duration_api_ms": 1206122,
+  "total_cost_usd": 2.9718720999999992,
+  "tokens_total": 5179120,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 148,
+      "outputTokens": 102489,
+      "cacheReadInputTokens": 4752623,
+      "cacheCreationInputTokens": 323860,
+      "costUSD": 2.9718720999999992
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "echo \"--- startup events ---\"\ngrep -o '\"event\": \"startup\"' lab/logs/app.log | wc -l\necho \"--- chaos enable/disable events ---\"\ngrep '\"event\": \"chaos_' lab/logs/app.log\necho \"--- chaos_failure count ---\"\ngrep -c '\"event\": \"chaos_failure\"' lab/logs/app.log\necho \"--- duration_ms distribution (sorted desc, top 10) ---\"\ngrep -o '\"duration_ms\": [0-9.]*' lab/logs/app.log | awk -F': ' '{print $2}' | sort -rn | head -10\necho \"--- unhandled exceptions ---\"\ngrep -c '\"event\": \"unhandled_exception\"' lab/logs/app.log"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status; echo \"---\"; wc -l lab/logs/app.log; echo \"---\"; ls -la lab/logs/"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "{\n  for i in $(seq 1 15); do\n    scripts/probe.sh /products/5\n  done\n  for i in $(seq 1 10); do\n    scripts/probe.sh /orders\n  done\n} > /tmp/konan-burst-gapB.out 2>&1\necho \"DONE\"\ngrep -c 'HTTP 200' /tmp/konan-burst-gapB.out\ngrep -c 'HTTP 503' /tmp/konan-burst-gapB.out\ngrep '\\-\\- HTTP' /tmp/konan-burst-gapB.out"
+    },
+    {
+      "tool": "Bash",
+      "command": "rm -f /tmp/konan-burst-gapB.out && for i in $(seq 1 15); do scripts/probe.sh /products/5 >> /tmp/konan-burst-gapB.out 2>&1; done && for i in $(seq 1 10); do scripts/probe.sh /orders >> /tmp/konan-burst-gapB.out 2>&1; done && echo DONE"
+    },
+    {
+      "tool": "Bash",
+      "command": "find /Users/lyudmylan/.claude/projects/-Users-lyudmylan-Projects-konan/memory -iname '*validate-journal*'"
+    },
+    {
+      "tool": "Bash",
+      "command": "awk -F'\"' 'NF>1 {print NR\": \"NF-1\" quotes\"}' journals/2026-11-02-shop-occasional-503s.md | awk -F': ' '{n=$2+0; if (n%2!=0) print}'"
+    },
+    {
+      "tool": "Bash",
+      "command": "awk -F'\"' '{n=NF-1; if (n%2!=0) print NR\": \"n\" quotes\"}' journals/2026-11-02-shop-occasional-503s.md"
+    }
+  ],
+  "result_tail": "ccess on retry of the same route \u2014 which is exactly why \"it works on retry, most people notice nothing.\" No code defect, process crash, or resource issue is involved; two adversarial judge passes and an independent-counter cross-check confirmed this. It's still active as of a few minutes ago.\n\nTwo honest gaps: I can't turn the toggle off to prove causation definitively (that's operator-only surface, outside a read-only investigator's reach), and I can't see who flipped it. Both are recorded in the journal rather than chased further.\n\nFull writeup: `journals/2026-11-02-shop-occasional-503s.md`.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-02T23:06:26Z",
+  "ended_at": "2026-11-02T23:24:55Z",
+  "restages": 0,
+  "wall_seconds_runner": 1109,
+  "journal_source_name": "2026-11-02-shop-occasional-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,51 @@
+{
+  "session_id": "9577c51b-4cf4-435b-bb5f-1a46e741eebd",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 757029,
+  "duration_api_ms": 830126,
+  "total_cost_usd": 1.8610391999999998,
+  "tokens_total": 2585819,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 78,
+      "outputTokens": 75709,
+      "cacheReadInputTokens": 2311591,
+      "cacheCreationInputTokens": 198441,
+      "costUSD": 1.8610391999999998
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd /private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-hcwsb9ml/wt && git show 6121a28 --stat | head -20"
+    },
+    {
+      "tool": "Bash",
+      "command": "git ls-tree -r HEAD --name-only -- journals/ && echo --- && ls journals/ 2>/dev/null"
+    },
+    {
+      "tool": "Bash",
+      "command": "git ls-tree -r HEAD --name-only -- journals/"
+    }
+  ],
+  "result_tail": "on switch (class: `infra-process`, cause: `degradation-switch`) \u2014 not a defect, not a dependency failure.\n\nI wrote the full evidence-cited record to `journals/2026-11-02-handover-chaos-recheck.md`. No action is needed. One suggestion for later: make chaos-toggle events visible to on-call directly, so short blips like this don't need a manual check to catch.\n\nSeparate note: I noticed several older journal files show as deleted in `git status` (uncommitted, not something I touched). That's pre-existing state from before this session \u2014 flagging it in case it's not expected, since I left it as-is.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-02T22:03:38Z",
+  "ended_at": "2026-11-02T22:16:16Z",
+  "restages": 0,
+  "wall_seconds_runner": 758,
+  "journal_source_name": "2026-11-02-handover-chaos-recheck.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

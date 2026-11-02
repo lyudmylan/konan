@@ -1,0 +1,47 @@
+{
+  "session_id": "381dec43-2462-4472-bb12-00578364cb42",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 17,
+  "duration_ms": 466482,
+  "duration_api_ms": 718958,
+  "total_cost_usd": 1.8937707000000001,
+  "tokens_total": 3105120,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 98,
+      "outputTokens": 63622,
+      "cacheReadInputTokens": 2823301,
+      "cacheCreationInputTokens": 218099,
+      "costUSD": 1.8937707000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u -r 1793658657 2>/dev/null || python3 -c \"import datetime; print(datetime.datetime.utcfromtimestamp(1793658657))\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, json, re, sys\nwith open('journals/2026-11-02-total-outage-process-crash.md') as f:\n    content = f.read()\nm = re.match(r'^---\\n(.*?)\\n---\\n', content, re.S)\nfm = yaml.safe_load(m.group(1))\nprint('parsed ok')\nprint(json.dumps(fm, indent=2)[:200])\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "command -v yq node ruby 2>&1"
+    }
+  ],
+  "result_tail": "ting is correct throughout, and the structure matches the schema. The journal is complete and consistent.\n\nInvestigation concluded: **root cause identified**. The faultline process crashed (exit code 1) after its `/simulate/crash` endpoint was hit at 22:30:23.955Z and never restarted \u2014 that's a total process-down state, which is why no error page could render at all, matching the complaint exactly. Written to `journals/2026-11-02-total-outage-process-crash.md`. Software-defect and interfaces/degradation-switch causes were tested and ruled out by three parallel lenses plus an adversarial judge.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-02T22:30:26Z",
+  "ended_at": "2026-11-02T22:40:58Z",
+  "restages": 0,
+  "wall_seconds_runner": 632,
+  "journal_source_name": "2026-11-02-total-outage-process-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
