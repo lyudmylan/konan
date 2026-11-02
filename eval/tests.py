@@ -425,6 +425,19 @@ def test_runner_recognizes_quota_errors():
     assert not runner.looks_like_quota_error({"is_error": True, "result": "journal schema invalid"})
 
 
+def test_runner_worktree_name_is_neutral():
+    # Check 5 of intents/bench-v2-rerun.md: the path the runner builds for a worktree carries neither
+    # `eval` nor a run id, whatever call builds it — the blind-mode hook never denies a command for the
+    # path alone, and the model cannot read the round off its working directory.
+    with tempfile.TemporaryDirectory() as tmp:
+        wt = runner.worktree_dir(base=tmp)
+        below = wt.relative_to(tmp).as_posix()
+        assert "eval" not in below and below.startswith("konan-wt-") and wt.name == "wt", below
+    src = (EVAL / "run.py").read_text()
+    assert src.count("mkdtemp(") == 1, "one call builds the worktree path"
+    assert "mkdtemp(" in src.split("def worktree_dir", 1)[1].split("\ndef ", 1)[0]
+
+
 # --- coverage (eval/bench.py, eval/run.py) — the pins of intents/bench-coverage.md ----------
 SCENARIO_IDS = sorted(p.stem for p in (EVAL / "scenarios").glob("*.yaml"))
 
@@ -545,9 +558,10 @@ if __name__ == "__main__":
     for t in (test_runner_envelope_meta_sums_whole_run_tokens,
               test_runner_stamps_tokens_once_in_the_machine_core_only,
               test_runner_user_error_detection_ignores_investigator_probes,
-              test_runner_recognizes_quota_errors):
+              test_runner_recognizes_quota_errors,
+              test_runner_worktree_name_is_neutral):
         t()
-    print("OK: 4 runner pins hold")
+    print("OK: 5 runner pins hold")
     for t in (test_bench_coverage_short_plan, test_bench_coverage_complete_plan,
               test_bench_coverage_quota_stops, test_bench_coverage_plan_source,
               test_bench_coverage_plan_is_pre_registered):
