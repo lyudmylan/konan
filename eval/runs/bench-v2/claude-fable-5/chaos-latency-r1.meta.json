@@ -1,0 +1,34 @@
+{
+  "session_id": "4898143b-0e48-4f3c-b76d-f29646425c2f",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 23,
+  "duration_ms": 504541,
+  "duration_api_ms": 554801,
+  "total_cost_usd": 5.2911175,
+  "tokens_total": 947226,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 36,
+      "outputTokens": 42572,
+      "cacheReadInputTokens": 757010,
+      "cacheCreationInputTokens": 147608,
+      "costUSD": 5.2911175
+    }
+  },
+  "permission_denials": [],
+  "result_tail": " database). The triage evidence was complete, so no deep-dive round was necessary. The adversarial judge validated the switch hypothesis (H1) and invalidated the three others: software defect (no exceptions, not deterministic), process failure (one clean start, stable memory), and load saturation (13 requests in total \u2014 almost no demand).\n\n**One open gap:** the telemetry shows one `POST /chaos/enable`, but it carries no caller identity. The mechanism is proven; the actor is not. Verdict: `infra-process` / `degradation-switch`. Trigger latency was 10 seconds; the investigation took 368 seconds.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "chaos-latency",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-02T15:39:48Z",
+  "ended_at": "2026-11-02T15:48:15Z",
+  "restages": 0,
+  "wall_seconds_runner": 507,
+  "journal_source_name": "2026-11-02-shop-slow-pages.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

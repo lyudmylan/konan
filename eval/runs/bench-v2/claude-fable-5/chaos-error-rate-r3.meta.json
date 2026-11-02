@@ -1,0 +1,50 @@
+{
+  "session_id": "e0de86e2-b977-4419-8226-614df703fbc9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 10,
+  "duration_ms": 388123,
+  "duration_api_ms": 610903,
+  "total_cost_usd": 5.2299254,
+  "tokens_total": 1712411,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 42,
+      "outputTokens": 37191,
+      "cacheReadInputTokens": 1293135,
+      "cacheCreationInputTokens": 69704,
+      "costUSD": 4.547185
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 26,
+      "outputTokens": 9079,
+      "cacheReadInputTokens": 211482,
+      "cacheCreationInputTokens": 91752,
+      "costUSD": 0.6827404000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "ls -la skills/investigate/ 2>/dev/null; ls journals/ 2>/dev/null; python3 -c \"import yaml, jsonschema; print('deps ok')\" 2>&1; date -u +%Y-%m-%dT%H:%M:%SZ"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 .validate-journal.py journals/2026-11-02-shop-503s-degradation-switch.md"
+    }
+  ],
+  "result_tail": "recorded gap, not a refutation.\n- One latent finding rides along: the metrics put 503s under raw paths (`/products/1`) but 200s under the route template. A dashboard that reads one label set under-reports errors.\n\n**Note on validation:** the repo's `.validate-journal.py` needs an approval this session cannot give. I checked the journal by hand against the schema: all evidence references resolve, the cause id matches its class, and the wall clock (311s) matches the timestamps. Remediation is out of scope; the journal's safe next steps start with \"ask the operator team who turned the switch on.\"",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "chaos-error-rate",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-02T15:30:40Z",
+  "ended_at": "2026-11-02T15:39:29Z",
+  "restages": 0,
+  "wall_seconds_runner": 529,
+  "journal_source_name": "2026-11-02-shop-503s-degradation-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
