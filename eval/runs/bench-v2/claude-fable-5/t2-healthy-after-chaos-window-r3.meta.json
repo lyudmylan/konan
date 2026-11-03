@@ -1,0 +1,34 @@
+{
+  "session_id": "3355378d-c3bf-4eca-8676-5d430c8d15aa",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 12,
+  "duration_ms": 428661,
+  "duration_api_ms": 743585,
+  "total_cost_usd": 7.304821500000001,
+  "tokens_total": 1876049,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 66,
+      "outputTokens": 54508,
+      "cacheReadInputTokens": 1631194,
+      "cacheCreationInputTokens": 190281,
+      "costUSD": 7.304821500000001
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "null`. Reads succeed. No order of it exists in telemetry, so the order path over a null price is not tested. Only my probe saw this.\n\nOne honest gap: the log starts at 12:15:33Z, with no older backups. If the reported noise came before that time, I cannot see it. The tie between the complaint and the chaos window is by elimination \u2014 it is the only anomaly in the full observable history.\n\nThe journal is written and committed: `journals/2026-11-03-chaos-switch-products-503s.md` (commit 65a3d21, on this worktree's detached HEAD). It validates against the schema checklist; the push stays with you.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-03T12:16:08Z",
+  "ended_at": "2026-11-03T12:26:41Z",
+  "restages": 0,
+  "wall_seconds_runner": 634,
+  "journal_source_name": "2026-11-03-chaos-switch-products-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

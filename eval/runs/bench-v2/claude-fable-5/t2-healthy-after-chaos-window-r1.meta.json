@@ -1,0 +1,41 @@
+{
+  "session_id": "d373c5e0-2b46-4994-baf2-ab4482cbaeaa",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 388179,
+  "duration_api_ms": 637634,
+  "total_cost_usd": 5.3400694,
+  "tokens_total": 1470732,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 32,
+      "outputTokens": 37802,
+      "cacheReadInputTokens": 1007843,
+      "cacheCreationInputTokens": 86685,
+      "costUSD": 4.631962999999999
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 28,
+      "outputTokens": 10042,
+      "cacheReadInputTokens": 236322,
+      "cacheCreationInputTokens": 91978,
+      "costUSD": 0.7081063999999999
+    }
+  },
+  "permission_denials": [],
+  "result_tail": ":28Z. Noise before that time is not visible on this surface.\n- The toggle requests are unstamped, so the telemetry shows the action, not the actor. If ownership matters, check operator-side records.\n- The switch can turn on again at any time. Watch `faultline_chaos_enabled` and the two 503 counters, and scrape /metrics again at the handover moment.\n\nOne process note: a triage lens reported that one of its log-filter commands held a forbidden operator-endpoint path, and the boundary hook did not deny it. The lens did not repeat the command. I added this nuance to my memory of the boundary hook.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-03T11:57:02Z",
+  "ended_at": "2026-11-03T12:06:22Z",
+  "restages": 0,
+  "wall_seconds_runner": 560,
+  "journal_source_name": "2026-11-03-chaos-window-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
