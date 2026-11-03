@@ -67,12 +67,15 @@ marketplace files of the plugin.
    state at zero denials and not frozen.
    test: `hooks/tests.py`, the pin "scope: tripwire untouched".
 7. The process contract: `python3 hooks/boundary.py` with an event whose `cwd` is an empty temporary
-   directory prints nothing for a raw network client; with a workspace `cwd` it prints the deny JSON.
+   directory prints nothing for a raw network client; with a workspace `cwd` it prints the deny JSON. The
+   pins build the environment of the process explicitly, with `KONAN_BOUNDARY` and `KONAN_EVAL_BLIND`
+   removed, and set them only in the rows of check 3.
    test: `hooks/tests.py`, the pin "scope: process silence".
 8. The README, the repository instructions and the product document state the scope: the README names the
    marker, the instructions name the marker and point to the README section, and the enterprise-
    distribution line of the product document names the workspace scope.
-   command: `grep -q 'konan-workspace' README.md && grep -q 'konan-workspace' AGENTS.md && grep -q 'scoped to a konan workspace' docs/product.md`
+   command: `grep -q 'konan-workspace' README.md && grep -q 'konan-workspace' AGENTS.md && tr "\n" " " < docs/product.md | grep -q "scoped to a konan workspace"`
+   (the product line is hard-wrapped, so the file is read with the line breaks removed)
 9. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks

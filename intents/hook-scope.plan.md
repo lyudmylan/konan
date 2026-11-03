@@ -35,13 +35,17 @@ other project.
    untouched" (two deny-by-content commands with an ungoverned `cwd` leave the state at zero and not
    frozen); "scope: process silence" (the hook process with an event whose `cwd` is an empty temporary
    directory prints nothing for a raw network client, and prints the deny JSON when `cwd` holds the
-   marker). The closing line counts the scope pins.
+   marker). `_run_hook` builds the environment of the process from a copy of the runner's environment
+   with `KONAN_BOUNDARY` and `KONAN_EVAL_BLIND` removed, then applies `env_extra`; only the rows of
+   "scope: force-on" and "scope: eval mode" set them, so the silence pins hold inside an eval session
+   and under the runner. The closing line counts the scope pins.
 3. `README.md`, "Install as a plugin": two sentences after the install lines: the hook decides only inside
    a konan workspace (a checkout of this repo, or a directory at or below a target that holds the marker
    file `.konan-workspace`, which the rim writes) and is silent in every other directory;
    `KONAN_BOUNDARY=1` forces it on anywhere. `AGENTS.md`, "Lab boundary": one sentence after the plugin
    sentence that names the scope and points to the README section. `docs/product.md`, the
-   enterprise-distribution line: "(methodology + boundary hook, scoped to a konan workspace; ...)".
+   enterprise-distribution line: "(methodology + boundary hook, scoped to a konan workspace; ...)"; the
+   line is hard-wrapped at about 90 columns, so check 8 reads the file with the line breaks removed.
 4. The checks: 1 to 9 of the intent, the two commands of `AGENTS.md`, and the manual check 10 by the
    engineer with the plugin installed in a directory that is not a workspace. One change request,
    `Closes #74`; the review loop (the branch touches `hooks/**`, high tier); the leader's approve in the
