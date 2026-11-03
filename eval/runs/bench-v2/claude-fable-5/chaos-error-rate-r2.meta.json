@@ -1,0 +1,46 @@
+{
+  "session_id": "433f897c-81c4-4832-95af-8870d009f36a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 18,
+  "duration_ms": 434336,
+  "duration_api_ms": 638713,
+  "total_cost_usd": 5.857644799999999,
+  "tokens_total": 1977653,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 42,
+      "outputTokens": 38944,
+      "cacheReadInputTokens": 1393353,
+      "cacheCreationInputTokens": 90273,
+      "costUSD": 5.146433
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 38,
+      "outputTokens": 9352,
+      "cacheReadInputTokens": 355049,
+      "cacheCreationInputTokens": 90602,
+      "costUSD": 0.7112118000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "python3 -I .validate-journal.py journals/2026-11-02-shop-chaos-503s.md"
+    }
+  ],
+  "result_tail": "arget itself stamps each failure).\n\nTwo things the telemetry cannot answer: **who flipped the switch** (the log records only `client 127.0.0.1:59023`, with no identity field), and the dashboard's own query definition. Both are in the journal as gaps, with safe next steps.\n\nThe journal is at `journals/2026-11-02-shop-chaos-503s.md` \u2014 complaint verbatim, trigger latency 15 s, full evidence ledger (21 entries), six judged hypotheses, and one latent finding: the request counter labels 503s with the literal path but successes with the route template, so per-path error panels understate error rates.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-02T15:20:57Z",
+  "ended_at": "2026-11-02T15:30:19Z",
+  "restages": 0,
+  "wall_seconds_runner": 562,
+  "journal_source_name": "2026-11-02-shop-chaos-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,34 @@
+{
+  "session_id": "f6e29f0e-220c-4ddc-b91e-96f77edd5dc7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 4,
+  "duration_ms": 156205,
+  "duration_api_ms": 594572,
+  "total_cost_usd": 6.1338325000000005,
+  "tokens_total": 1297544,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 52,
+      "outputTokens": 45710,
+      "cacheReadInputTokens": 1068965,
+      "cacheCreationInputTokens": 182817,
+      "costUSD": 6.1338325000000005
+    }
+  },
+  "permission_denials": [],
+  "result_tail": " health endpoint stayed green the whole time \u2014 the classic healthy-monitoring trap.\n\nGaps: telemetry starts at the process start (12:55:17Z), so earlier errors in the complaint window are not observable. The operator identity behind the enable call is outside the read-only surface.\n\nThe journal is at `journals/2026-11-03-occasional-shop-503s.md` (contract v2, 17 evidence entries, 4 hypotheses). I did not commit it \u2014 say the word and I will. Safe next step for you: ask who enabled the switch, and watch the gauge for the return to 0. Turning it off is remediation and stays outside konan's scope.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-03T12:55:23Z",
+  "ended_at": "2026-11-03T13:03:17Z",
+  "restages": 0,
+  "wall_seconds_runner": 474,
+  "journal_source_name": "2026-11-03-occasional-shop-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

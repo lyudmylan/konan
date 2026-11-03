@@ -1,0 +1,71 @@
+{
+  "session_id": "5ecc6715-3767-48b1-9d4a-15b6ea4b021e",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 54,
+  "duration_ms": 822519,
+  "duration_api_ms": 850184,
+  "total_cost_usd": 2.5562523,
+  "tokens_total": 5902420,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 142,
+      "outputTokens": 72439,
+      "cacheReadInputTokens": 5612704,
+      "cacheCreationInputTokens": 217135,
+      "costUSD": 2.5562523
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "git log --all --oneline -- 'journals/*' 'eval/runs/**/journal*.md' 2>/dev/null | head -20; echo \"---\"; grep -rl \"konan_journal: 2\" --include=\"*.md\" . 2>/dev/null | head -10"
+    },
+    {
+      "tool": "Bash",
+      "command": "git show 89deae6 --stat | head -5; echo \"---\"; git show 89deae6:$(git show 89deae6 --stat | grep -o 'journals/[^ ]*\\.md' | head -1) 2>/dev/null | head -80"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd journals && python3 -c \"\nimport yaml, sys\nwith open('2026-11-02-chaos-toggle-503s.md') as f:\n    content = f.read()\n# extract frontmatter between first and second '---'\nparts = content.split('---\\n', 2)\nfm = parts[1]\ndata = yaml.safe_load(fm)\nprint('YAML parsed OK')\nprint('top-level keys:', list(data.keys()))\n\" 2>&1 || echo \"PYTHON_FAILED\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 .validate_tmp.py"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd journals && awk 'NR==5||NR==6||NR==7||NR==8||NR==15||NR==20||NR==26||NR==32||NR==40||NR==45||NR==50||NR==56||NR==62||NR==70||NR==76||NR==81||NR==86||NR==91||NR==100||NR==106||NR==107||NR==108||NR==109||NR==110 {n=gsub(/\"/,\"\\\"\",$0); print NR\": \"n\" quotes\"}' 2026-11-02-chaos-toggle-503s.md"
+    },
+    {
+      "tool": "Bash",
+      "command": "cd journals && for n in 5 6 7 8 15 20 26 32 40 45 50 56 62 70 76 81 86 91 100 106 107 108 109 110; do c=$(sed -n \"${n}p\" 2026-11-02-chaos-toggle-503s.md | grep -o '\"' | wc -l); echo \"line $n: $c quotes\"; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "git add journals/2026-11-02-chaos-toggle-503s.md && git status --short"
+    }
+  ],
+  "result_tail": " (infra-process, interfaces, software-defect) all converged on the same cause. No unhandled exceptions, no restart, no memory growth \u2014 ruling out a code bug or resource exhaustion. An adversarial judge flagged that the 0.4 rate was only self-reported by the toggle's own log line, so I pulled the full request tally: 4 failures out of 10 post-toggle requests, an exact match.\n\n**Open items (in the journal's Gaps):** no visibility into who/what flipped the switch, and business traffic stopped after ~19 seconds so I can't confirm fresh user impact beyond the toggle still reading \"on\" at conclusion.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-02T18:43:52Z",
+  "ended_at": "2026-11-02T18:57:35Z",
+  "restages": 0,
+  "wall_seconds_runner": 823,
+  "journal_source_name": "2026-11-02-chaos-toggle-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

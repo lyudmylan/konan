@@ -1,0 +1,47 @@
+{
+  "session_id": "e0e18d89-5050-4059-afd3-4a95328ba6d7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 22,
+  "duration_ms": 928028,
+  "duration_api_ms": 1060053,
+  "total_cost_usd": 4.737622250000001,
+  "tokens_total": 1927339,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 80,
+      "outputTokens": 80303,
+      "cacheReadInputTokens": 1589102,
+      "cacheCreationInputTokens": 257854,
+      "costUSD": 4.737622250000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-ejiegjiy/wt/scripts/probe.sh /metrics"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json | python3 -I -c 'import json,sys; d=json.load(sys.stdin) if False else None' 2>/dev/null; scripts/probe.sh /openapi.json"
+    }
+  ],
+  "result_tail": " null is the price, not the quantity; no 422 and no gateway status in the full metric series).\n\nThree latent findings ride along, none of them the incident: the error path logs no `product_id`, the published contract declares no `Product` schema and no 500 for `POST /orders`, and product 3 is orderable at zero stock.\n\nJournal: `journals/2026-11-03-order-null-price-500s.md`. Trigger latency was 14s, and the investigation took 659s. I did not commit the file \u2014 commits from a `/konan` session are yours to make, and your worktree already shows nine journals as deleted, so look at that state first.",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "d2-null-price-order",
+  "rep": 2,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-03T00:21:35Z",
+  "ended_at": "2026-11-03T00:37:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 929,
+  "journal_source_name": "2026-11-03-order-null-price-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

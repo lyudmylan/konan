@@ -1,0 +1,59 @@
+{
+  "session_id": "9792e491-9f6b-412f-9568-cce57f652edf",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 49,
+  "duration_ms": 768631,
+  "duration_api_ms": 834525,
+  "total_cost_usd": 2.361613000000001,
+  "tokens_total": 4468802,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 128,
+      "outputTokens": 71933,
+      "cacheReadInputTokens": 4140975,
+      "cacheCreationInputTokens": 255766,
+      "costUSD": 2.361613000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "for id in 1 2 3 4 5; do for i in 1 2 3; do scripts/probe.sh /products/$id 2>&1 | tail -1; done; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n 'konan-1793651032-4164' lab/logs/app.log | grep 'unhandled_exception' | python3 -c \"\nimport sys, json\nline = sys.stdin.readline()\n# strip leading 'N:' prefix from grep -n\nidx = line.index('{')\nobj = json.loads(line[idx:])\nstack = obj['stack']\nfor part in stack.split('\\n'):\n    if 'shop.py' in part or 'ZeroDivision' in part or 'units_in_stock' in part:\n        print(part)\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -o 'get_product\\\\n.\\{0,80\\}' lab/logs/app.log | sort -u"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n 'konan-1793651032-4164' lab/logs/app.log | cut -d: -f1 > /tmp/linenos.txt; cat /tmp/linenos.txt"
+    }
+  ],
+  "result_tail": "er touched `/products/3` and was 100% successful. So there's no telemetry evidence that an actual customer has hit this route \u2014 it's a confirmed, reproducible bug, but currently only I have triggered it.\n\n**Safe next steps logged in the journal:** re-check `/metrics` periodically for exception growth from non-investigator traffic, and ask support whether affected customers' complaints name \"Unobtainium Ingot\" specifically \u2014 that would convert this from latent to active.\n\n**Gap:** no way to check for an upstream gateway/CDN log that might show real customer hits outside this contract's surface.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-02T20:20:11Z",
+  "ended_at": "2026-11-02T20:33:00Z",
+  "restages": 0,
+  "wall_seconds_runner": 769,
+  "journal_source_name": "2026-11-02-products-3-zero-stock-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

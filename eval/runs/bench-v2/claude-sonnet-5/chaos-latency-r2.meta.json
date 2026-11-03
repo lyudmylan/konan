@@ -1,0 +1,47 @@
+{
+  "session_id": "092ec2d5-9601-4dfc-9bef-454ac0cb8c27",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 39,
+  "duration_ms": 757056,
+  "duration_api_ms": 779372,
+  "total_cost_usd": 1.9884984999999995,
+  "tokens_total": 3376881,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 104,
+      "outputTokens": 69536,
+      "cacheReadInputTokens": 3098495,
+      "cacheCreationInputTokens": 208746,
+      "costUSD": 1.9884984999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -n -A 60 '\"\\$defs\"' skills/investigate/journal.schema.json | grep -n -A 3 \"degradation-switch\\|config-change\\|\\\"cause\\\"\""
+    }
+  ],
+  "result_tail": ". That's exactly the reported symptom \u2014 everything slow, nothing erroring, health green. A confirming probe 8.5 minutes later (994ms on `/products/1`, vs. <2ms pre-toggle) showed it was still active at the time of writing.\n\nResource saturation and a code-level defect were both tested and ruled out \u2014 no RSS growth or restart, zero exceptions in the full log history, and the slowdown hit unrelated routes simultaneously rather than one data-dependent path.\n\nNo remediation was applied (read-only investigation, per the lab boundary) \u2014 turning the switch off is an operator action outside this scope.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-02T19:25:32Z",
+  "ended_at": "2026-11-02T19:38:10Z",
+  "restages": 0,
+  "wall_seconds_runner": 758,
+  "journal_source_name": "2026-11-02-shop-latency-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

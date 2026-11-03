@@ -16,7 +16,8 @@ Per (fixture, repetition):
      run's worktree so `lab/` is the worktree's.
   2. Stage — executes the fixture's `setup.stage` list (eval-side, operator surface).
   3. Investigate — `claude -p --model <m> --permission-mode acceptEdits` in a detached git
-     worktree of HEAD whose `journals/` is emptied (no incident memory, no ground truth),
+     worktree of HEAD under a neutral temporary name (neither `eval` nor the run id in the
+     path the model sees), whose `journals/` is emptied (no incident memory, no ground truth),
      with `KONAN_EVAL_BLIND=1` so the boundary hook denies `gh`, reads under `eval/`, and
      the faultline checkout mechanically. The prompt is `/konan <complaint verbatim>` —
      nothing else.
@@ -106,6 +107,14 @@ def lab_start(wt, env, base):
 
 
 # --- envelope → meta ----------------------------------------------------------------------
+def worktree_dir(base=None):
+    """The worktree path of a run: a neutral temporary name, neither `eval` nor the run id in
+    the path the model sees (check 5 of intents/bench-v2-rerun.md). In blind mode the boundary
+    hook denies a command that mentions `eval/`, so a name that carried it made a model's own
+    working directory a denial. The only place that builds the path."""
+    return Path(tempfile.mkdtemp(prefix="konan-wt-", dir=base)) / "wt"
+
+
 def envelope_meta(env_json):
     """Pure: the fields we keep from a `claude -p --output-format json` envelope."""
     mu = env_json.get("modelUsage") or {}
@@ -261,7 +270,7 @@ def main():
         print("WARNING: uncommitted changes under skills/hooks/.claude/scripts/docs — the worktree runs HEAD, not them:\n" + dirty)
 
     # Worktree of HEAD with an empty journals/ — no memory, no ground truth in reach.
-    wt = Path(tempfile.mkdtemp(prefix=f"konan-eval-{a.run_id}-")) / "wt"
+    wt = worktree_dir()
     sh(["git", "worktree", "add", "--detach", str(wt), "HEAD"], REPO, timeout=60)
     for j in (wt / "journals").glob("*.md"):
         j.unlink()

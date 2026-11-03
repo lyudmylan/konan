@@ -1,0 +1,47 @@
+{
+  "session_id": "ff901cf9-d02e-4308-a107-7a91ac919261",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 796877,
+  "duration_api_ms": 820302,
+  "total_cost_usd": 2.0273694,
+  "tokens_total": 3222963,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 94,
+      "outputTokens": 72961,
+      "cacheReadInputTokens": 2929832,
+      "cacheCreationInputTokens": 220076,
+      "costUSD": 2.0273694
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status 2>&1; echo \"---\"; ls .claude/skills/investigate/ 2>&1; echo \"---lenses---\"; ls .claude/skills/investigate/lenses/ 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "ne product page fails, other pages work fine, no deploy involved.\n\nTwo gaps are noted honestly in the journal: telemetry only covers the current process's short lifetime, so I cannot date when the stock value hit zero; and memory was sampled at only two points, so a very slow leak is not fully ruled out (though unlikely given flat readings).\n\nSafe next step suggested in the journal: watch the error counters for other product IDs reaching zero stock, since the same code path would fail for any of them.\n\nThe journal file is written but not committed to git \u2014 let me know if you want it committed.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 3,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-02T17:39:56Z",
+  "ended_at": "2026-11-02T17:53:13Z",
+  "restages": 0,
+  "wall_seconds_runner": 798,
+  "journal_source_name": "2026-11-02-products-3-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

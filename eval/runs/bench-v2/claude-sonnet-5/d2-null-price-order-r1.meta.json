@@ -1,0 +1,75 @@
+{
+  "session_id": "5b14d972-1971-43f1-8dc9-132ccc4f090c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 41,
+  "duration_ms": 1071124,
+  "duration_api_ms": 1167023,
+  "total_cost_usd": 2.8377711999999997,
+  "tokens_total": 4706238,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 136,
+      "outputTokens": 101360,
+      "cacheReadInputTokens": 4292631,
+      "cacheCreationInputTokens": 312111,
+      "costUSD": 2.8377711999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/probe.sh /openapi.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(list(d['paths'].keys())); [print(p, list(v.keys())) for p,v in d['paths'].items()]\" 2>/dev/null || scripts/probe.sh /openapi.json"
+    },
+    {
+      "tool": "Bash",
+      "command": "ls -la ./lab/logs/ 2>/dev/null; echo \"---\"; for f in ./lab/logs/*; do echo \"== $f ==\"; grep -c . \"$f\" 2>/dev/null; done"
+    },
+    {
+      "tool": "Bash",
+      "command": "cat ./lab/faultline.pid 2>/dev/null; echo; grep -n \"Uvicorn running\\|\\\"port\\\"\\|127.0.0.1:\" ./lab/server.out 2>/dev/null | head -5; echo \"---\"; ps -p \"$(cat ./lab/faultline.pid 2>/dev/null)\" 2>/dev/null"
+    },
+    {
+      "tool": "Bash",
+      "command": "echo \"=== GET /products/4 ===\"; curl -s http://127.0.0.1:8000/products/4; echo; echo \"=== GET /products ===\"; curl -s http://127.0.0.1:8000/products; echo"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /openapi.json > /tmp/konan_openapi_check.json 2>&1; python3 -I -c \"\nimport json\nwith open('/tmp/konan_openapi_check.json') as f:\n    lines = f.read().rsplit('\\n-- HTTP', 1)\nspec = json.loads(lines[0])\npaths = spec['paths']\nprint('ROUTES:')\nfor p, methods in paths.items():\n    print(' ', p, list(methods.keys()))\nprint()\nprint('OrderRequest schema:')\nschemas = spec.get('components', {}).get('schemas', {})\nprint(json.dumps(schemas.get('OrderRequest', {}), indent=2))\n\"\n"
+    },
+    {
+      "tool": "Bash",
+      "command": "./scripts/probe.sh /openapi.json > /tmp/konan_openapi_check.json 2>&1"
+    },
+    {
+      "tool": "Bash",
+      "command": "command -v jq >/dev/null 2>&1 && echo \"jq available\" || echo \"no jq\""
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"print('test')\""
+    }
+  ],
+  "result_tail": "cause-identified`, cause: `unhandled-exception`, class: `software-defect`), with the full evidence ledger, timeline, and gaps section (the main gap: attribution to product 4 is by closed-set elimination rather than a direct per-request log field, since the surface doesn't log request bodies).\n\nOne side note: this worktree already had 9 pre-existing uncommitted journal deletions in `git status` before I started (unrelated to this investigation \u2014 I didn't touch them). I didn't stage or commit anything; the new journal file is sitting there uncommitted if you want to review or commit it yourself.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 1,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-02T17:53:26Z",
+  "ended_at": "2026-11-02T18:11:18Z",
+  "restages": 0,
+  "wall_seconds_runner": 1072,
+  "journal_source_name": "2026-11-02-orders-500-null-price.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

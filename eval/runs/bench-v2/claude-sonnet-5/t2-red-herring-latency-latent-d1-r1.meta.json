@@ -1,0 +1,47 @@
+{
+  "session_id": "9d9d6c70-c087-4f93-bb88-9348d8a5bcd5",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 33,
+  "duration_ms": 1011348,
+  "duration_api_ms": 1141402,
+  "total_cost_usd": 2.5047095,
+  "tokens_total": 3727880,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 120,
+      "outputTokens": 98193,
+      "cacheReadInputTokens": 3357345,
+      "cacheCreationInputTokens": 272222,
+      "costUSD": 2.5047095
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "for id in 1 2 3 4 5; do echo \"== product $id ==\"; scripts/probe.sh \"/products/$id\"; done"
+    }
+  ],
+  "result_tail": "te `/products/3` returns an error. The code divides by zero when stock is zero. Product 3 has zero stock. This error is real and repeats every time. But no real user traffic hit this route in the log. Only my own test probes hit it. I cannot link this error to the \"error page\" that users reported. I logged it as a latent finding, not as the cause.\n\n**Gaps.** I cannot check traffic from before the server start; no older log files exist. I cannot test a client-side timeout as a cause of the error page; the lab has no gateway tier to test that path.\n\nDo you want me to commit the journal file now?",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-02T20:54:30Z",
+  "ended_at": "2026-11-02T21:11:22Z",
+  "restages": 0,
+  "wall_seconds_runner": 1012,
+  "journal_source_name": "2026-11-02-shop-slowness-chaos-toggle.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

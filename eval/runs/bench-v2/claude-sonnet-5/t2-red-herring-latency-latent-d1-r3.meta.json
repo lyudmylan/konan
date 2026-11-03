@@ -1,0 +1,47 @@
+{
+  "session_id": "5be085da-4b65-41cf-8d95-1ca69e9c0864",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 33,
+  "duration_ms": 868133,
+  "duration_api_ms": 931015,
+  "total_cost_usd": 2.0693331,
+  "tokens_total": 3150468,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 100,
+      "outputTokens": 80482,
+      "cacheReadInputTokens": 2853818,
+      "cacheCreationInputTokens": 216068,
+      "costUSD": 2.0693331
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "date -u -r 1793655702 +\"%Y-%m-%dT%H:%M:%SZ\" 2>/dev/null || python3 -c \"import datetime; print(datetime.datetime.utcfromtimestamp(1793655702))\""
+    }
+  ],
+  "result_tail": "y only hits business routes, explaining why health checks stayed green and fast. Confirmed live-reproducible and still active ~10 minutes later, with no restart or memory leak in play.\n\n**Loose end:** the \"saw an error page once\" detail has no corroborating evidence anywhere \u2014 `failure_rate` was 0.0 throughout, zero non-2xx statuses and zero exceptions across the full log and two metrics snapshots. Flagged as a gap rather than papered over; it may have been a client-side timeout render this surface can't see.\n\nVerdict: `root-cause-identified`, class `infra-process`, cause `degradation-switch`.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-02T21:39:04Z",
+  "ended_at": "2026-11-02T21:53:33Z",
+  "restages": 0,
+  "wall_seconds_runner": 869,
+  "journal_source_name": "2026-11-02-chaos-latency-slowdown.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,39 @@
+{
+  "session_id": "9e063a23-3329-4a94-bd67-26b3b87143bd",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 795229,
+  "duration_api_ms": 859650,
+  "total_cost_usd": 7.3338705,
+  "tokens_total": 1556970,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 58,
+      "outputTokens": 61783,
+      "cacheReadInputTokens": 1314338,
+      "cacheCreationInputTokens": 180791,
+      "costUSD": 7.3338705
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    }
+  ],
+  "result_tail": "re-the-window and customer-attribution hypotheses inconclusive. By the contract, a defect that only my probes triggered is a latent finding, not the active incident.\n\n**One record settles it.** Ask support for one failing customer's URL or product id, with a timestamp. If it names product 3, the attribution is closed. If the timestamp is after 11:10:45Z on a different path, the surface question reopens.\n\nThe full report, with the evidence ledger, the four judged hypotheses, timeline, and gaps, is in `journals/2026-11-03-product-page-500s.md`. I did not commit it \u2014 tell me if you want a commit.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-03T11:10:52Z",
+  "ended_at": "2026-11-03T11:24:08Z",
+  "restages": 0,
+  "wall_seconds_runner": 796,
+  "journal_source_name": "2026-11-03-product-page-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -35,36 +35,47 @@ event, never poll.
 
 ### The same skills, three models
 
-Skills, lenses and scorer held constant; only the model swapped. 90 blind headless
-investigations — 10 fixtures across three difficulty tiers, N = 3, one small lab.
-Protocol, limits and the full narrative: [eval/BENCHMARK.md](eval/BENCHMARK.md);
-generated table: [eval/BENCHMARK-results.md](eval/BENCHMARK-results.md).
+Skills, lenses and scorer held constant; only the model swapped. bench-v2, 2026-11-02 to
+2026-11-03: 90 blind headless investigations - 10 fixtures across three difficulty tiers,
+N = 3, one small lab - on the corpus corrected after the first round. Protocol, limits, both
+rounds and the false-fail table: [eval/BENCHMARK.md](eval/BENCHMARK.md); generated table:
+[eval/BENCHMARK-results.md](eval/BENCHMARK-results.md).
 
 | Model | Journals | Pass (pre-registered) | Pass (class-agnostic) | Root-cause acc. | Citations | Tokens (median) | Wall s (median) |
 |---|---|---|---|---|---|---|---|
-| Fable 5 | 30/30 | 47% | **73%** | 76% | 100% | **1.29M** | **285** |
-| Opus 5 | 30/30 | **53%** | 63% | 67% | 100% | 1.77M | 496 |
-| Sonnet 5 | 24/30 | 17% | 50% | 76% | 80% | 2.26M | 418 |
+| Fable 5 | 30/30 | **77%** | **77%** | **86%** | **100%** | **1.47M** | **405** |
+| Opus 5 | 30/30 | 63% | 63% | 67% | 97% | 2.21M | 610 |
+| Sonnet 5 | 30/30 | 73% | 73% | **86%** | **100%** | 3.38M | 576 |
 
-Read the two pass columns together. The pre-registered rate is the one the protocol
-committed to before the runs; the class-agnostic rate ignores only the incident-class
-label, whose taxonomy this round proved ambiguous ([#63](../../issues/63)). The gap
-between them is the corpus's, not the models'.
+The two pass columns are equal this round. The first round's gap between them was the
+incident-class label ([#63](../../issues/63)); the taxonomy fix ([#77](../../issues/77))
+removed it. What remains in the 26 failed runs is read row by row in the false-fail table
+of the protocol: 13 are a `must_claim` matcher that did not list the agent's wording while
+the verdict, the class and the cause were right; 12 are verdict errors on the two tier-2
+healthy traps; one is a journal the scorer refused.
 
-Two results are worth more than the ranking. Sonnet's six missing journals are all one
-behavior — it asked the absent operator for approval and ended the session — which is a
-difference in *unattended* fitness that no accuracy column shows. And the suggestive-
-complaint fixture, where a dormant defect meets a complaint implying an outage, caught
-every model at the same rate: each resisted in exactly 1 of 3 runs. That is the
-healthy-baseline failure measured on frontier models, and it is a stability problem
-rather than a capability ceiling.
+Two results are worth more than the ranking. The suggestive-complaint fixture - a dormant
+defect, a healthy system, a complaint that implies an outage - still catches frontier
+models: Fable held the line in 2 of 3 runs, Sonnet in 1 of 3, Opus in 0 of 3; four of the six
+runs that failed it promoted a defect their own probes had triggered to the cause of the
+reported incident, and two wrote `inconclusive` with the observer effect stated in their
+own summary. And the closed-window fixture - a real degradation that ended before the
+complaint - caught every model on the verdict label: 7 of 9 runs wrote `root-cause-identified`
+for a window they themselves described as over, six of them with "nothing is wrong now" or
+"no active incident right now" in the first lines of the summary. The protocol reads that as
+a gap in the report contract, which does not say which verdict a closed window gets; the fix
+is one line there.
 
-**Honesty over polish**: tokens, wall clock and quota share are captured per run from
-the harness envelope and committed with the journals. The tier-3 fixtures are not yet
-trustworthy as a model measure and carry no claim here ([#75](../../issues/75)).
-Wall-clock numbers include real interruptions, documented inside the journals rather
-than hidden. One earlier batch was invalidated by a runner bug, archived rather than
-deleted, and is described in the protocol.
+**Honesty over polish**: tokens, wall clock and quota share are captured per run from the
+harness envelope and committed with the journals. The harness wall clock undercounts in 24
+of 90 runs; the journal's own clock is the measure of an investigation, and its medians are
+in the protocol. Tier 3 now differs by model as scored, and on the verdict and the cause
+every tier-3 run of every model is right: the scored spread is matcher vocabulary, the
+content is at the ceiling, and on this transparent lab the tier separates the models on
+cost, not on findings. One journal was refused by the scorer and counts as failed. Sonnet's six missing
+journals of the first round did not recur: the same operator command was denied and the
+model continued. The earlier batch invalidated by a runner bug stays archived, not deleted,
+and is described in the protocol.
 
 ## How it works
 

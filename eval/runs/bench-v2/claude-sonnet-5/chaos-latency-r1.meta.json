@@ -1,0 +1,34 @@
+{
+  "session_id": "2fa2b2b7-73ee-4780-952a-c3bceab8db96",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 9,
+  "duration_ms": 410968,
+  "duration_api_ms": 1027159,
+  "total_cost_usd": 2.8007598,
+  "tokens_total": 5501939,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 148,
+      "outputTokens": 95224,
+      "cacheReadInputTokens": 5158314,
+      "cacheCreationInputTokens": 248253,
+      "costUSD": 2.8007598
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "ested and ruled out three other causes: a code defect, a failing dependency, and resource exhaustion (CPU/memory/connections). Evidence for all of this \u2014 over two dozen cited log lines and metric readings \u2014 is in the journal, along with two rounds of adversarial judging (the first round sent it back for more samples; the second validated it).\n\nTwo things I could not determine, and noted as gaps: who or what flipped the switch on, and why the delay size varies instead of staying at a fixed 1500ms.\n\nThe journal file is written but not committed to git \u2014 let me know if you'd like me to commit it.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "chaos-latency",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-02T19:09:56Z",
+  "ended_at": "2026-11-02T19:24:33Z",
+  "restages": 0,
+  "wall_seconds_runner": 877,
+  "journal_source_name": "2026-11-02-chaos-latency-slowdown.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

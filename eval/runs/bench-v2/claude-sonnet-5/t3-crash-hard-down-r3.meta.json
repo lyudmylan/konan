@@ -1,0 +1,47 @@
+{
+  "session_id": "0512da6f-4d2c-4203-b021-2e5683bc8097",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 33,
+  "duration_ms": 382766,
+  "duration_api_ms": 380425,
+  "total_cost_usd": 1.0749879999999998,
+  "tokens_total": 2140406,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 64,
+      "outputTokens": 31430,
+      "cacheReadInputTokens": 2008180,
+      "cacheCreationInputTokens": 100732,
+      "costUSD": 1.0749879999999998
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "git add journals/2026-11-02-shop-down-simulate-crash.md && git commit -m \"$(cat <<'EOF'\ninvestigate: shop fully down after a /simulate/crash call exits the process\n\nHuman report (/konan): total outage, no error page. Log tail shows GET\n/simulate/crash immediately followed by a CRITICAL intentional exit(1);\nthree independent probes (/health, /metrics, /products) all fail at TCP\nconnect, ruling out a single-endpoint defect. Adversarial judge validated.\nEOF\n)\""
+    }
+  ],
+  "result_tail": "ot even an error page\" exactly. Three independent, unrelated endpoints all failed the same way, ruling out a single-handler bug; a loopback connection refusal rules out firewall/DNS causes. An adversarial judge reviewed the evidence independently and validated the hypothesis.\n\nTwo honest gaps are recorded in the journal: no direct process/port snapshot (the lab's own status command wasn't available in this session, so I relied on three probe failures as a proxy), and a ~74-second window right after the crash with no telemetry, so a silent restart-then-recrash inside it can't be fully excluded.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-02T22:51:49Z",
+  "ended_at": "2026-11-02T22:58:13Z",
+  "restages": 0,
+  "wall_seconds_runner": 383,
+  "journal_source_name": "2026-11-02-shop-down-simulate-crash.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

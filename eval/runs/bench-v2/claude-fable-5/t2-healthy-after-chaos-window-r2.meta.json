@@ -1,0 +1,41 @@
+{
+  "session_id": "1b035440-cdc1-47f5-a260-edbc4ce8afb0",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 25,
+  "duration_ms": 512750,
+  "duration_api_ms": 603929,
+  "total_cost_usd": 5.1434124,
+  "tokens_total": 1205295,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 28,
+      "outputTokens": 37438,
+      "cacheReadInputTokens": 812464,
+      "cacheCreationInputTokens": 89003,
+      "costUSD": 4.464704
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 22,
+      "outputTokens": 8710,
+      "cacheReadInputTokens": 163277,
+      "cacheCreationInputTokens": 94353,
+      "costUSD": 0.6787084
+    }
+  },
+  "permission_denials": [],
+  "result_tail": " tags for all four 503s, no actor claim without evidence, a fresh gauge read).\n\n**Two gaps for the handover.** (1) The telemetry does not say *who* flipped the switch \u2014 the enable request is `5b3e79b107b1` from 127.0.0.1, with no identity fields; ask the team if a chaos exercise was run unannounced. (2) No telemetry exists before the process start at 12:06:24Z, so noise older than that is out of reach.\n\nJournal: `journals/2026-11-03-handover-chaos-window.md` (verdict `root-cause-identified`, class `infra-process`, cause `degradation-switch`). I did not commit it \u2014 tell me if you want a commit.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-03T12:06:58Z",
+  "ended_at": "2026-11-03T12:15:32Z",
+  "restages": 0,
+  "wall_seconds_runner": 513,
+  "journal_source_name": "2026-11-03-handover-chaos-window.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

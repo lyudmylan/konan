@@ -1,0 +1,47 @@
+{
+  "session_id": "03e14054-d0bc-46de-b640-5593cd8e4bee",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 557858,
+  "duration_api_ms": 618943,
+  "total_cost_usd": 1.612311,
+  "tokens_total": 2544903,
+  "model_usage": {
+    "claude-sonnet-5": {
+      "inputTokens": 78,
+      "outputTokens": 52365,
+      "cacheReadInputTokens": 2295090,
+      "cacheCreationInputTokens": 197370,
+      "costUSD": 1.612311
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "scripts/lab.sh status"
+    },
+    {
+      "tool": "Bash",
+      "command": "python3 -c \"\nimport yaml, sys\nwith open('journals/2026-11-02-orders-product-4-500s.md') as f:\n    content = f.read()\nfm = content.split('---')[1]\ndata = yaml.safe_load(fm)\nimport json\nprint(json.dumps(data, indent=2)[:2000])\n\"\n"
+    }
+  ],
+  "result_tail": " by elimination (no log field carries the request body), not read directly. Carried into Gaps rather than downgrading the verdict, since no competing explanation exists.\n\nJournal written to `journals/2026-11-02-orders-product-4-500s.md` (not committed \u2014 committing is out of scope for a manual `/konan` run per this repo's rules, which reserve auto-commit for unattended `/oncall` shifts). I noticed `journals/` had nine other journal files showing as deleted-but-tracked in git status from before this session started \u2014 I left that alone since it looks like in-progress work, not something to touch.",
+  "run_id": "bench-v2",
+  "model": "claude-sonnet-5",
+  "scenario": "d2-null-price-order",
+  "rep": 3,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-02T18:23:50Z",
+  "ended_at": "2026-11-02T18:33:09Z",
+  "restages": 0,
+  "wall_seconds_runner": 559,
+  "journal_source_name": "2026-11-02-orders-product-4-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

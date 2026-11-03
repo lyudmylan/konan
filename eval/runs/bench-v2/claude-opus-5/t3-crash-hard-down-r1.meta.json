@@ -1,0 +1,39 @@
+{
+  "session_id": "cd151eac-c126-492b-9dc8-b2644e666248",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 792238,
+  "duration_api_ms": 950075,
+  "total_cost_usd": 4.15662475,
+  "tokens_total": 1762620,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 66,
+      "outputTokens": 70957,
+      "cacheReadInputTokens": 1486237,
+      "cacheCreationInputTokens": 205360,
+      "costUSD": 4.15662475
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "now=$(date +%s); echo \"concluded_epoch=$now\"; date -u -r \"$now\" +%Y-%m-%dT%H:%M:%SZ; echo \"wall_clock_seconds=$((now - 1793696305))\""
+    }
+  ],
+  "result_tail": "ions are in the journal.\n\nProcess notes: trigger latency was 14 s (08:58:11Z report \u2192 08:58:25Z start). Everything was read-only \u2014 2 probes by me, 5 by the lenses, and file reads. I started and stopped nothing. I did not commit the journal: this worktree already has staged deletions of other journals, and you are here to decide. I also could not run the schema validator, because `python3` needs your approval in this session; I checked the machine core against the schema by hand instead (all 15 evidence ids resolve, `root_cause` points at the validated H1, and 608 s matches the two timestamps).",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "t3-crash-hard-down",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-03T08:58:07Z",
+  "ended_at": "2026-11-03T09:11:20Z",
+  "restages": 0,
+  "wall_seconds_runner": 793,
+  "journal_source_name": "2026-11-03-shop-total-outage.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

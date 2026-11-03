@@ -1,0 +1,17 @@
+{
+  "run_id": "bench-v2",
+  "fixtures": [
+    "chaos-error-rate",
+    "chaos-latency",
+    "d1-zero-stock-product-page",
+    "d2-null-price-order",
+    "healthy-baseline",
+    "t2-healthy-after-chaos-window",
+    "t2-quiet-d1-suggestive-complaint",
+    "t2-red-herring-latency-latent-d1",
+    "t3-chaos-low-rate-intermittent",
+    "t3-crash-hard-down"
+  ],
+  "repeat": 3,
+  "registered_at": "2026-11-02T13:46:50Z"
+}

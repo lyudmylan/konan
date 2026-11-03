@@ -1,0 +1,41 @@
+{
+  "session_id": "893e5d74-8dba-47cd-9b79-ff0896ecdb35",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 7,
+  "duration_ms": 207075,
+  "duration_api_ms": 519805,
+  "total_cost_usd": 4.583391800000001,
+  "tokens_total": 1335364,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 28,
+      "outputTokens": 31293,
+      "cacheReadInputTokens": 901914,
+      "cacheCreationInputTokens": 70563,
+      "costUSD": 3.8781039999999996
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 26,
+      "outputTokens": 9201,
+      "cacheReadInputTokens": 227194,
+      "cacheCreationInputTokens": 95145,
+      "costUSD": 0.7052878000000001
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "The investigation is complete. The fallback wakeup is cancelled, and no monitors run.\n\n**Result, in short:** Root cause identified. At 10:14:48Z someone enabled faultline's chaos switch with 1500 ms of extra latency and a zero failure rate. Every shop route then slowed from 1\u201312 ms to 420\u20131446 ms, with no errors, while `/health` and `/metrics` stayed below 1 ms. The switch is still on. The journal is at `journals/2026-11-03-shop-wide-slowness.md`, validated manually against the schema. It is not committed \u2014 tell me if you want a commit.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-03T10:15:00Z",
+  "ended_at": "2026-11-03T10:22:26Z",
+  "restages": 0,
+  "wall_seconds_runner": 445,
+  "journal_source_name": "2026-11-03-shop-wide-slowness.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
