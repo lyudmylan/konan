@@ -39,7 +39,7 @@ the settings, or the contract part of the rim document changes here.
 ## Files
 
 `docs/rims/grafana-cloud.alloy` (renamed from `docs/rims/alloy-config.example.alloy`),
-`docs/rims/grafana-cloud.md`, and this file. Not changed: `docs/rims/grafana-cloud.mcp.json.example`,
+`docs/rims/grafana-cloud.md`, `intents/telemetry-plane.md` (check 2, with the work), and this file. Not changed: `docs/rims/grafana-cloud.mcp.json.example`,
 `.claude/settings.json`, `.gitignore`, `skills/**`, `scripts/**`, `docs/product.md` (no code path changes).
 
 ## Tests

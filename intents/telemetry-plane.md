@@ -41,9 +41,9 @@ the investigate skill; a Grafana dashboard or alert rule.
    variables. It runs on the operator computer, where Alloy is installed; it is not part of the quality gate.
    command: `KONAN_REPO=. GCLOUD_PROM_URL=u GCLOUD_PROM_USER=u GCLOUD_PROM_KEY=k GCLOUD_LOKI_URL=u GCLOUD_LOKI_USER=u GCLOUD_LOKI_KEY=k alloy validate docs/rims/grafana-cloud.alloy`
 2. The configuration reads six distinct credential names and the path from the environment, holds no
-   literal credential and no absolute path, and pins the stream label and the scrape interval; the example
-   file is gone.
-   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = sys.env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && grep -q 'job = "faultline"' docs/rims/grafana-cloud.alloy && grep -q 'scrape_interval = "15s"' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+   literal credential and no absolute path, and pins the stream label, the two log labels and the scrape
+   interval; the example file is gone.
+   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = sys.env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && grep -q 'job = "faultline"' docs/rims/grafana-cloud.alloy && grep -q 'stage.labels { values = { level = "", event = "" } }' docs/rims/grafana-cloud.alloy && grep -q 'scrape_interval = "15s"' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
    (`sys.env()`, not `env()`: see the plan)
 3. The rim document names the tap and formula, the validate command, the foreground run, and the LogQL
    matcher on the konan-stamped request ids; the pointer to the example file is gone.
