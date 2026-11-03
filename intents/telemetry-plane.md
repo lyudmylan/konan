@@ -9,10 +9,11 @@ committed Alloy configuration whose credentials live only in the operator's envi
 
 ## In scope
 
-- `lab/alloy/config.alloy`: the Alloy configuration of the lab, moved from
-  `docs/rims/alloy-config.example.alloy` (one definition; the example file goes away): a scrape of the lab's
-  `/metrics` at `127.0.0.1:8000` every 15 s into Grafana Cloud Prometheus; a tail of `lab/logs/app.log*`
-  (JSON lines) into Grafana Cloud Loki, with `level` and `event` as labels and `request_id` as a field; the
+- `docs/rims/grafana-cloud.alloy`: the Alloy configuration of the lab, renamed from
+  `docs/rims/alloy-config.example.alloy` (one definition, tracked with the rim; `lab/` holds runtime files
+  and is not tracked): a scrape of the lab's `/metrics` at `127.0.0.1:8000` every 15 s into Grafana Cloud
+  Prometheus; a tail of `lab/logs/app.log*` (JSON lines) into Grafana Cloud Loki with the static stream
+  label `job="faultline"`, `level` and `event` as labels and `request_id` as a field; the
   write credentials and the repository path read from the environment (`GCLOUD_PROM_URL`,
   `GCLOUD_PROM_USER`, `GCLOUD_PROM_KEY`, `GCLOUD_LOKI_URL`, `GCLOUD_LOKI_USER`, `GCLOUD_LOKI_KEY`,
   `KONAN_REPO`); no literal credential and no absolute path in the file.
@@ -38,13 +39,13 @@ the investigate skill; a Grafana dashboard or alert rule.
 
 1. The Alloy configuration is valid: the validate command exits 0 with placeholder values in the seven
    variables. It runs on the operator computer, where Alloy is installed; it is not part of the quality gate.
-   command: `KONAN_REPO=. GCLOUD_PROM_URL=u GCLOUD_PROM_USER=u GCLOUD_PROM_KEY=k GCLOUD_LOKI_URL=u GCLOUD_LOKI_USER=u GCLOUD_LOKI_KEY=k alloy validate lab/alloy/config.alloy`
-2. The configuration reads the six credentials and the path from the environment and holds no literal
-   credential.
-   command: `test "$(grep -c 'env("GCLOUD_' lab/alloy/config.alloy)" -eq 6 && test "$(grep -c 'password = env("GCLOUD_' lab/alloy/config.alloy)" -eq 2 && grep -q '__path__ = env("KONAN_REPO")' lab/alloy/config.alloy && ! grep -q 'glc_' lab/alloy/config.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+   command: `KONAN_REPO=. GCLOUD_PROM_URL=u GCLOUD_PROM_USER=u GCLOUD_PROM_KEY=k GCLOUD_LOKI_URL=u GCLOUD_LOKI_USER=u GCLOUD_LOKI_KEY=k alloy validate docs/rims/grafana-cloud.alloy`
+2. The configuration reads six distinct credential names and the path from the environment, and holds no
+   literal credential and no absolute path; the example file is gone.
+   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
 3. The rim document names the tap and formula, the validate command, the foreground run, and the LogQL
-   query on `request_id`.
-   command: `grep -q 'brew install grafana/grafana/alloy' docs/rims/grafana-cloud.md && grep -q 'alloy validate' docs/rims/grafana-cloud.md && grep -q 'alloy run' docs/rims/grafana-cloud.md && grep -q 'request_id' docs/rims/grafana-cloud.md`
+   matcher on the konan-stamped request ids; the pointer to the example file is gone.
+   command: `grep -q 'brew install grafana/grafana/alloy' docs/rims/grafana-cloud.md && grep -q 'alloy validate' docs/rims/grafana-cloud.md && grep -q 'alloy run' docs/rims/grafana-cloud.md && grep -q 'request_id=~"konan-' docs/rims/grafana-cloud.md && ! grep -q 'alloy-config.example' docs/rims/grafana-cloud.md`
 4. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ## Manual checks
@@ -52,7 +53,7 @@ the investigate skill; a Grafana dashboard or alert rule.
 5. A Grafana Cloud stack exists, and the six write credentials from its portal plus `KONAN_REPO` are exported
    in the shell that runs Alloy. who: the operator. Not automatic: the account and the credentials are the
    operator's hands; no credential lands in a file that the agent writes.
-6. With the lab started, Alloy runs in the foreground with `lab/alloy/config.alloy` and reports no error in
+6. With the lab started, Alloy runs in the foreground with `docs/rims/grafana-cloud.alloy` and reports no error in
    its first minute. who: the operator. Not automatic: it needs the credentials of check 5 and the lab on
    the operator computer.
 7. One D1 staging is visible in Grafana Cloud within one minute: the lab's request counter in Explore,

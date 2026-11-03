@@ -18,28 +18,30 @@ the settings, or the contract part of the rim document changes here.
    `GCLOUD_PROM_URL`, `GCLOUD_PROM_USER`, `GCLOUD_PROM_KEY`, `GCLOUD_LOKI_URL`, `GCLOUD_LOKI_USER`,
    `GCLOUD_LOKI_KEY`, with `KONAN_REPO` as the absolute path of this checkout; Alloy installed with
    `brew tap grafana/grafana` and `brew install grafana/grafana/alloy`.
-2. Agent: `git mv docs/rims/alloy-config.example.alloy lab/alloy/config.alloy`; the `stage.json`
-   expressions checked against a request line of `lab/logs/app.log` (the field names of the lab's log
-   lines, `event` and `request_id`); check 1 with placeholder values once Alloy is installed; check 2.
+2. Agent: `git mv docs/rims/alloy-config.example.alloy docs/rims/grafana-cloud.alloy` (`lab/` is not
+   tracked, so the configuration lives with the rim); the file-match target gains the static label
+   `job = "faultline"`; the `stage.json` expressions match the field names of the lab's request lines
+   (`event`, `request_id`, verified below); check 1 with placeholder values once Alloy is installed; check 2.
 3. Agent: `docs/rims/grafana-cloud.md`, "Operator setup" rewritten as the steps that run: step 1, the
-   validate command, `alloy run lab/alloy/config.alloy` in a shell that holds the seven variables, the
-   Homebrew service as the optional form in one line (its own `config.alloy` and `config.env` under the
-   Homebrew prefix), the two Explore views, and the LogQL query; the pointer to the example file replaced by
-   the pointer to `lab/alloy/config.alloy`; check 3.
-4. Operator with the agent: `scripts/lab.sh start`; `alloy run` in a second terminal; the D1 staging
-   (eval-side, prompted) with seeded traffic through `scripts/scenario.sh get` and `order` and one
-   `scripts/probe.sh` call; Explore, Prometheus and Explore, Loki; the LogQL query; checks 5 to 8 recorded
-   in the change request as text.
-5. The change request: `Closes #53`; checks 1 to 4 run, 5 to 8 recorded; the tier is low by the paths
-   (`lab/`, `docs/rims/`) and high when this plan changes; the leader's approve in the conversation; the
-   merge. The epic (#58) gets the decision of #54 to make next: the hosted Grafana Cloud MCP server or the
-   open-source binary.
+   validate command, `alloy run docs/rims/grafana-cloud.alloy` in a shell that holds the seven variables,
+   the Homebrew service as the optional form in one line (its own `config.alloy` and `config.env` under
+   the Homebrew prefix), the two Explore views, and the LogQL query
+   `{job="faultline"} | json | request_id=~"konan-.*"`; the pointer to the example file replaced by the
+   pointer to `docs/rims/grafana-cloud.alloy`; check 3.
+4. Operator with the agent: `scripts/lab.sh start`; `alloy run docs/rims/grafana-cloud.alloy` in a second
+   terminal; the D1 staging (eval-side, prompted) with seeded traffic through `scripts/scenario.sh get` and
+   `order` and one `scripts/probe.sh` call; Explore, Prometheus and Explore, Loki; the LogQL query; checks 5
+   to 8 recorded in the change request as text.
+5. The change request: `Closes #53`; checks 1 to 4 run, 5 to 8 recorded; the tier is the one that
+   `charter.toml` gives the changed paths (high when this plan changes); the leader's approve in the
+   conversation; the merge. The epic (#58) gets the decision of #54 to make next: the hosted Grafana Cloud
+   MCP server or the open-source binary.
 
 ## Files
 
-`lab/alloy/config.alloy` (moved from `docs/rims/alloy-config.example.alloy`), `docs/rims/grafana-cloud.md`,
-and this file. Not changed: `docs/rims/grafana-cloud.mcp.json.example`, `.claude/settings.json`,
-`skills/**`, `scripts/**`, `docs/product.md` (no code path changes).
+`docs/rims/grafana-cloud.alloy` (renamed from `docs/rims/alloy-config.example.alloy`),
+`docs/rims/grafana-cloud.md`, and this file. Not changed: `docs/rims/grafana-cloud.mcp.json.example`,
+`.claude/settings.json`, `.gitignore`, `skills/**`, `scripts/**`, `docs/product.md` (no code path changes).
 
 ## Tests
 
