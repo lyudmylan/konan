@@ -1,0 +1,34 @@
+{
+  "session_id": "41bd340f-5d19-4abf-98e1-f415b945c8e4",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 31,
+  "duration_ms": 812710,
+  "duration_api_ms": 967789,
+  "total_cost_usd": 4.5551155,
+  "tokens_total": 2288064,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 88,
+      "outputTokens": 74223,
+      "cacheReadInputTokens": 1990656,
+      "cacheCreationInputTokens": 223097,
+      "costUSD": 4.5551155
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "as self-contradictory against the `/products/3` fault, and it caught that my error census covered 5xx only. I then censused every status: zero 4xx, 33 requests total. Two questions it raised need the service's source code or a `POST`; both are outside the read-only boundary, so I recorded them as gaps and handed them on as code reads instead of crossing the line.\n\nJournal: `journals/2026-11-03-shop-handover-check.md`.\n\n**I did not commit it.** This checkout is on a detached HEAD, and nine other journals show as deleted in the working tree. Tell me if you want it committed, and on which branch.",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-03T08:30:31Z",
+  "ended_at": "2026-11-03T08:44:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 813,
+  "journal_source_name": "2026-11-03-shop-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
