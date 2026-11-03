@@ -120,3 +120,20 @@ semantics pins and the coverage pins stay as they are.
   (Sonnet, the D1 fixture) took 3.0 million tokens and 650 seconds.
 - The README carries the bench-v1 table and the tier-3 caveat sentence; the product bullet on the benchmark
   ends with the tier-3 re-run condition.
+
+## What the round changed in this plan (recorded 2026-11-03, after the last batch)
+
+- Step 5, the per-batch scorecard: not produced after Opus batch 3, Fable batch 2 and Fable
+  batch 3. The scorer refuses one Opus journal (`t2-healthy-after-chaos-window`, rep 1: the
+  frontmatter is not YAML) with exit 2, which stops the whole scorecard. The committed
+  `scorecard.md` was produced after the last batch with the runner's own command minus that
+  pair (89 pairs); the results section says so. The scorer is pinned: its change (a frontmatter
+  that is not YAML is a failing report, not a broken harness) is an issue after the round.
+- Step 6, `eval/bench.py`: unchanged by decision. Its output carries two blemishes the results
+  section names: the refused journal's message spans several lines inside one cell of the
+  per-run table, and the quota section still speaks of the five-hour window that the provider
+  dissolved. One issue after the round.
+- `quota-stops.jsonl` does not exist: the runner writes it at a quota stop, and there was none.
+- The wall-clock column of the table is the harness duration, which undercounts in 24 runs
+  (the investigator's session used a wakeup timer in the one case read); the results section
+  carries the runner's own clock beside it.
