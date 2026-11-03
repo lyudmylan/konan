@@ -10,3 +10,8 @@ provider before this round); the weekly meters are the limit. The week resets on
 | 2026-11-02 | before the first batch | claude-fable-5 | 0 | 15% | 29% |
 | 2026-11-02 | after batch 1 (ten runs) | claude-fable-5 | 10 | 22% | 42% |
 | 2026-11-02 | before the first batch | claude-sonnet-5 | 0 | 22% | 42% |
+| 2026-11-03 | after Sonnet batch 3 and Opus batch 1 | claude-sonnet-5, claude-opus-5 | 30, 10 | 28% | 43% |
+
+No reading was taken between the last Sonnet batch and the first Opus batch: the batches ran in the
+night without the leader. The row of 2026-11-03 is the first reading after both; it covers forty runs
+of the two models together.
