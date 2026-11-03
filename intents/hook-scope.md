@@ -1,0 +1,69 @@
+# Intent: the scope of the boundary hook
+
+Work item: #74. Status: planned. Approval: a person merges the change request that adds this file.
+
+## Goal
+
+The boundary hook governs a konan workspace and is silent everywhere else, so a developer who installs the
+plugin keeps the read-only boundary on a target and loses nothing on other projects.
+
+## In scope
+
+- `hooks/boundary.py`: a scope decision before every other decision, from the `cwd` of the hook event. A
+  directory is a konan workspace when it holds `docs/triggers.md` and `skills/investigate/` (a checkout of
+  this repo, the runner's worktree included), or the marker file `.konan-workspace` (a target that a rim
+  onboarded), or when `KONAN_BOUNDARY=1` or `KONAN_EVAL_BLIND=1` is set in the environment. Outside a
+  workspace the hook returns no decision, for every tool and every command, frozen or not, and the tripwire
+  counts nothing: the freeze belongs to the workspace. An event without `cwd` is governed: the hook fails
+  closed, on the deny side, as it does on unreadable input. The `cd <dir> &&` prefix keeps its rule: the
+  scope is the session's `cwd`, not the target of the `cd`. The docstring states the scope.
+- `hooks/tests.py`: the scoped rows, negative-tested: the same commands governed inside a workspace and
+  silent outside it; the marker alone governs; each override governs; no `cwd` governs; the tripwire
+  outside a workspace stays at zero; the process contract outside a workspace prints nothing. The closing
+  line counts the new pins.
+- `README.md`, "Install as a plugin": the scope in two sentences (where the hook decides, how to force it
+  on). `AGENTS.md`, "Lab boundary": one sentence on the scope. The eval-blind mode and the settings
+  registration of this repo do not change.
+- `docs/product.md`: the enterprise-distribution line names the scope of the plugin's hook, because
+  `hooks/**` is a code path of the contract.
+- The rim marker is defined here; the rim skill writes it when #52 lands, with a note on #52.
+
+## Out of scope
+
+The rim skill (#52). The permission lists of `.claude/settings.json`: they are scoped to this repo already.
+A change to the content rules of the hook, to the pre-approved shapes, or to the tripwire threshold. The
+marketplace files of the plugin.
+
+## Acceptance checks
+
+## Automatic checks
+
+1. Outside a workspace, a command that the content rules deny inside one gets no decision: the pin runs the
+   denied rows of the decision table with a `cwd` that holds no signature and expects silence, and the same
+   rows with a signature and expects the decision of the table.
+   test: `hooks/tests.py`, the pin "scope: silent outside a workspace". command: `python3 hooks/tests.py`
+2. Inside a checkout of this repo the decision table is unchanged: every existing row of `PINS` and
+   `BLIND_PINS` holds with the repository as `cwd`.
+   test: `hooks/tests.py`, `test_decision_table` and `test_blind_mode_decision_table`, run with the repo as
+   `cwd`.
+3. The marker `.konan-workspace` alone governs a directory; `KONAN_BOUNDARY=1` governs any directory;
+   `KONAN_EVAL_BLIND=1` governs any directory.
+   test: `hooks/tests.py`, the pins "scope: marker", "scope: force-on", "scope: eval mode".
+4. An event without `cwd` is governed.
+   test: `hooks/tests.py`, the pin "scope: no cwd fails closed".
+5. Outside a workspace the tripwire counts nothing: two commands that the content rules deny leave the
+   state at zero denials and not frozen.
+   test: `hooks/tests.py`, the pin "scope: tripwire untouched".
+6. The process contract: `python3 hooks/boundary.py` with an event whose `cwd` is an empty temporary
+   directory prints nothing for a raw network client; with a workspace `cwd` it prints the deny JSON.
+   test: `hooks/tests.py`, the pin "scope: process silence".
+7. The README and the repository instructions state the scope.
+   command: `grep -q 'konan-workspace' README.md && grep -q 'konan-workspace' AGENTS.md`
+8. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
+
+## Manual checks
+
+9. With the plugin installed on the operator computer, a raw network client in a directory that is not a
+   workspace is not denied, and the same command in a checkout of this repo is denied. who: the engineer.
+   Not automatic: it needs the plugin installed and a session outside the repository; the receipt of #57
+   showed the denial that this check reverses.
