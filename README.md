@@ -159,6 +159,12 @@ contract, lab scripts — stays per-repo setup, by design. Working inside a clon
 this repo? Don't also install the plugin there: the repo's own settings already run
 the same hook, and two registrations would double-count the tripwire's denials.
 
+The hook decides only inside a konan workspace: a checkout of this repo, or a
+directory at or below a target that holds the marker file `.konan-workspace` (the rim
+writes it when it onboards a target). In every other directory the hook is silent and
+the normal permission flow applies; `KONAN_BOUNDARY=1` in the environment forces it on
+anywhere.
+
 ## Docs
 
 - Product contract: [docs/product.md](docs/product.md)

@@ -25,6 +25,16 @@ call is denied with a reason telling the agent to stop and page a human. A denie
 action is a signal to stop, never a puzzle to solve. Threshold: KONAN_BOUNDARY_TRIP
 (default 2); state lives in the temp dir, keyed by session id.
 
+Scope: the hook decides only inside a konan workspace — the session's `cwd`, or any
+parent of it up to the filesystem root, holds `docs/triggers.md` and `skills/investigate/`
+(a checkout of this repo, the runner's worktree included) or the marker file
+`.konan-workspace` (a target that a rim onboarded). `KONAN_BOUNDARY=1` or
+`KONAN_EVAL_BLIND=1` forces it on in any directory. Outside a workspace the hook prints
+nothing, for every tool and every command, frozen or not, and the tripwire counts
+nothing: the freeze belongs to the workspace. An event without `cwd` is governed — fail
+closed, as on unreadable input. The scope is the session's `cwd`, not the target of a
+`cd <dir> &&` prefix.
+
 Deterministic on purpose: same input, same output; no model in the loop. Stdlib only —
 python3 is the only dependency, so plugin consumers need nothing else. Pins:
 `python3 hooks/tests.py`. Semantics: AGENTS.md (lab boundary). Fails closed on any
@@ -35,6 +45,36 @@ import os
 import re
 import sys
 import tempfile
+
+# --- scope: the hook decides only inside a konan workspace ---------------------------
+WORKSPACE_SIGNATURE = ("docs/triggers.md", "skills/investigate")   # a file and a directory
+WORKSPACE_MARKER = ".konan-workspace"                               # written by the rim
+
+
+def in_workspace(cwd: str | None, env) -> bool:
+    """Pure over (cwd, env): is this session inside a konan workspace?
+
+    True when the environment forces the hook on (KONAN_BOUNDARY=1) or runs an evaluated
+    investigation (KONAN_EVAL_BLIND=1); when cwd is missing or empty (fail closed); or
+    when cwd or any parent of it, up to the filesystem root, holds the two signature
+    paths (a checkout of this repo, the runner's worktree included) or the marker file
+    (a target that a rim onboarded). Otherwise False: the hook is silent there."""
+    if env.get("KONAN_BOUNDARY") == "1" or env.get("KONAN_EVAL_BLIND") == "1":
+        return True
+    if not cwd:
+        return True
+    sig_file, sig_dir = WORKSPACE_SIGNATURE
+    here = os.path.abspath(cwd)
+    while True:
+        if os.path.exists(os.path.join(here, WORKSPACE_MARKER)):
+            return True
+        if os.path.isfile(os.path.join(here, sig_file)) and os.path.isdir(os.path.join(here, sig_dir)):
+            return True
+        parent = os.path.dirname(here)
+        if parent == here:
+            return False
+        here = parent
+
 
 # --- deny: raw network clients, as shell words anywhere in the command ---------------
 # A "word start" is the command start or a shell separator/prefix boundary; a path prefix
@@ -164,8 +204,14 @@ def strip_cd_to_cwd(command: str, cwd: str | None) -> str:
     return m.group(4) if same else command
 
 
-def evaluate(event: dict, state: dict, trip: int, blind: bool = False) -> tuple[str | None, str, dict]:
-    """Pure decision over (event, state) → (decision, reason, new_state)."""
+def evaluate(event: dict, state: dict, trip: int, blind: bool = False,
+             governed: bool = True) -> tuple[str | None, str, dict]:
+    """Pure decision over (event, state) → (decision, reason, new_state).
+
+    `governed` is the scope (in_workspace): when False the hook has no decision for any
+    tool, frozen or not, and returns before the state is looked at."""
+    if not governed:
+        return None, "", state
     tool = event.get("tool_name")
     if tool != "Bash":
         if blind and blind_path_violation(tool, event.get("tool_input") or {}):
@@ -221,8 +267,10 @@ def main() -> int:
     try:
         trip = max(1, int(os.environ.get("KONAN_BOUNDARY_TRIP", "2")))
         blind = os.environ.get("KONAN_EVAL_BLIND") == "1"
+        governed = in_workspace(event.get("cwd"), os.environ)
         path = _state_path(str(event.get("session_id", "")))
-        decision, reason, new_state = evaluate(event, _load(path), trip, blind)
+        state = _load(path) if governed else {}          # outside a workspace the state is not read
+        decision, reason, new_state = evaluate(event, state, trip, blind, governed=governed)
         if new_state is not None and decision == "deny":
             _save(path, new_state)
         _emit(decision, reason)

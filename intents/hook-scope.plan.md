@@ -18,8 +18,8 @@ other project.
    and `WORKSPACE_MARKER = ".konan-workspace"`; one function `in_workspace(cwd, env)` that returns True
    when `env` has `KONAN_BOUNDARY=1` or `KONAN_EVAL_BLIND=1`, or when `cwd` is missing or empty (fail
    closed); otherwise it starts at `cwd` and walks up to the filesystem root, and returns True at the
-   first directory that holds the two signature paths (a file and a directory) or the marker file, and
-   False when the root is reached without one. `evaluate` gains a keyword `governed=True`; when it is
+   first directory that holds the two signature paths (a file and a directory) or an entry named
+   `.konan-workspace` (a file, or a directory by mistake), and False when the root is reached without one. `evaluate` gains a keyword `governed=True`; when it is
    False the function returns `(None, "", state)` before the frozen check, so the tripwire state is
    neither read nor written. `main` computes `governed = in_workspace(event.get("cwd"), os.environ)` and
    passes it. The docstring gains the scope paragraph: where the hook decides, the walk up the parents,
@@ -35,10 +35,10 @@ other project.
    untouched" (two deny-by-content commands with an ungoverned `cwd` leave the state at zero and not
    frozen); "scope: process silence" (the hook process with an event whose `cwd` is an empty temporary
    directory prints nothing for a raw network client, and prints the deny JSON when `cwd` holds the
-   marker). `_run_hook` builds the environment of the process from a copy of the runner's environment
-   with `KONAN_BOUNDARY` and `KONAN_EVAL_BLIND` removed, then applies `env_extra`; only the rows of
-   "scope: force-on" and "scope: eval mode" set them, so the silence pins hold inside an eval session
-   and under the runner. The closing line counts the scope pins.
+   marker). `_hook_env` (called by `_run_hook` and the process pins) builds the environment of the
+   process from a copy of the runner's environment with `KONAN_BOUNDARY` and `KONAN_EVAL_BLIND` removed,
+   then applies `extra`; only the rows of "scope: force-on" and "scope: eval mode" set them, so the
+   silence pins hold inside an eval session and under the runner. The closing line counts the scope pins.
 3. `README.md`, "Install as a plugin": two sentences after the install lines: the hook decides only inside
    a konan workspace (a checkout of this repo, or a directory at or below a target that holds the marker
    file `.konan-workspace`, which the rim writes) and is silent in every other directory;
@@ -63,6 +63,16 @@ The scope pins of step 2, negative-tested as the intent's checks 1 to 7 state, t
 The existing decision table, the blind rows, the tripwire pins and the process-contract pins run
 unchanged: `evaluate` keeps its default `governed=True`, so an event without `cwd` in the existing tests
 is governed, as the fail-closed rule says.
+
+## What the code changed in this plan (2026-11-03)
+
+- The pins are supersets of step 2: "scope: silent outside a workspace" runs every row of the table, not
+  the deny rows only, and adds a frozen state and a `cd` into a workspace, both silent outside; "scope:
+  force-on", "scope: eval mode" and "scope: tripwire untouched" also run the hook process; the added
+  cases strengthen checks 1, 3 and 6 and change no check.
+- `main` reads the state file only when the session is governed; `evaluate` returns before the frozen
+  check, as step 1 says.
+- The closing line of `python3 hooks/tests.py` counts the nine scope pins.
 
 ## Facts the plan rests on (as of 2026-11-03)
 
