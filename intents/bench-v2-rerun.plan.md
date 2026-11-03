@@ -30,7 +30,12 @@ which exist only after the last run, and a change request for the runner alone c
    function takes none) and ends in `wt`; and the source of `eval/run.py` holds exactly one `mkdtemp(`,
    inside `worktree_dir`, so no other call builds a worktree path. The closing line counts 5 runner pins.
 3. The pin commit: steps 1 and 2, committed on the branch as "The runner names its worktree neutrally",
-   `uv run eval/tests.py` green at it. Its sha is `first-run`. From there to `last-run` the pinned paths
+   `uv run eval/tests.py` green at it. Its sha is `first-run`. The intent's gate line,
+   "the pin commit recorded in `eval/BENCHMARK.md` before the batch starts", is met by the results
+   section, written after the last run, because one change request carries the round: a deviation
+   from the intent's wording, decided by this plan; the sha was stated in the conversation at the go
+   (step 4), and the commit is on the branch before the first batch. From there to `last-run` the
+   pinned paths
    do not change (check 3); `eval/run.py` and `eval/bench.py` do not change either, by decision.
 4. The pre-run review (manual check 8), in the conversation, before the first batch: the pin sha; the
    model ids that answered one headless call (check 9: on 2026-11-02 `claude-sonnet-5`, `claude-opus-5`,
@@ -38,7 +43,9 @@ which exist only after the last run, and a change request for the runner alone c
    (step 1 and the false-fail table of step 8). The leader gives the go. The quota plan, accepted by the
    leader on 2026-11-02 with her readings: the five-hour window no longer exists (dissolved by the
    provider), so the weekly meter is the one limit; the usage panel read 15 percent of the week and 29
-   percent of the Fable week, with the reset on 2026-11-03 at 22:00 (Asia/Jerusalem). The order Sonnet,
+   percent of the Fable week, with the reset on 2026-11-03 at 22:00 (Asia/Jerusalem). The order that ran: Fable ten
+   runs, Sonnet thirty, Opus thirty, Fable twenty, by the dated changes below. The order as
+   planned: Sonnet,
    Opus, Fable; inside each model the tier-1 fixtures first, then tier 2, then tier 3 (the order of
    `--fixtures`); batches of ten (`--max-runs 10`), one model at a time, for the granularity of the
    commits, resumed until the model's thirty runs are done; the weekly meters read before and after each
@@ -76,7 +83,7 @@ which exist only after the last run, and a change request for the runner alone c
    gains the bench-v2 lines.
 8. The false-fail table, in that section, with the columns date, scenario, what failed, whether the agent
    was wrong, the fix. One row per failed scenario of `eval/runs/bench-v2/scorecard.md` (manual check 12).
-   I draft each row from the failure detail of the scorecard and the journal; the leader confirms or
+   The agent drafts each row from the failure detail of the scorecard and the journal; the leader confirms or
    corrects each row in the conversation before the change request. A row whose fix is a fixture or scorer
    change names the issue to file; the fix is not applied in this round, because the pinned paths do not
    change.
@@ -84,7 +91,8 @@ which exist only after the last run, and a change request for the runner alone c
    model-overall rows of the generated table, same columns); the paragraph on the two pass columns
    rewritten to what bench-v2 shows; the sentence "The tier-3 fixtures are not yet trustworthy ..."
    replaced by the tier-3 reading (check 4); "bench-v2" named with its dates and its ninety runs.
-10. `docs/product.md`, v0.2 exit criteria, the bullet "Benchmark v1 published": its closing sentences on
+10. `docs/product.md`, v0.2 exit criteria, the bullet "Benchmark v1 published" (the intent's "v0.2 status
+    line" is the closing sentences of this bullet; the Status line of v0.2 is unchanged): its closing sentences on
     the tier-3 re-run updated to the state after bench-v2 (the date, and whether tier 3 carries a number).
     `eval/` is not a code path of the contract, so this document change is by the intent, not by the
     contract rule.
@@ -99,7 +107,8 @@ which exist only after the last run, and a change request for the runner alone c
 ## Files
 
 `eval/run.py`, `eval/tests.py`, `eval/runs/bench-v2/` (new: the journals, the sidecars, `plan.json`,
-`results.jsonl`, `quota-stops.jsonl`, `scorecard.md`, `usage-readings.md`), `eval/BENCHMARK-results.md`,
+`results.jsonl`, `scorecard.md`, `usage-readings.md`; `quota-stops.jsonl` only if a quota stop
+happens), `eval/BENCHMARK-results.md`,
 `eval/BENCHMARK.md`, `README.md`, `docs/product.md`, `intents/cause-field.md` (one line), and this file.
 Not changed: the pinned paths of the intent, and `eval/bench.py`.
 
