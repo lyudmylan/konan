@@ -1,0 +1,41 @@
+{
+  "session_id": "0305257d-3039-47b3-af44-a2591efa634b",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 4,
+  "duration_ms": 316618,
+  "duration_api_ms": 651207,
+  "total_cost_usd": 5.493971800000001,
+  "tokens_total": 1334351,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 28,
+      "outputTokens": 40150,
+      "cacheReadInputTokens": 841123,
+      "cacheCreationInputTokens": 97224,
+      "costUSD": 4.793383
+    },
+    "claude-opus-5-5": {
+      "inputTokens": 28,
+      "outputTokens": 9446,
+      "cacheReadInputTokens": 254209,
+      "cacheCreationInputTokens": 92143,
+      "costUSD": 0.7005888
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "th the full evidence ledger (11 entries) and the gaps.\n\nFor the responder, the practical point is simple: the defect is live now. A customer who opens product 3's page gets a 500 today. The probable cause of the morning reports is this defect, but confirmation needs data outside my surface: the morning's proxy or CDN logs, one customer's exact URL and error page, or supervisor restart records. The journal lists these as safe next steps, with one more: find when product 3's stock became 0.\n\nOne minor extra finding: product 4 has `price: null`. It returns 200, but strict clients can break on it.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-03T10:51:24Z",
+  "ended_at": "2026-11-03T11:01:13Z",
+  "restages": 0,
+  "wall_seconds_runner": 589,
+  "journal_source_name": "2026-11-03-products-3-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

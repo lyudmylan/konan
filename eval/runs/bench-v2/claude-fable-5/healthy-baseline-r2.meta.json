@@ -1,0 +1,34 @@
+{
+  "session_id": "c7f42719-78aa-4f69-a1f3-bf83f0a4e4a1",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 3,
+  "duration_ms": 146128,
+  "duration_api_ms": 766942,
+  "total_cost_usd": 7.586684,
+  "tokens_total": 1975081,
+  "model_usage": {
+    "claude-fable-5": {
+      "inputTokens": 72,
+      "outputTokens": 54232,
+      "cacheReadInputTokens": 1718289,
+      "cacheCreationInputTokens": 202488,
+      "costUSD": 7.586684
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "adversarial judge validated the defect at once, but it rejected \"no active incident\" in round one. The reason was the unexplained process start. Round two gathered the settling evidence (`lab/server.out`, directory timestamps), and the judge then validated it as scoped.\n\nThe journal is at `journals/2026-11-03-routine-handover-check.md`. It is not committed \u2014 this is a manual `/konan` run, not an `/oncall` shift, so I left the commit to you. One more note: `scripts/lab.sh status` hit a permission prompt early on (one denial; the tripwire freezes at two). I did not retry it and used probes only.",
+  "run_id": "bench-v2",
+  "model": "claude-fable-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-03T10:30:28Z",
+  "ended_at": "2026-11-03T10:41:14Z",
+  "restages": 0,
+  "wall_seconds_runner": 646,
+  "journal_source_name": "2026-11-03-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
