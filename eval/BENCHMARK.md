@@ -272,17 +272,24 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   (19/30). The class-agnostic column equals the pre-registered column in every row of the
   table: after the taxonomy fix (#77) the incident-class label is no source of fails, and the
   gap the first round measured is gone. Root-cause accuracy: Fable 86%, Sonnet 86%, Opus 67%.
-  False attributions: Fable 4, Opus 2, Sonnet 4; all ten on the two tier-2 healthy traps.
+  False attributions: Fable 4, Opus 2, Sonnet 4; all ten on the two tier-2 healthy traps, and
+  six of the ten are the closed-window label error below, where the mechanism named is the
+  true mechanism of the window and only the verdict is wrong.
   Citations: Fable 100%, Sonnet 100%, Opus 97% (the refused journal). Tokens, median per run:
   Fable 1.47M, Opus 2.21M, Sonnet 3.38M. The cost column is API-equivalent and notional, as
   in bench-v1: these runs were paid for in subscription quota.
-- **Wall clock, a measurement caveat:** the "Wall s" column is the harness's `duration_ms`.
-  In 24 of 90 runs (Fable 9, Opus 9, Sonnet 6) it is below half of the runner's own clock
-  (process start to process end, `wall_seconds_runner` in the sidecars). In the one case read
-  in full, the investigator's session used a wakeup timer and the harness reported only the
-  segment after it (Fable, d1, rep 3: 10 s against 1547 s). The runner's clock is the
-  portable number: medians 574 s Fable, 788 s Opus, 681 s Sonnet, against the harness medians
-  405, 610 and 576. The whole round ran 17.6 hours of investigations.
+- **Wall clock, a measurement caveat:** three clocks exist per run. The "Wall s" column is
+  the harness's `duration_ms`; in 24 of 90 runs (Fable 9, Opus 9, Sonnet 6) it is below half
+  of the runner's clock (process start to process end, `wall_seconds_runner` in the sidecars).
+  The runner's clock counts idle time too: in the one case read in full the investigator's
+  session used a fallback wakeup timer, the harness reported only the segment after it, and
+  the runner waited 1092 s after the journal was concluded (Fable, d1, rep 3: harness 10 s,
+  journal 431 s, runner 1547 s). The journal's own `wall_clock_seconds` (started to concluded,
+  the scorecard column) is the one that measures the investigation: medians 407 s Fable,
+  585 s Opus, 475 s Sonnet. The harness medians are 405, 633 and 576 over the 30 runs of each
+  model (the generator's 610 for Opus is over the 29 scored runs); the runner medians 574, 788
+  and 681. The round holds 12.4 hours of investigation by the journals' clocks and 17.6 hours
+  of runner time.
 - **Quota, measured (manual check 11; the subscription is the meter):**
   - Quota stops: none in 90 runs. `quota-stops.jsonl` does not exist because the runner
     writes it only at a stop; the generator's per-model line reads "open 30". The provider
@@ -301,14 +308,18 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   - No run failed to finish: 90 journals, no timeout, no quota stop, and no session that
     ended asking the absent operator for approval. bench-v1's Sonnet mode (6 of 30 runs ended
     on `scripts/lab.sh status`) did not recur: this round the harness denied the same command
-    36 times across the Sonnet runs and the model continued each time.
+    40 times across the Sonnet runs (33 times exactly that command, 7 times with a prefix, a
+    redirect, or a chained command) and the model continued each time.
   - One journal the scorer refuses: Opus, `t2-healthy-after-chaos-window`, rep 1. The
     frontmatter is not YAML: the quote of one evidence entry holds a Python traceback whose
     third line is less indented than its first, which ends the block scalar and leaves a
     stray mapping. The scorer's rule - "an unreadable journal is a broken harness (refused,
     exit 2)" - was written for harness defects; a frontmatter the model wrote and that is not
-    YAML is a failing report, and the refusal takes the whole scorecard with it. Issue on
-    `eval/score.py` after the round (a pinned path). Read as text, the verdict it wrote is
+    YAML is a failed run, and the refusal takes the whole scorecard with it. The smaller
+    change is to refuse the pair, not the scorecard, with two costs named in the issue: a
+    file the harness truncated is not YAML either, and the model of such a run comes from
+    the path, not from the journal. Issue on `eval/score.py` after the round (a pinned
+    path). Read as text, the verdict it wrote is
     `root-cause-identified` for the closed window: the same error as the six scored runs on
     that fixture.
   - The verdict on a window that closed before the complaint
@@ -317,15 +328,25 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
     3. The six scored failures describe the window correctly, start and end cited, and say
     in the first lines of their summary that nothing is wrong now or that no incident is
     active; the verdict field contradicts their own prose. The report contract calls the
-    verdict "the incident-level conclusion" and does not say which verdict a closed window
-    gets; the fixture's scoring notes do. One line in the contract decides it (issue on
-    `skills/investigate` after the round); the fixture stands.
+    verdict "the incident-level conclusion" and does not say which verdict a window with no
+    impact at investigation time gets; the fixture's scoring notes do, and the complaint
+    itself asked "right now?", so the contract's silence is part of the cause, not all of
+    it. One line in the contract decides it, keyed to the state at conclusion time, with the
+    place of the mechanism named (a validated hypothesis and the timeline, not
+    `root_cause`), so a model does not drop what it found; the passing Opus rep 2 is the
+    template (verdict `no-active-incident`, the window as a validated hypothesis "it is off
+    now"). Issue on `skills/investigate` after the round; the fixture stands.
   - Findings pressure on the suggestive complaint (`t2-quiet-d1-suggestive-complaint`): 5
     of 9 runs failed. Four promoted the latent defect their own stamped probes had triggered
     to the cause of an incident that no user request reached (Fable 1, Opus 2, Sonnet 1); two
     hedged to `inconclusive` with the observer effect stated in their own summary (Opus 1,
     Sonnet 1). Held the line: Fable 2 of 3, Sonnet 1 of 3, Opus 0 of 3; bench-v1 had 1 of 3
-    for each model.
+    for each model. One confound to name: the lab restarts seconds before the complaint, so
+    the telemetry horizon is short, and the complaint says "this morning"; all six failures
+    argue that the customers' errors predate the log. The three passing runs saw the same
+    horizon and held the line, so the fixture works; a next corpus version can put the
+    complaint inside the horizon ("in the last few minutes") so the fixture measures findings
+    pressure alone. That is a corpus decision, not a fix of this round.
   - Matcher vocabulary: 13 runs fail on one or two `must_claim` lines alone, with the
     verdict, the class, the cause id and the citations right and zero false attributions.
     Six matchers across four fixtures: `spread` and `switch-flipped` (chaos-error-rate),
@@ -333,29 +354,39 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
     (t3-chaos-low-rate-intermittent), `no-restart-after` (t3-crash-hard-down). The wording
     the matchers missed is in the table below. With the cause id now scored by equality,
     these prose matchers are the main source of fails that are not agent errors; widening
-    them is an issue on `eval/scenarios/` after the round.
+    them is an issue on `eval/scenarios/` after the round, with one rule for the widening:
+    every added alternative is anchored (a word boundary on "id 3", the decimal rate tied to
+    the word "rate"), and none matches a word that every statement carries, such as
+    "requests" or a timestamp.
+  - The claim surface holds validated hypotheses beside the root-cause statement. Two Opus
+    journals (chaos-error-rate rep 1, t3-chaos-low-rate-intermittent rep 1) carry the latent
+    D1 defect as a validated hypothesis "separate from the incident" on that surface; the
+    scorer's false-attribution count did not fire on them. The contract says a latent
+    finding goes in `latent_findings`. Whether the scorer should read only the root-cause
+    hypothesis, or the contract should forbid a validated hypothesis that is not the
+    incident, is a question for the scorer issue.
 - **False-fail table (manual check 12).** One row per failed scenario of the scorecard, plus
   the refused journal; the date is the run's start in the sidecar (UTC). "No" in the fourth
   column means the agent's report was right and the fail is the corpus's.
 
   | Date | Scenario | What failed | Was the agent wrong | The fix |
   | --- | --- | --- | --- | --- |
-  | 2026-11-02 | chaos-error-rate, Fable, rep 1 | `must_claim spread` (intermittent, across, multiple); the statement: "injects fast random HTTP 503 failures into business endpoints" | No: verdict, class, cause id and citations right, no false attribution | Widen `spread` (random, a fraction, several routes, requests in the plural); issue on `eval/scenarios/` |
+  | 2026-11-02 | chaos-error-rate, Fable, rep 1 | `must_claim spread` (intermittent, across, multiple); the statement: "injects fast random HTTP 503 failures into business endpoints" | No: verdict, class, cause id and citations right, no false attribution | Widen `spread` (random, a fraction, several routes); issue on `eval/scenarios/` |
   | 2026-11-02 | chaos-error-rate, Fable, rep 2 | `spread`; "injects 503s into roughly 40% of product and order requests" | No | Same issue |
   | 2026-11-02 | chaos-error-rate, Fable, rep 3 | `spread`; "randomly rejects about 40% of shop requests" | No | Same issue |
-  | 2026-11-03 | t2-healthy-after-chaos-window, Fable, rep 1 | Verdict `root-cause-identified`, want `no-active-incident`; the cause `degradation-switch` counts as a false attribution | On the verdict, yes; on the facts, no: the summary says "the incident is over and the service is healthy now", the window's start and end are cited | One line in the report contract: a window that closed before the complaint is `no-active-incident`, the window in the timeline; issue on `skills/investigate`; the fixture stands |
+  | 2026-11-03 | t2-healthy-after-chaos-window, Fable, rep 1 | Verdict `root-cause-identified`, want `no-active-incident`; the cause `degradation-switch` counts as a false attribution | On the verdict, yes; on the facts, no: the summary says "the incident is over and the service is healthy now", the window's start and end are cited | One line in the report contract: no impact at conclusion time is `no-active-incident`, the mechanism of the window in a validated hypothesis and the timeline; issue on `skills/investigate`; the fixture stands |
   | 2026-11-03 | t2-healthy-after-chaos-window, Fable, rep 2 | Same | On the verdict, yes; the summary: "nothing is wrong with the shop service right now" | Same issue |
   | 2026-11-03 | t2-healthy-after-chaos-window, Fable, rep 3 | Same | On the verdict, yes; the summary: "Nothing is wrong with the shop service now" | Same issue |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Fable, rep 2 | Verdict `root-cause-identified`, want `no-active-incident`; the cause `unhandled-exception` is a false attribution | Yes: its own timeline says the non-investigator traffic never touched `/products/3` and that the four 500s are its triage probes; it still named the latent defect the cause of the reported incident | None in the corpus: the trap works as designed; the observer-effect rule of the skill did not bite |
   | 2026-11-03 | chaos-error-rate, Opus, rep 1 | `must_claim switch-flipped` (enab…): "turned on"; `spread`: "fail a fraction of requests" | No | Widen `switch-flipped` (turned on, switched on, armed, toggled) and `spread`; same issue |
   | 2026-11-03 | chaos-error-rate, Opus, rep 2 | `switch-flipped`: "armed" | No | Same issue |
   | 2026-11-02 | d1-zero-stock-product-page, Opus, rep 1 | `must_claim data-condition` (units_in_stock = 0, zero stock, stock is 0): "the product's units_in_stock, which is 0" | No | Widen `data-condition` (the field and the zero a few words apart: "which is 0", "equal to 0", "0 units"); same issue |
-  | 2026-11-02 | d1-zero-stock-product-page, Opus, rep 2 | `must_claim location` (/products/3, product 3): "currently only product id 3" | No | Widen `location` ("product id 3", "id 3", "catalog row 3"); same issue |
-  | 2026-11-03 | t2-healthy-after-chaos-window, Opus, rep 1 | The scorer refused the journal: the frontmatter is not YAML (a traceback quoted with uneven indentation in evidence E15); the per-batch scorecards after it were not produced | Yes, on the report contract: the frontmatter must be YAML. Read as text, its verdict is `root-cause-identified` for the closed window, the error of the rows above | Scorer: a frontmatter that is not YAML is a failing report, not a broken harness; issue on `eval/score.py`. The run counts as failed |
+  | 2026-11-02 | d1-zero-stock-product-page, Opus, rep 2 | `must_claim location` (/products/3, product 3): "currently only product id 3" | No | Widen `location` ("product id 3", "id 3" with a word boundary, "catalog row 3"); same issue |
+  | 2026-11-03 | t2-healthy-after-chaos-window, Opus, rep 1 | The scorer refused the journal: the frontmatter is not YAML (a traceback quoted with uneven indentation in evidence E15); the per-batch scorecards after it were not produced | Yes, on the report contract: the frontmatter must be YAML. Read as text, its verdict is `root-cause-identified` for the closed window, the error of the rows above | Scorer: refuse the pair, not the scorecard, and count a frontmatter the model wrote and that is not YAML as a failed run; issue on `eval/score.py`. The run counts as failed |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 1 | Verdict `root-cause-identified`; false attribution `unhandled-exception` | Yes: "four of four attempts returned 500" were its own probes; promoted a latent defect to the cause of the reported incident | None in the corpus |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 2 | Same | Yes: same | None in the corpus |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 3 | Verdict `inconclusive`, want `no-active-incident` | Yes, as a hedge: its summary says "What cannot be claimed is that any customer was affected. All four HTTP 500s in the entire record carry an investigator request id", and the verdict still did not say so | None in the corpus; the contract's line "no-active-incident is a legitimate verdict and still requires evidence" was not enough for this run |
-  | 2026-11-03 | t3-chaos-low-rate-intermittent, Opus, rep 1 | `must_claim rare-but-real` (intermittent, occasional, rare, low-rate, a fraction, a few, sporadic, probabilist, a percentage): "returns 503 to a subset of requests while identical requests succeed on retry", the rate stated as `failure_rate 0.08` | No | Widen `rare-but-real` (a subset, a share, some requests, a rate written as a decimal); same issue |
+  | 2026-11-03 | t3-chaos-low-rate-intermittent, Opus, rep 1 | `must_claim rare-but-real` (intermittent, occasional, rare, low-rate, a fraction, a few, sporadic, probabilist, a percentage): "returns 503 to a subset of requests while identical requests succeed on retry", the rate stated as `failure_rate 0.08` | No | Widen `rare-but-real` (a subset, a share, some requests, a decimal tied to the word rate); same issue |
   | 2026-11-03 | t3-chaos-low-rate-intermittent, Opus, rep 3 | `rare-but-real`: "short-circuits a share of incoming requests" | No | Same issue |
   | 2026-11-03 | t3-crash-hard-down, Opus, rep 1 | `must_claim no-restart-after`: "nothing started it again, so the listener on 127.0.0.1:8000 was absent" | No | Widen `no-restart-after` (nothing started it again, the listener was absent, no process listening); same issue |
   | 2026-11-02 | chaos-error-rate, Sonnet, rep 1 | `spread`: "injects probabilistic 503 failures on /products, /products/{id}, and /orders, the business routes" | No | Same issue as the first row |
@@ -374,12 +405,17 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
 - **Tier 3 (manual check 10, the leader's reading):** the rows differ by model as scored,
   Fable 6 of 6, Sonnet 5 of 6, Opus 3 of 6. The four fails are matcher wording (the
   `rare-but-real` and `no-restart-after` rows above) with the verdict and the cause id right,
-  so on the verdict and the cause every tier-3 run of every model is right, 18 of 18. The
-  bench-v1 signature - 33% for all three models on one matcher line - is gone: the tier
-  measures the agent. What it measures on this lab is a ceiling, not a difficulty: the
-  gauge names the switch and the crash writes its own CRITICAL line, so tier 3 does not
-  separate the models here (the limits above say why). Tier 3 carries its scored number
-  with this reading beside it, and no ranking.
+  so on the verdict and the cause every tier-3 run of every model is right, 18 of 18: 9 of 9
+  `process-crashed`, 9 of 9 `degradation-switch`, each with the CRITICAL exit line or the
+  enable marker cited. The bench-v1 signature - 33% for all three models, from two scorer
+  artifacts (the class label on the low-rate fixture, #63, and one matcher on the crash
+  fixture, #75) - is gone. What the scored spread measures now is vocabulary, the fixture's;
+  what the content measures is the agent, at the ceiling: in every run the baseline alone
+  (the log tail and the gauge) exposed the mechanism, so the "hard" tier was in practice the
+  easiest of the round, and the difficulty of bench-v2 sits in tier 2. Tier 3 separates the
+  models on cost, not on findings: Fable's tier-3 runs are the cheapest of the round
+  (0.59M to 1.30M tokens), Opus 0.74M to 1.86M, Sonnet 1.9M to 5.2M. Tier 3 carries its
+  scored number with this reading beside it, and no ranking.
 - **Diff against bench-v1** (both pass columns per model, as the generator renders them):
 
   | Model | bench-v1 pre-registered | bench-v1 class-agnostic | bench-v2 pre-registered | bench-v2 class-agnostic |
@@ -391,17 +427,23 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   Beside the pass rates: journals Sonnet 24/30 → 30/30; root-cause accuracy 76/67/76 →
   86/67/86 (Fable/Opus/Sonnet); citations 100/100/80 → 100/97/100; median tokens 1.29M/
   1.77M/2.26M → 1.47M/2.21M/3.38M; median harness wall clock 285/496/418 s → 405/610/576 s.
-  The investigations of this round are longer and heavier for every model. What changed
+  The investigations of this round are heavier in tokens for every model; the wall-clock
+  half of the comparison rests on the harness clock, which under-measures 24 of 90 runs here
+  and an unknown share of bench-v1, so it is stated and not claimed. What changed
   between the rounds and is not separated by these numbers: the fixtures (#75, #77), the
   cause field of the report contract (#78), the runner's neutral worktree, the quota regime,
   and ten weeks on the provider's side under the same model ids. The round claims no cause
-  for the slowdown.
+  for the growth in tokens.
 - **Denials, a caveat:** the bench-v1 counts held the worktree-path artifact (the plan of
   this round, step 1: the old prefix put `eval` into every absolute path of the worktree, so
   a model that wrote its own working directory into a command was denied for the path); the
   bench-v2 counts hold content denials only, so the two columns are not comparable. What
-  they were this round: Sonnet 87 in 23 of 30 runs (median 3 per run), 36 of them
-  `scripts/lab.sh status`; Opus 16 in 11 runs and Fable 17 in 8 runs, mostly `python3`
-  calls (approval-gated unattended; journal validation), greps whose pattern named the
-  operator surface (the boundary hook matches content), and shell arithmetic the harness
-  does not run unattended.
+  they were this round: Sonnet 87 in 23 of 30 runs (median 3 per run), 40 of them
+  `scripts/lab.sh status` (33 exactly, 7 with a prefix, a redirect, or a chained command);
+  among the other 47, nine git commands including attempts to add and commit the journal,
+  two reads of a memory folder of the operator outside the target, and one direct call to
+  the target's address with a network client, which is the boundary doing its job, not
+  approval noise. Opus 16 in 11 runs and Fable 17 in 8 runs are tooling: `python3` calls
+  (approval-gated unattended; journal validation), one grep whose pattern named the operator
+  surface (the boundary hook matches content), and shell arithmetic the harness does not run
+  unattended.

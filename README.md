@@ -67,10 +67,11 @@ is one line there.
 
 **Honesty over polish**: tokens, wall clock and quota share are captured per run from the
 harness envelope and committed with the journals. The harness wall clock undercounts in 24
-of 90 runs; the runner's own clock is in the sidecars and in the protocol. Tier 3 now
-differs by model as scored, and on the verdict and the cause every tier-3 run of every
-model is right: the tier measures the agent, and on this transparent lab it separates
-nothing. One journal was refused by the scorer and counts as failed. Sonnet's six missing
+of 90 runs; the journal's own clock is the measure of an investigation, and its medians are
+in the protocol. Tier 3 now differs by model as scored, and on the verdict and the cause
+every tier-3 run of every model is right: the scored spread is matcher vocabulary, the
+content is at the ceiling, and on this transparent lab the tier separates the models on
+cost, not on findings. One journal was refused by the scorer and counts as failed. Sonnet's six missing
 journals of the first round did not recur: the same operator command was denied and the
 model continued. The earlier batch invalidated by a runner bug stays archived, not deleted,
 and is described in the protocol.

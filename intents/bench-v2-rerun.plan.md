@@ -136,4 +136,10 @@ semantics pins and the coverage pins stay as they are.
 - `quota-stops.jsonl` does not exist: the runner writes it at a quota stop, and there was none.
 - The wall-clock column of the table is the harness duration, which undercounts in 24 runs
   (the investigator's session used a wakeup timer in the one case read); the results section
-  carries the runner's own clock beside it.
+  carries the journal's own clock and the runner's clock beside it.
+- Step 8, the false-fail table: before the leader read it, two reviewers that were not the
+  author read it, one blind (the evidence and the question, not the draft) and one adversarial
+  (the draft and the evidence). Their findings were answered in the results section on
+  2026-11-03; the disagreements went to the leader. The rule is drafted upstream, in Charter
+  (the review of a drafted reading, https://github.com/lyudmylan/charter/issues/69); the two
+  reports go into the change request.
