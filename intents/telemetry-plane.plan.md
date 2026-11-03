@@ -46,6 +46,16 @@ the settings, or the contract part of the rim document changes here.
 
 The four commands of checks 1 to 4; check 1 on the operator computer only.
 
+## What the work changed in this plan (2026-11-03)
+
+- Alloy v1.21.3, installed by the agent from the Grafana tap on the leader's word, deprecates the `env()`
+  function for `sys.env()`, and `alloy validate` fails on the deprecation; the configuration uses
+  `sys.env()`. The attributes of a block go one per line (`basic_auth`), not comma-separated on one line.
+- Check 2 of the intent names `__path__ = sys.env("KONAN_REPO")`; the count of distinct credential names
+  is unchanged, because the grep matches inside `sys.env(`.
+- The draft change request opened after the agent's steps, so the operator's receipt has its place; it
+  leaves draft when checks 1 and 5 to 8 are recorded.
+
 ## Facts the plan rests on (as of 2026-11-03)
 
 - Alloy on macOS installs from the Grafana tap: `brew tap grafana/grafana`, `brew install

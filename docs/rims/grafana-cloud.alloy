@@ -13,13 +13,16 @@ prometheus.scrape "faultline" {
 
 prometheus.remote_write "gcloud" {
   endpoint {
-    url = env("GCLOUD_PROM_URL")
-    basic_auth { username = env("GCLOUD_PROM_USER"), password = env("GCLOUD_PROM_KEY") }
+    url = sys.env("GCLOUD_PROM_URL")
+    basic_auth {
+      username = sys.env("GCLOUD_PROM_USER")
+      password = sys.env("GCLOUD_PROM_KEY")
+    }
   }
 }
 
 local.file_match "faultline_logs" {
-  path_targets = [{ __path__ = env("KONAN_REPO") + "/lab/logs/app.log*", job = "faultline" }]   // job: the stream label
+  path_targets = [{ __path__ = sys.env("KONAN_REPO") + "/lab/logs/app.log*", job = "faultline" }]   // job: the stream label
 }
 
 loki.source.file "faultline" {
@@ -35,7 +38,10 @@ loki.process "faultline" {
 
 loki.write "gcloud" {
   endpoint {
-    url = env("GCLOUD_LOKI_URL")
-    basic_auth { username = env("GCLOUD_LOKI_USER"), password = env("GCLOUD_LOKI_KEY") }
+    url = sys.env("GCLOUD_LOKI_URL")
+    basic_auth {
+      username = sys.env("GCLOUD_LOKI_USER")
+      password = sys.env("GCLOUD_LOKI_KEY")
+    }
   }
 }

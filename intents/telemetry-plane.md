@@ -42,7 +42,9 @@ the investigate skill; a Grafana dashboard or alert rule.
    command: `KONAN_REPO=. GCLOUD_PROM_URL=u GCLOUD_PROM_USER=u GCLOUD_PROM_KEY=k GCLOUD_LOKI_URL=u GCLOUD_LOKI_USER=u GCLOUD_LOKI_KEY=k alloy validate docs/rims/grafana-cloud.alloy`
 2. The configuration reads six distinct credential names and the path from the environment, and holds no
    literal credential and no absolute path; the example file is gone.
-   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = sys.env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+   (`sys.env()`: Alloy 1.21 deprecates the bare `env()` and the validate command fails on it; changed with
+   the work on 2026-11-03)
 3. The rim document names the tap and formula, the validate command, the foreground run, and the LogQL
    matcher on the konan-stamped request ids; the pointer to the example file is gone.
    command: `grep -q 'brew install grafana/grafana/alloy' docs/rims/grafana-cloud.md && grep -q 'alloy validate' docs/rims/grafana-cloud.md && grep -q 'alloy run' docs/rims/grafana-cloud.md && grep -q 'request_id=~"konan-' docs/rims/grafana-cloud.md && ! grep -q 'alloy-config.example' docs/rims/grafana-cloud.md`
