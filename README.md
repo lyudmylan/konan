@@ -56,9 +56,10 @@ healthy traps; one is a journal the scorer refused.
 
 Two results are worth more than the ranking. The suggestive-complaint fixture - a dormant
 defect, a healthy system, a complaint that implies an outage - still catches frontier
-models: Fable held the line in 2 of 3 runs, Sonnet in 1 of 3, Opus in 0 of 3, and the four
+models: Fable held the line in 2 of 3 runs, Sonnet in 1 of 3, Opus in 0 of 3; four of the six
 runs that failed it promoted a defect their own probes had triggered to the cause of the
-reported incident. And the closed-window fixture - a real degradation that ended before the
+reported incident, and two wrote `inconclusive` with the observer effect stated in their
+own summary. And the closed-window fixture - a real degradation that ended before the
 complaint - caught every model on the verdict label: 7 of 9 runs wrote `root-cause-identified`
 for a window they themselves described as over, six of them with "nothing is wrong now" or
 "no active incident right now" in the first lines of the summary. The protocol reads that as

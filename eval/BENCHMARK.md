@@ -339,8 +339,11 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   - Findings pressure on the suggestive complaint (`t2-quiet-d1-suggestive-complaint`): 5
     of 9 runs failed. Four promoted the latent defect their own stamped probes had triggered
     to the cause of an incident that no user request reached (Fable 1, Opus 2, Sonnet 1); two
-    hedged to `inconclusive` with the observer effect stated in their own summary (Opus 1,
-    Sonnet 1). Held the line: Fable 2 of 3, Sonnet 1 of 3, Opus 0 of 3; bench-v1 had 1 of 3
+    wrote `inconclusive` with the observer effect stated in their own summary (Opus 1,
+    Sonnet 1): right on the facts, wrong on a label the contract does not define, the same
+    kind of error as the closed-window rows, and the same issue gets one line that defines
+    `inconclusive` (conflicting evidence, or a present failure that cannot be tested; an
+    unobserved past is a gap, not a verdict). Held the line: Fable 2 of 3, Sonnet 1 of 3, Opus 0 of 3; bench-v1 had 1 of 3
     for each model. One confound to name: the lab restarts seconds before the complaint, so
     the telemetry horizon is short, and the complaint says "this morning"; all six failures
     argue that the customers' errors predate the log. The three passing runs saw the same
@@ -385,7 +388,7 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   | 2026-11-03 | t2-healthy-after-chaos-window, Opus, rep 1 | The scorer refused the journal: the frontmatter is not YAML (a traceback quoted with uneven indentation in evidence E15); the per-batch scorecards after it were not produced | Yes, on the report contract: the frontmatter must be YAML. Read as text, its verdict is `root-cause-identified` for the closed window, the error of the rows above | Scorer: refuse the pair, not the scorecard, and count a frontmatter the model wrote and that is not YAML as a failed run; issue on `eval/score.py`. The run counts as failed |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 1 | Verdict `root-cause-identified`; false attribution `unhandled-exception` | Yes: "four of four attempts returned 500" were its own probes; promoted a latent defect to the cause of the reported incident | None in the corpus |
   | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 2 | Same | Yes: same | None in the corpus |
-  | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 3 | Verdict `inconclusive`, want `no-active-incident` | Yes, as a hedge: its summary says "What cannot be claimed is that any customer was affected. All four HTTP 500s in the entire record carry an investigator request id", and the verdict still did not say so | None in the corpus; the contract's line "no-active-incident is a legitimate verdict and still requires evidence" was not enough for this run |
+  | 2026-11-03 | t2-quiet-d1-suggestive-complaint, Opus, rep 3 | Verdict `inconclusive`, want `no-active-incident` | On the verdict label, yes; on the facts, no: its summary says "What cannot be claimed is that any customer was affected. All four HTTP 500s in the entire record carry an investigator request id", the defect is in the latent findings, and it chose `inconclusive` for the unobserved morning | One line in the report contract that defines `inconclusive` (conflicting evidence, or a present failure that cannot be tested; an unobserved past is a gap, not a verdict); same issue as the closed-window rows |
   | 2026-11-03 | t3-chaos-low-rate-intermittent, Opus, rep 1 | `must_claim rare-but-real` (intermittent, occasional, rare, low-rate, a fraction, a few, sporadic, probabilist, a percentage): "returns 503 to a subset of requests while identical requests succeed on retry", the rate stated as `failure_rate 0.08` | No | Widen `rare-but-real` (a subset, a share, some requests, a decimal tied to the word rate); same issue |
   | 2026-11-03 | t3-chaos-low-rate-intermittent, Opus, rep 3 | `rare-but-real`: "short-circuits a share of incoming requests" | No | Same issue |
   | 2026-11-03 | t3-crash-hard-down, Opus, rep 1 | `must_claim no-restart-after`: "nothing started it again, so the listener on 127.0.0.1:8000 was absent" | No | Widen `no-restart-after` (nothing started it again, the listener was absent, no process listening); same issue |
@@ -395,13 +398,17 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   | 2026-11-02 | t2-healthy-after-chaos-window, Sonnet, rep 2 | Same | On the verdict, yes; the summary opens "No active incident right now" | Same |
   | 2026-11-02 | t2-healthy-after-chaos-window, Sonnet, rep 3 | Same | On the verdict, yes; the summary: "no incident is active now" | Same |
   | 2026-11-02 | t2-quiet-d1-suggestive-complaint, Sonnet, rep 2 | Verdict `root-cause-identified`; false attribution `unhandled-exception` | Yes: "every probe against /products/3 fails the same way", its own probes; promoted a latent defect | None in the corpus |
-  | 2026-11-02 | t2-quiet-d1-suggestive-complaint, Sonnet, rep 3 | Verdict `inconclusive`, want `no-active-incident` | Yes, as a hedge: its summary says every logged request on the route carries the investigator's own request id and none is customer traffic | None in the corpus |
+  | 2026-11-02 | t2-quiet-d1-suggestive-complaint, Sonnet, rep 3 | Verdict `inconclusive`, want `no-active-incident` | On the verdict label, yes; on the facts, no: its summary says every logged request on the route carries the investigator's own request id and none is customer traffic, the defect is in the latent findings, and it chose `inconclusive` for the unobserved past | Same contract line on `inconclusive`; same issue |
   | 2026-11-02 | t3-crash-hard-down, Sonnet, rep 3 | `no-restart-after`: "with no process listening on the port" | No | Same issue as the Opus crash row |
 
   Thirteen rows read "No": with those confirmed as false fails, the pass rates by content are
-  Fable 87% (26/30), Opus 87% (26/30), Sonnet 83% (25/30). The pre-registered rate stays the
-  reported number of this round; the matchers are widened in the next corpus version and
-  measured in the round that follows it.
+  Fable 87% (26/30), Opus 87% (26/30), Sonnet 83% (25/30). Nine rows are a verdict label the
+  contract leaves undefined, with the facts right; four rows are the agent's error, all on
+  the suggestive complaint. The pre-registered rate stays the reported number of this round;
+  the matchers are widened in the next corpus version and measured in the round that follows
+  it. The leader confirmed the 26 readings on 2026-11-03, after two agents that were not the
+  author had reviewed them (one blind, one adversarial) and the disagreements had been
+  decided.
 - **Tier 3 (manual check 10, the leader's reading):** the rows differ by model as scored,
   Fable 6 of 6, Sonnet 5 of 6, Opus 3 of 6. The four fails are matcher wording (the
   `rare-but-real` and `no-restart-after` rows above) with the verdict and the cause id right,
