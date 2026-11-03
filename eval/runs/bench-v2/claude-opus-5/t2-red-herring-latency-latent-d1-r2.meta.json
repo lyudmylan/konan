@@ -1,0 +1,39 @@
+{
+  "session_id": "2e50044e-4459-43ea-84c2-45ae8cb526d9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 905946,
+  "duration_api_ms": 1134362,
+  "total_cost_usd": 4.9248069999999995,
+  "tokens_total": 2213633,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 78,
+      "outputTokens": 86252,
+      "cacheReadInputTokens": 1898204,
+      "cacheCreationInputTokens": 229099,
+      "costUSD": 4.9248069999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; echo $(( $(date +%s) - 1793691748 ))"
+    }
+  ],
+  "result_tail": " a real measurement. It caught me citing my own 500 responses as proof of user impact, which was my worst error. And it found a 41-second arithmetic mistake in one evidence note. It also named three hypotheses I had missed, which are now in the record.\n\nI spent no deep-dive agents. The triage evidence was already complete, and the loop says deep-dives fill gaps instead of proving a point twice.\n\nThe journal is at `journals/2026-11-03-shop-latency-degradation-switch.md`. I did not commit it \u2014 you are here, so that is your decision. Everything I did was read-only; I took no action on the target.",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-03T07:41:56Z",
+  "ended_at": "2026-11-03T07:57:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 908,
+  "journal_source_name": "2026-11-03-shop-latency-degradation-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,34 @@
+{
+  "session_id": "ff726bfc-80c3-47b6-9ea6-35fc5a7f49ec",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 777016,
+  "duration_api_ms": 922985,
+  "total_cost_usd": 4.272928,
+  "tokens_total": 1794838,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 72,
+      "outputTokens": 71337,
+      "cacheReadInputTokens": 1502646,
+      "cacheCreationInputTokens": 220783,
+      "costUSD": 4.272928
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "sting, so a user who opens it gets a 500.\n\n**Limits of the evidence.** I never read the target's code, so the health-check exemption is an observation, not a proven rule. The judge asked me to read the source; I refused, because it is outside the surface contract and the blinding rule. Also, no user request appears in the log after 05:45:55.885Z. The switch is on, but the shop may now be idle, so I cannot show live user impact.\n\nTrigger latency was 7 seconds. Total time 629 seconds: one triage round with three parallel lenses, no deep-dive round (H1's evidence was already complete), one judge.",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-03T05:45:55Z",
+  "ended_at": "2026-11-03T05:58:53Z",
+  "restages": 0,
+  "wall_seconds_runner": 778,
+  "journal_source_name": "2026-11-03-shop-wide-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

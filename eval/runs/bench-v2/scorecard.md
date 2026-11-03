@@ -1,16 +1,16 @@
 # konan scorecard
 
-Generated 2026-11-03T03:44:29+02:00 — 50 scenario(s) scored, model(s): claude-fable-5, claude-opus-5, claude-sonnet-5.
+Generated 2026-11-03T09:57:06+02:00 — 60 scenario(s) scored, model(s): claude-fable-5, claude-opus-5, claude-sonnet-5.
 Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 
 ## Summary
 
-- **Scenarios passed: 35/50**
-- Root-cause accuracy: 31/41 (scenarios expecting a root cause)
-- False attributions: 4
-- Evidence-citation compliance: 50/50
-- Tokens: 147247945
-- Wall clock: 25277s total
+- **Scenarios passed: 42/60**
+- Root-cause accuracy: 35/45 (scenarios expecting a root cause)
+- False attributions: 6
+- Evidence-citation compliance: 60/60
+- Tokens: 171289865
+- Wall clock: 31581s total
 
 ## Scenarios
 
@@ -30,12 +30,22 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 | chaos-error-rate | claude-opus-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 2446858 | 642 |
 | chaos-error-rate | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2362790 | 597 |
 | chaos-latency | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1975228 | 569 |
+| chaos-latency | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1701870 | 483 |
+| chaos-latency | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1794838 | 629 |
 | d1-zero-stock-product-page | claude-opus-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 2560299 | 531 |
 | d1-zero-stock-product-page | claude-opus-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 1993854 | 472 |
 | d1-zero-stock-product-page | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2104505 | 499 |
 | d2-null-price-order | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1767130 | 455 |
 | d2-null-price-order | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 1927339 | 659 |
 | d2-null-price-order | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2342381 | 468 |
+| healthy-baseline | claude-opus-5 | ✓ no-active-incident | — | — | 0 | ✓ | 2442318 | 670 |
+| healthy-baseline | claude-opus-5 | ✓ no-active-incident | — | — | 0 | ✓ | 3594610 | 1078 |
+| healthy-baseline | claude-opus-5 | ✓ no-active-incident | — | — | 0 | ✓ | 3016297 | 561 |
+| t2-quiet-d1-suggestive-complaint | claude-opus-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 2464707 | 592 |
+| t2-quiet-d1-suggestive-complaint | claude-opus-5 | ✗ root-cause-identified (want no-active-incident) | — | — | 1 | ✓ | 1860258 | 399 |
+| t2-quiet-d1-suggestive-complaint | claude-opus-5 | ✗ inconclusive (want no-active-incident) | — | — | 0 | ✓ | 2721666 | 596 |
+| t2-red-herring-latency-latent-d1 | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2231723 | 614 |
+| t2-red-herring-latency-latent-d1 | claude-opus-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 2213633 | 682 |
 | chaos-error-rate | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✗ | 0 | ✓ | 3450833 | 421 |
 | chaos-error-rate | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 5902420 | 488 |
 | chaos-error-rate | claude-sonnet-5 | ✓ root-cause-identified | ✓ | ✓ | 0 | ✓ | 3381155 | 518 |
@@ -97,6 +107,20 @@ Deterministic scoring (regex + equality only); semantics: `eval/README.md`.
 ### d1-zero-stock-product-page
 
 - must_claim `location`: no match in the claim surface
+
+### t2-quiet-d1-suggestive-complaint
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `unhandled-exception`, want `None` — false attribution
+
+### t2-quiet-d1-suggestive-complaint
+
+- verdict: got `root-cause-identified`, want `no-active-incident`
+- cause: got `unhandled-exception`, want `None` — false attribution
+
+### t2-quiet-d1-suggestive-complaint
+
+- verdict: got `inconclusive`, want `no-active-incident`
 
 ### chaos-error-rate
 

@@ -1,0 +1,39 @@
+{
+  "session_id": "c1f58f94-efc4-443f-82c9-2ae61ad22ac3",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 1333435,
+  "duration_api_ms": 1647847,
+  "total_cost_usd": 6.8160175,
+  "tokens_total": 3594610,
+  "model_usage": {
+    "claude-opus-5": {
+      "inputTokens": 144,
+      "outputTokens": 119447,
+      "cacheReadInputTokens": 3167010,
+      "cacheCreationInputTokens": 308009,
+      "costUSD": 6.8160175
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "git ls-tree --name-only HEAD journals/"
+    }
+  ],
+  "result_tail": "27 evidence quotes, 10 hypotheses with the judge's states, and 9 gaps.\n\nTwo things I did not do. I did not commit the journal, because you did not ask. I also did not run the schema validator, because `python3` needs an approval that this session cannot give; I checked the machine core against the schema by hand instead.\n\nOne note on the judge: it asked me to read the order-creation code to close the two open questions. I refused. The target source is blinded by contract, and an investigation that reads the code it must diagnose from telemetry measures nothing. The refusal is in the gaps list.",
+  "run_id": "bench-v2",
+  "model": "claude-opus-5",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-03T06:14:16Z",
+  "ended_at": "2026-11-03T06:36:30Z",
+  "restages": 0,
+  "wall_seconds_runner": 1334,
+  "journal_source_name": "2026-11-03-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
