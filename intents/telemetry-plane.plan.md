@@ -14,9 +14,8 @@ the settings, or the contract part of the rim document changes here.
 ## Steps
 
 1. Operator, any time before step 4: a Grafana Cloud stack on the free tier; from its portal the Prometheus
-   remote-write and the Loki push credentials (a URL, a user and a key for each) exported in a shell as
-   `GCLOUD_PROM_URL`, `GCLOUD_PROM_USER`, `GCLOUD_PROM_KEY`, `GCLOUD_LOKI_URL`, `GCLOUD_LOKI_USER`,
-   `GCLOUD_LOKI_KEY`, with `KONAN_REPO` as the absolute path of this checkout; Alloy installed with
+   remote-write and the Loki push credentials (a URL, a user and a key for each) exported in a shell under
+   the seven names of the intent, with `KONAN_REPO` as the absolute path of this checkout; Alloy installed with
    `brew tap grafana/grafana` and `brew install grafana/grafana/alloy`.
 2. Agent: `git mv docs/rims/alloy-config.example.alloy docs/rims/grafana-cloud.alloy` (`lab/` is not
    tracked, so the configuration lives with the rim); the file-match target gains the static label
