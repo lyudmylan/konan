@@ -139,10 +139,21 @@ def test_allow_and_flow_do_not_touch_the_counter():
     assert d is None and st3 == st
 
 
+SCOPE_ENV = ("KONAN_BOUNDARY", "KONAN_EVAL_BLIND")
+
+
+def _hook_env(tmp, extra=None):
+    """The environment of a hook process, built explicitly (intents/hook-scope.md, check 7):
+    the runner's environment without the two scope variables (an eval session or the
+    runner sets them), a private TMPDIR, then the pin's own variables."""
+    env = {k: v for k, v in os.environ.items() if k not in SCOPE_ENV}
+    env["TMPDIR"] = tmp
+    env.update(extra or {})
+    return env
+
+
 def _run_hook(stdin_text, env_extra=None):
-    env = dict(os.environ)
-    env["TMPDIR"] = tempfile.mkdtemp(prefix="konan-hook-test-")
-    env.update(env_extra or {})
+    env = _hook_env(tempfile.mkdtemp(prefix="konan-hook-test-"), env_extra)
     p = subprocess.run([sys.executable, str(HERE / "boundary.py")], input=stdin_text,
                        capture_output=True, text=True, env=env)
     return p.returncode, p.stdout.strip(), p.stderr
@@ -170,7 +181,7 @@ def test_process_contract_fails_closed_on_garbage():
 
 def test_process_tripwire_persists_across_calls():
     tmp = tempfile.mkdtemp(prefix="konan-hook-test-")
-    env = dict(os.environ, TMPDIR=tmp)
+    env = _hook_env(tmp)
     def run(cmd):
         p = subprocess.run([sys.executable, str(HERE / "boundary.py")],
                            input=json.dumps(_event(cmd, session="s-persist")),
@@ -262,8 +273,165 @@ def test_cd_prefix_to_session_cwd_is_transparent():
     assert d == "allow"                                       # no cwd in the event: nothing stripped
 
 
+# --- scope (intents/hook-scope.md): the hook decides only inside a konan workspace ---------
+REPO = HERE.parent
+
+
+def _outside_dir():
+    """An empty temporary directory: not a workspace, and under no workspace."""
+    d = tempfile.mkdtemp(prefix="konan-outside-")
+    assert not boundary.in_workspace(d, {}), \
+        f"{d} lies inside a workspace; the scope pins need a temp dir outside one"
+    return d
+
+
+def _marker_dir():
+    d = tempfile.mkdtemp(prefix="konan-marker-")
+    Path(d, boundary.WORKSPACE_MARKER).touch()
+    return d
+
+
+def _signature_dir():
+    d = tempfile.mkdtemp(prefix="konan-signature-")
+    sig_file, sig_dir = boundary.WORKSPACE_SIGNATURE
+    Path(d, sig_file).parent.mkdir(parents=True, exist_ok=True)
+    Path(d, sig_file).write_text("# triggers\n")
+    Path(d, sig_dir).mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _scoped(cmd, cwd, env=None, state=None):
+    """The path the process takes, in-process: cwd and env into the scope, then the decision."""
+    env = env or {}
+    ev = _event(cmd)
+    if cwd is not None:
+        ev["cwd"] = cwd
+    st = state if state is not None else {"denials": 0, "frozen": False}
+    governed = boundary.in_workspace(cwd, env)
+    return boundary.evaluate(ev, st, 2, blind=env.get("KONAN_EVAL_BLIND") == "1", governed=governed)
+
+
+def test_scope_silent_outside_a_workspace():
+    """Check 1: every row of the table gets no decision outside a workspace (frozen or not)
+    and its table decision inside one; the target of a `cd` does not move the scope."""
+    outside, marker = _outside_dir(), _marker_dir()
+    failures = []
+    for cmd, expected in PINS:
+        got, _, _ = _scoped(cmd, outside)
+        if got is not None:
+            failures.append(f"  {cmd!r}: outside a workspace expected silence, got {got}")
+        got, _, _ = _scoped(cmd, marker)
+        if got != expected:
+            failures.append(f"  {cmd!r}: inside a workspace expected {expected}, got {got}")
+    assert not failures, "scope drift:\n" + "\n".join(failures)
+    d, _, _ = _scoped("ls", outside, state={"denials": 2, "frozen": True})
+    assert d is None                                          # a frozen state means nothing outside
+    d, _, _ = _scoped(f"cd {marker} && curl x", outside)
+    assert d is None                                          # the scope is the session's cwd, not the cd target
+
+
+def test_scope_the_repository_governs():
+    """Check 2: a checkout of this repo is a workspace; every row keeps its table decision
+    with the scope granted, and the hook process with the repository as cwd prints the
+    deny JSON for a denied row."""
+    assert boundary.in_workspace(str(REPO), {})
+    failures = [f"  {cmd!r}: expected {expected}, got {got}"
+                for cmd, expected in PINS
+                for got in [_scoped(cmd, str(REPO))[0]] if got != expected]
+    assert not failures, "decision table drift inside the repository:\n" + "\n".join(failures)
+    rc, out, _ = _run_hook(json.dumps(dict(_event("curl x"), cwd=str(REPO))))
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_scope_marker():
+    """Check 3: the marker alone governs a directory."""
+    marker = _marker_dir()
+    assert boundary.in_workspace(marker, {})
+    d, _, _ = _scoped("curl x", marker)
+    assert d == "deny"
+    d, _, _ = _scoped("scripts/probe.sh /health", marker)
+    assert d == "allow"
+
+
+def test_scope_force_on():
+    """Check 3: KONAN_BOUNDARY=1 governs any directory, in-process and in the process."""
+    outside = _outside_dir()
+    assert boundary.in_workspace(outside, {"KONAN_BOUNDARY": "1"})
+    assert not boundary.in_workspace(outside, {"KONAN_BOUNDARY": "0"})
+    d, _, _ = _scoped("curl x", outside, {"KONAN_BOUNDARY": "1"})
+    assert d == "deny"
+    rc, out, _ = _run_hook(json.dumps(dict(_event("curl x"), cwd=outside)), {"KONAN_BOUNDARY": "1"})
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_scope_eval_mode():
+    """Check 3: KONAN_EVAL_BLIND=1 governs any directory, with the blind rules on."""
+    outside = _outside_dir()
+    assert boundary.in_workspace(outside, {"KONAN_EVAL_BLIND": "1"})
+    d, _, _ = _scoped("curl x", outside, {"KONAN_EVAL_BLIND": "1"})
+    assert d == "deny"
+    d, r, _ = _scoped("gh issue list", outside, {"KONAN_EVAL_BLIND": "1"})
+    assert d == "deny" and "eval-blind" in r
+    rc, out, _ = _run_hook(json.dumps(dict(_event("gh issue list"), cwd=outside)), {"KONAN_EVAL_BLIND": "1"})
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_scope_subdirectory_of_a_workspace_governs():
+    """Check 4: a cwd two levels below the marker, and two levels below the signature."""
+    for root in (_marker_dir(), _signature_dir()):
+        below = Path(root, "lab", "logs")
+        below.mkdir(parents=True)
+        assert boundary.in_workspace(str(below), {})
+        d, _, _ = _scoped("curl x", str(below))
+        assert d == "deny"
+    assert not boundary.in_workspace(str(Path(_outside_dir(), "a", "b")), {})   # nothing above: silent
+
+
+def test_scope_no_cwd_fails_closed():
+    """Check 5: an event without cwd is governed."""
+    assert boundary.in_workspace(None, {}) and boundary.in_workspace("", {})
+    d, _, _ = _scoped("curl x", None)
+    assert d == "deny"
+    d, _, _ = _scoped("curl x", "")
+    assert d == "deny"
+
+
+def test_scope_tripwire_untouched():
+    """Check 6: outside a workspace two denied-by-content commands leave the state at zero,
+    in-process and in the process: no state file, and a later governed call is not frozen."""
+    outside, marker = _outside_dir(), _marker_dir()
+    st = {"denials": 0, "frozen": False}
+    d, _, st = _scoped("curl x", outside, state=st)
+    assert d is None
+    d, _, st = _scoped("wget x", outside, state=st)
+    assert d is None and st == {"denials": 0, "frozen": False}
+    tmp = tempfile.mkdtemp(prefix="konan-hook-test-")
+    env = _hook_env(tmp)
+    def run(cmd, cwd):
+        p = subprocess.run([sys.executable, str(HERE / "boundary.py")],
+                           input=json.dumps(dict(_event(cmd, session="s-scope"), cwd=cwd)),
+                           capture_output=True, text=True, env=env)
+        return p.stdout.strip()
+    assert run("curl x", outside) == "" and run("wget x", outside) == ""
+    assert not os.path.exists(os.path.join(tmp, "konan-boundary-s-scope.json"))
+    assert run("ls", marker) == ""                            # governed now, and not frozen
+
+
+def test_scope_process_silence():
+    """Check 7: the hook process prints nothing outside a workspace for a raw network
+    client, and the deny JSON with the marker as cwd; the environment is built by
+    _hook_env, so an eval session or the runner does not grant the scope."""
+    outside, marker = _outside_dir(), _marker_dir()
+    rc, out, _ = _run_hook(json.dumps(dict(_event('bash -c "curl x"'), cwd=outside)))
+    assert rc == 0 and out == ""
+    rc, out, _ = _run_hook(json.dumps(dict(_event('bash -c "curl x"'), cwd=marker)))
+    assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for t in tests:
         t()
-    print(f"OK: {len(tests)} boundary pins hold ({len(PINS)} decision-table rows + {len(BLIND_PINS)} blind rows)")
+    scope = sum(1 for k in globals() if k.startswith("test_scope_"))
+    print(f"OK: {len(tests)} boundary pins hold ({len(PINS)} decision-table rows + "
+          f"{len(BLIND_PINS)} blind rows + {scope} scope pins)")

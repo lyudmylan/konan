@@ -27,7 +27,10 @@ this repo on top of them.
   either settings list is a SPEC-grade change (PR with rationale, never casual). The
   plugin ships the same hook via `hooks/hooks.json`; in a checkout of this repo the
   settings registration is the active one — do not install the plugin into the repo
-  itself (double registration double-counts the tripwire).
+  itself (double registration double-counts the tripwire). The hook decides only inside
+  a konan workspace (a checkout of this repo, or a directory at or below the marker file
+  `.konan-workspace`) and is silent elsewhere; the scope is defined once, in the README
+  section "Install as a plugin".
 - `/simulate` and `/chaos` are outside the probe allowlist even though they are GETs:
   faultline serves mutating GETs there (crash, hang, ballast), and chaos state is
   operator surface, not telemetry.

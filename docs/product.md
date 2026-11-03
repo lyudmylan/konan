@@ -159,10 +159,11 @@ team-designated safe checks.
   model release; publish the scorecard.
 - **Real-stack integrations**: the first rim proof (Grafana Cloud via MCP) lands in v0.2;
   team-designated checks, change-context sources, and alert-webhook triggers follow.
-- **Enterprise distribution**: the plugin lands in v0.2 (methodology + boundary hook; the
-  rim stays per-target). Team/Enterprise seats (verified: full parity for skills,
-  plugins, hooks, routines; org-managed policies make guardrails admin-enforced). Not
-  Bedrock/Vertex — no skills/plugins/routines there per the current feature matrix.
+- **Enterprise distribution**: the plugin lands in v0.2 (methodology + boundary hook,
+  scoped to a konan workspace; the rim stays per-target). Team/Enterprise seats (verified:
+  full parity for skills, plugins, hooks, routines; org-managed policies make guardrails
+  admin-enforced). Not Bedrock/Vertex — no skills/plugins/routines there per the current
+  feature matrix.
 
 ## Policies
 

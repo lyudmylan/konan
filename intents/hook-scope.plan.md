@@ -64,6 +64,18 @@ The existing decision table, the blind rows, the tripwire pins and the process-c
 unchanged: `evaluate` keeps its default `governed=True`, so an event without `cwd` in the existing tests
 is governed, as the fail-closed rule says.
 
+## What the code changed in this plan (2026-11-03)
+
+- The pins are supersets of step 2: "scope: silent outside a workspace" runs every row of the table, not
+  the deny rows only, and adds a frozen state and a `cd` into a workspace, both silent outside; "scope:
+  force-on", "scope: eval mode" and "scope: tripwire untouched" also run the hook process.
+- The marker governs when any entry of that name exists (`os.path.exists`), so a marker created as a
+  directory by mistake governs too, on the closed side.
+- `main` reads the state file only when the session is governed; `evaluate` returns before the frozen
+  check, as step 1 says.
+- `python3 hooks/tests.py` prints "OK: 22 boundary pins hold (66 decision-table rows + 14 blind rows +
+  9 scope pins)".
+
 ## Facts the plan rests on (as of 2026-11-03)
 
 - The hook event carries `cwd`, the current directory of the session; `strip_cd_to_cwd` reads it already.
