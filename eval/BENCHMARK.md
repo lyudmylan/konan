@@ -293,8 +293,10 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
     and the all-models week meter from 15% to 22%; thirty Sonnet and ten Opus runs together
     took the week meter from 22% to 28%, about 0.15 points per investigation, and the
     Fable-week meter from 42% to 43%. Upper bounds: the orchestrating session shares the
-    meters. The reading after the last twenty Opus and twenty Fable runs is taken by the
-    leader before the weekly reset of 2026-11-03 22:00 and recorded in the readings file.
+    meters. The last twenty Opus and twenty Fable runs together took the week meter from 28% to
+    43% and the Fable-week meter from 43% to 65%, about 1.1 points of the Fable week per
+    Fable investigation with the orchestrating Fable session on the same meter. The whole
+    round: week 15% → 43%, Fable week 29% → 65%, for ninety investigations and the session.
 - **Failure modes observed:**
   - No run failed to finish: 90 journals, no timeout, no quota stop, and no session that
     ended asking the absent operator for approval. bench-v1's Sonnet mode (6 of 30 runs ended
