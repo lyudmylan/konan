@@ -58,7 +58,8 @@ that runs Alloy; none of them lands in a file of this repo.
    `level` and `event` as labels, `request_id` as a field. The Homebrew service is the
    optional form: it reads its own `config.alloy` and `config.env` under the Homebrew
    prefix, not this shell.
-5. Verify in Grafana Cloud, within a minute of traffic: Explore → Prometheus,
+5. Verify in Grafana Cloud, within a few minutes of traffic (15 s scrapes, log shipping
+   adds seconds): Explore → Prometheus,
    `http_requests_total` (and `faultline_chaos_enabled` when chaos is on);
    Explore → Loki, `{job="faultline"} | json` shows the request lines with their
    `request_id`.
