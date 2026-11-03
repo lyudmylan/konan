@@ -245,6 +245,11 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   started from main at the merge of the cause field (#78), so the report contract the runs
   saw is version 2 of the journal (the cause id scored by equality), which bench-v1 did not
   have.
+- **Deviations from the intent's wording, decided in the plan** (`intents/bench-v2-rerun.plan.md`,
+  which holds the reasons): the pin is recorded here after the last run, not before the first
+  batch, because one change request carries the round; `quota-stops.jsonl` is absent, because
+  the runner writes it only at a quota stop and there was none; the scorecard covers 89 of the
+  90 pairs, because the scorer refuses one journal.
 - **Models:** claude-fable-5 30/30, claude-opus-5 30/30, claude-sonnet-5 30/30 journals. No
   substitution: each of the three ids answered one headless call on 2026-11-02 before the
   first batch (manual check 9). N = 3. One Opus journal is unscorable (below) and counts as
