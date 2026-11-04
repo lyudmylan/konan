@@ -7,8 +7,8 @@ request that adds this file.
 
 The investigator reads a real observability plane through a read-only rim: the lab's metrics and logs in
 Grafana Cloud, through the open-source `mcp-grafana` server, with every tool it may call named in one
-committed allowlist and no write tool reachable. The rim is configuration, never code, and a stranger
-reproduces it with one service account.
+committed allowlist and no write tool reachable. The rim is configuration, never code, and the operator
+setup in the rim document is complete enough to reproduce it with one service account.
 
 ## In scope
 
@@ -56,12 +56,14 @@ the journal schema, the oncall and setup skills. Rims of other targets.
 
 ### Automatic checks
 
-1. The MCP configuration names the server, disables the write tools, takes both credentials from the
-   environment, holds no token and no stack address; the example file is gone. The category flag joins
-   this command with the work, once its exact form is pinned from `mcp-grafana --help`.
-   command: `jq -e '.mcpServers.grafana | .command == "mcp-grafana" and (.args | index("--disable-write") != null) and .env.GRAFANA_URL == "${GRAFANA_URL}" and .env.GRAFANA_SERVICE_ACCOUNT_TOKEN == "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"' docs/rims/grafana-cloud.mcp.json >/dev/null && ! grep -Eq 'glsa_|grafana\.net' docs/rims/grafana-cloud.mcp.json && ! test -e docs/rims/grafana-cloud.mcp.json.example`
+1. The MCP configuration names the server, carries exactly the write-tools-off flag and the three enabled
+   categories (the flag forms pinned from `mcp-grafana --help` on 2026-11-04: `--disable-write`, and
+   `--enabled-tools` with a comma-separated list), takes both credentials from the environment, holds no
+   token and no stack address; the example file is gone.
+   command: `jq -e '.mcpServers.grafana | .command == "mcp-grafana" and .args == ["--disable-write", "--enabled-tools", "prometheus,loki,datasource"] and .env.GRAFANA_URL == "${GRAFANA_URL}" and .env.GRAFANA_SERVICE_ACCOUNT_TOKEN == "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"' docs/rims/grafana-cloud.mcp.json >/dev/null && ! grep -Eq 'glsa_|grafana\.net' docs/rims/grafana-cloud.mcp.json && ! test -e docs/rims/grafana-cloud.mcp.json.example`
 2. The allowlist equals the tool list of the rim document, holds at least the query tools of Prometheus and
-   Loki, and holds no write tool, no wildcard and no server-wide entry.
+   Loki (the two names are confirmed or corrected from the listing of check 8; the work updates this
+   command if they differ), and holds no write tool, no wildcard and no server-wide entry.
    command: `diff <(grep -o 'mcp__grafana__[a-z_]*' docs/rims/grafana-cloud.md | sort -u) <(jq -r '.permissions.allow[]' .claude/settings.json | grep '^mcp__grafana__' | sort -u) && jq -r '.permissions.allow[]' .claude/settings.json | grep -q '^mcp__grafana__query_prometheus$' && jq -r '.permissions.allow[]' .claude/settings.json | grep -q '^mcp__grafana__query_loki_logs$' && ! jq -r '.permissions.allow[]' .claude/settings.json | grep -Eq 'mcp__grafana__(update_|create_|delete_|add_|install_|.*_write|ask_assistant|generate_deeplink|query_sql|query_influxdb|grafana_api_request)|mcp__grafana__\*|^mcp__grafana$'`
 3. The rim selection is wired: the skill reads `KONAN_RIM`, the settings allow that one read, and the rim
    document and `AGENTS.md` name it.
