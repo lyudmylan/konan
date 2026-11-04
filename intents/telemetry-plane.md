@@ -40,9 +40,11 @@ the investigate skill; a Grafana dashboard or alert rule.
 1. The Alloy configuration is valid: the validate command exits 0 with placeholder values in the seven
    variables. It runs on the operator computer, where Alloy is installed; it is not part of the quality gate.
    command: `KONAN_REPO=. GCLOUD_PROM_URL=u GCLOUD_PROM_USER=u GCLOUD_PROM_KEY=k GCLOUD_LOKI_URL=u GCLOUD_LOKI_USER=u GCLOUD_LOKI_KEY=k alloy validate docs/rims/grafana-cloud.alloy`
-2. The configuration reads six distinct credential names and the path from the environment, and holds no
-   literal credential and no absolute path; the example file is gone.
-   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+2. The configuration reads six distinct credential names and the path from the environment, holds no
+   literal credential and no absolute path, and pins the stream label, the two log labels and the scrape
+   interval; the example file is gone.
+   command: `test "$(grep -o 'env("GCLOUD_[A-Z_]*")' docs/rims/grafana-cloud.alloy | sort -u | wc -l | tr -d ' ')" -eq 6 && grep -q '__path__ = sys.env("KONAN_REPO")' docs/rims/grafana-cloud.alloy && ! grep -Eq '"/(Users|home)/|glc_' docs/rims/grafana-cloud.alloy && grep -q 'job = "faultline"' docs/rims/grafana-cloud.alloy && grep -q 'stage.labels { values = { level = "", event = "" } }' docs/rims/grafana-cloud.alloy && grep -q 'scrape_interval = "15s"' docs/rims/grafana-cloud.alloy && ! test -e docs/rims/alloy-config.example.alloy`
+   (`sys.env()`, not `env()`: see the plan)
 3. The rim document names the tap and formula, the validate command, the foreground run, and the LogQL
    matcher on the konan-stamped request ids; the pointer to the example file is gone.
    command: `grep -q 'brew install grafana/grafana/alloy' docs/rims/grafana-cloud.md && grep -q 'alloy validate' docs/rims/grafana-cloud.md && grep -q 'alloy run' docs/rims/grafana-cloud.md && grep -q 'request_id=~"konan-' docs/rims/grafana-cloud.md && ! grep -q 'alloy-config.example' docs/rims/grafana-cloud.md`
@@ -56,7 +58,8 @@ the investigate skill; a Grafana dashboard or alert rule.
 6. With the lab started, Alloy runs in the foreground with `docs/rims/grafana-cloud.alloy` and reports no error in
    its first minute. who: the operator. Not automatic: it needs the credentials of check 5 and the lab on
    the operator computer.
-7. One D1 staging is visible in Grafana Cloud within one minute: the lab's request counter in Explore,
+7. One D1 staging is visible in Grafana Cloud within a few minutes (the scrape interval is 15 s; the log
+   shipping adds seconds): the lab's request counter in Explore,
    Prometheus, and its JSON log lines with `request_id` in Explore, Loki. who: the operator with the agent.
    Not automatic: in this work item the plane is read through the browser; the mechanical read lands with
    the rim (#54) and is exercised by the blind run (#55).

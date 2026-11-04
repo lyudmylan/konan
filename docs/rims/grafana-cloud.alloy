@@ -1,5 +1,8 @@
 // Grafana Alloy — ship the konan lab's telemetry to Grafana Cloud (#53).
-// Fill the four credentials from the Cloud portal; KONAN_REPO = this repo's absolute path.
+// Everything variable comes from the environment of the shell that runs Alloy: the six write
+// credentials from the Cloud portal and KONAN_REPO, the absolute path of this checkout.
+// Validate: `alloy validate docs/rims/grafana-cloud.alloy`; run: `alloy run docs/rims/grafana-cloud.alloy`.
+// The steps: grafana-cloud.md, "Operator setup".
 
 prometheus.scrape "faultline" {
   targets    = [{ __address__ = "127.0.0.1:8000" }]
@@ -10,13 +13,16 @@ prometheus.scrape "faultline" {
 
 prometheus.remote_write "gcloud" {
   endpoint {
-    url = env("GCLOUD_PROM_URL")
-    basic_auth { username = env("GCLOUD_PROM_USER"), password = env("GCLOUD_PROM_KEY") }
+    url = sys.env("GCLOUD_PROM_URL")
+    basic_auth {
+      username = sys.env("GCLOUD_PROM_USER")
+      password = sys.env("GCLOUD_PROM_KEY")
+    }
   }
 }
 
 local.file_match "faultline_logs" {
-  path_targets = [{ __path__ = env("KONAN_REPO") + "/lab/logs/app.log*" }]
+  path_targets = [{ __path__ = sys.env("KONAN_REPO") + "/lab/logs/app.log*", job = "faultline" }]   // job: the stream label
 }
 
 loki.source.file "faultline" {
@@ -32,7 +38,10 @@ loki.process "faultline" {
 
 loki.write "gcloud" {
   endpoint {
-    url = env("GCLOUD_LOKI_URL")
-    basic_auth { username = env("GCLOUD_LOKI_USER"), password = env("GCLOUD_LOKI_KEY") }
+    url = sys.env("GCLOUD_LOKI_URL")
+    basic_auth {
+      username = sys.env("GCLOUD_LOKI_USER")
+      password = sys.env("GCLOUD_LOKI_KEY")
+    }
   }
 }
