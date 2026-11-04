@@ -25,7 +25,7 @@ investigate skill, the rim document, the two documents, the receipts.
    it is plane-only; out of bounds: the lab's files, `eval/`, the tracker, every write surface; the owner:
    the leader). Then the rim session, `claude --mcp-config docs/rims/grafana-cloud.mcp.json`, and `/mcp`:
    the served tool names, recorded as text; the allowlist written from that list (check 8); the no-write
-   check (check 9).
+   check with a temporary copy of the configuration outside the repository, deleted after it (check 9).
 4. Agent: `.claude/settings.json` (the pinned entries and `Bash(printenv KONAN_RIM)`); the Setup line of
    `skills/investigate/SKILL.md`; `docs/rims/grafana-cloud.md` rewritten as the live contract (the tool
    names, the three layers, the operator setup, the citation form, the owner, the gaps, the Alloy run command
@@ -60,12 +60,9 @@ runs after step 5 only.
   release binary, Docker and Go as the other forms. It reads `GRAFANA_URL` and
   `GRAFANA_SERVICE_ACCOUNT_TOKEN`; `--disable-write` removes the write tools (dashboards and folders,
   incidents, alerting writes, annotations, snapshots, deep links, raw SQL); `--disable-<category>` removes a
-  category; `--enabled-tools` takes a comma-separated list of categories. The read tools of the two
-  categories the rim uses are, per the README: `query_prometheus`, `list_prometheus_metric_metadata`,
-  `list_prometheus_metric_names`, `list_prometheus_label_names`, `list_prometheus_label_values`,
-  `query_prometheus_histogram`; `query_loki_logs`, `list_loki_label_names`, `list_loki_label_values`,
-  `query_loki_stats`, `query_loki_patterns`, `analyze_loki_labels`; plus `list_datasources`. The allowlist is
-  written from the served listing, not from this list. Source: the `mcp-grafana` README.
+  category; `--enabled-tools` takes a comma-separated list of categories. The README names about six read
+  tools in each of the Prometheus and Loki categories and a datasource list; those names are unpinned, and
+  the rim document is the one list, written from the served listing. Source: the `mcp-grafana` README.
 - Claude Code expands `${VAR}` in an MCP configuration file; `--mcp-config <file>` loads servers for one
   session; a permission rule `mcp__<server>__<tool>` allows one tool, `mcp__<server>` a whole server; a tool
   that no rule allows asks in an interactive session and fails closed in `-p`. Source: the Claude Code

@@ -25,13 +25,17 @@ reproduces it with one service account.
 - `skills/investigate/SKILL.md`, Setup step 1: the surface contract is the rim document that `KONAN_RIM`
   names (read with `printenv KONAN_RIM`), `docs/lab.md` when it is unset; under a rim document the lab's
   files and probes are out of bounds; the journal's `surface_contract` field names the document in use.
-  No other change to the skill, its lenses or the report contract.
+  No other change to the skill, its lenses or the report contract. This exclusion is a rule of the skill,
+  not a mechanical boundary: the settings keep `scripts/probe.sh` allowed and the hook is silent on `lab/`
+  reads outside blind mode. The mechanical boundary of this rim is the three layers on the Grafana side; a
+  mechanical exclusion of the lab under a rim is a later work item.
 - `docs/rims/grafana-cloud.md`, the live surface contract: the status line "Status: live"; the surface as the
   pinned tool names; the boundary in three layers (the Viewer service account, `--disable-write`, the
   allowlist); the operator setup of the rim (the service account, the two variables, the Homebrew formula,
   the session command with `--mcp-config`, `/mcp`, `KONAN_RIM`); the citation form of plane evidence (the
   tool, the query, the time); the owner of the rim; the Alloy run command with its storage flag (the open
-  finding of #53); the known gaps.
+  finding of #53); the known gaps, among them that the exclusion of the lab's files and probes is a rule of
+  the skill and not a mechanical boundary.
 - `AGENTS.md`, the lab boundary: one sentence that under a rim document the investigator's hand is the rim's
   read-only MCP tools named in `.claude/settings.json`, and that `KONAN_RIM` names the rim.
 - `README.md`, "Bring your own target": the Grafana Cloud rim is live, with the session command.
@@ -41,17 +45,20 @@ reproduces it with one service account.
 ## Out of scope
 
 The blind run (#55) and the plumbing of `--mcp-config` and `KONAN_RIM` into `eval/run.py`. A trigger profile
-from Grafana alerting (#35). Any write tool, `--enable-write-tools`, dashboards, alert rules. The hosted
-Grafana Cloud MCP server (decided against, epic #58). The plugin's `hooks/hooks.json`. The Alloy
-configuration (merged with #53). The lenses, the report contract, the journal schema, the oncall and setup
-skills. Rims of other targets.
+from Grafana alerting (#35). Any write tool, `--enable-write-tools`, alert rules. The dashboard tools, read
+or write: the stack holds no dashboard of the lab, and every tool the investigator needs is a query tool,
+so the category stays off at the server. The hosted Grafana Cloud MCP server (decided against, epic #58).
+A mechanical exclusion of the lab's files and probes under a rim (a hook change; a later work item). The
+plugin's `hooks/hooks.json`. The Alloy configuration (merged with #53). The lenses, the report contract,
+the journal schema, the oncall and setup skills. Rims of other targets.
 
 ## Acceptance checks
 
-## Automatic checks
+### Automatic checks
 
 1. The MCP configuration names the server, disables the write tools, takes both credentials from the
-   environment, holds no token and no stack address; the example file is gone.
+   environment, holds no token and no stack address; the example file is gone. The category flag joins
+   this command with the work, once its exact form is pinned from `mcp-grafana --help`.
    command: `jq -e '.mcpServers.grafana | .command == "mcp-grafana" and (.args | index("--disable-write") != null) and .env.GRAFANA_URL == "${GRAFANA_URL}" and .env.GRAFANA_SERVICE_ACCOUNT_TOKEN == "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"' docs/rims/grafana-cloud.mcp.json >/dev/null && ! grep -Eq 'glsa_|grafana\.net' docs/rims/grafana-cloud.mcp.json && ! test -e docs/rims/grafana-cloud.mcp.json.example`
 2. The allowlist equals the tool list of the rim document, holds at least the query tools of Prometheus and
    Loki, and holds no write tool, no wildcard and no server-wide entry.
@@ -64,12 +71,13 @@ skills. Rims of other targets.
    command: `grep -q '^Status: live' docs/rims/grafana-cloud.md && ! grep -q 'PREPARED' docs/rims/grafana-cloud.md && ! grep -q 'TODO at go-live' docs/rims/grafana-cloud.md && grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' docs/rims/grafana-cloud.md && grep -q '^Owner:' docs/rims/grafana-cloud.md && grep -q 'alloy run --storage.path lab/alloy docs/rims/grafana-cloud.alloy' docs/rims/grafana-cloud.md`
 5. The smoke-run journal names the rim as its surface contract, cites plane queries, and cites no lab file,
    no probe and no lab contract.
-   command: `f=$(grep -l 'surface_contract: docs/rims/grafana-cloud.md' journals/*.md) && test -n "$f" && grep -Eq 'query_prometheus|query_loki' $f && ! grep -Eq 'lab/logs|probe\.sh|docs/lab\.md' $f`
+   command: `f=$(grep -l 'surface_contract: docs/rims/grafana-cloud.md' journals/*.md) && test "$(printf '%s\n' "$f" | wc -l | tr -d ' ')" -eq 1 && grep -Eq 'query_prometheus|query_loki' "$f" && ! grep -Eq 'lab/logs|probe\.sh|docs/lab\.md' "$f"`
+   (one smoke journal under this rim; the blind run's journal (#55) is scored under its own intent)
 6. The README section points at the live rim and its session command, and no longer calls it an example.
    command: `grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' README.md && ! grep -q 'prepared example rim' README.md`
 7. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
-## Manual checks
+### Manual checks
 
 8. The server connects with the operator's credentials and the tools are pinned from it: a Viewer service
    account and its token in `GRAFANA_SERVICE_ACCOUNT_TOKEN`, the stack address in `GRAFANA_URL`,
@@ -78,9 +86,10 @@ skills. Rims of other targets.
    allowlist and the rim document hold exactly its read tools. who: the operator with the agent. Not
    automatic: the account and the token are the operator's hands, and the listing needs a live session.
 9. No write reaches Grafana: in the session of check 8 the listing holds no write tool; in one session started
-   without `--disable-write`, a write tool is listed and its call is not allowed by the settings (the harness
-   asks; the operator declines; nothing is sent). who: the operator with the agent. Not automatic: it needs
-   the live session, and the denial is shown to the operator as the rim skill asks.
+   with a temporary copy of the configuration outside the repository, without `--disable-write` and deleted
+   after the check, a write tool is listed, its call is asked and not allowed, and the operator declines;
+   nothing is sent, and the committed file keeps its flag. who: the operator with the agent. Not automatic:
+   it needs the live session, and the denial is shown to the operator as the rim skill asks.
 10. The smoke run: with the lab and Alloy running and `KONAN_RIM` set, `/konan <a benign complaint the
     operator chooses>` in the rim session; the journal read together: every claim cites a plane query (the
     tool, the query, the time), no lab file; the journal is committed under `journals/` and check 5 reads it.
