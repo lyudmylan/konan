@@ -23,7 +23,11 @@ Prime directives, in force for every step:
 ## 0. Setup
 
 1. Read the target surface contract — the document defining what you may probe, where
-   logs live, and what metrics exist. Default for this repo's lab: `docs/lab.md`. Touch
+   logs live, and what metrics exist. The rim in use is named by the environment
+   variable `KONAN_RIM` (read it with `printenv KONAN_RIM`; it holds the path of a rim
+   document under `docs/rims/`); when it is unset, the contract is this repo's lab,
+   `docs/lab.md`. Under a rim document the lab's files and probes are out of bounds,
+   and the journal's `surface_contract` field names the document in use. Touch
    nothing outside that contract.
 2. Record the complaint verbatim (who reports what, since when — as given).
 3. Budget for this investigation, unless the caller overrides: one triage round, at most

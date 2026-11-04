@@ -7,8 +7,8 @@ request that adds this file.
 
 The investigator reads a real observability plane through a read-only rim: the lab's metrics and logs in
 Grafana Cloud, through the open-source `mcp-grafana` server, with every tool it may call named in one
-committed allowlist and no write tool reachable. The rim is configuration, never code, and the operator
-setup in the rim document is complete enough to reproduce it with one service account.
+committed allowlist and no write tool reachable, as configuration and never code, reproducible from the
+rim document with one service account.
 
 ## In scope
 
@@ -30,7 +30,8 @@ setup in the rim document is complete enough to reproduce it with one service ac
   reads outside blind mode. The mechanical boundary of this rim is the three layers on the Grafana side; a
   mechanical exclusion of the lab under a rim is a later work item.
 - `docs/rims/grafana-cloud.md`, the live surface contract: the status line "Status: live"; the surface as the
-  pinned tool names; the boundary in three layers (the Viewer service account, `--disable-write`, the
+  pinned tool names (the `mcp__grafana__` names appear only in that list, and no write tool is named in
+  that form anywhere in the document); the boundary in three layers (the Viewer service account, `--disable-write`, the
   allowlist); the operator setup of the rim (the service account, the two variables, the Homebrew formula,
   the session command with `--mcp-config`, `/mcp`, `KONAN_RIM`); the citation form of plane evidence (the
   tool, the query, the time); the owner of the rim; the Alloy run command with its storage flag (the open
@@ -70,7 +71,7 @@ the journal schema, the oncall and setup skills. Rims of other targets.
    command: `grep -q 'printenv KONAN_RIM' skills/investigate/SKILL.md && grep -q 'Bash(printenv KONAN_RIM)' .claude/settings.json && grep -q 'KONAN_RIM' docs/rims/grafana-cloud.md && grep -q 'KONAN_RIM' AGENTS.md`
 4. The rim document is the live contract: the status, no prepared or go-live wording, the session command,
    the owner, and the Alloy run command with its storage flag.
-   command: `grep -q '^Status: live' docs/rims/grafana-cloud.md && ! grep -q 'PREPARED' docs/rims/grafana-cloud.md && ! grep -q 'TODO at go-live' docs/rims/grafana-cloud.md && grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' docs/rims/grafana-cloud.md && grep -q '^Owner:' docs/rims/grafana-cloud.md && grep -q 'alloy run --storage.path lab/alloy docs/rims/grafana-cloud.alloy' docs/rims/grafana-cloud.md`
+   command: `grep -q '^Status: live' docs/rims/grafana-cloud.md && ! grep -qi 'prepared' docs/rims/grafana-cloud.md && ! grep -q 'TODO at go-live' docs/rims/grafana-cloud.md && grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' docs/rims/grafana-cloud.md && grep -q '^Owner:' docs/rims/grafana-cloud.md && grep -q 'alloy run --storage.path lab/alloy docs/rims/grafana-cloud.alloy' docs/rims/grafana-cloud.md`
 5. The smoke-run journal names the rim as its surface contract, cites plane queries, and cites no lab file,
    no probe and no lab contract.
    command: `f=$(grep -l 'surface_contract: docs/rims/grafana-cloud.md' journals/*.md) && test "$(printf '%s\n' "$f" | wc -l | tr -d ' ')" -eq 1 && grep -Eq 'query_prometheus|query_loki' "$f" && ! grep -Eq 'lab/logs|probe\.sh|docs/lab\.md' "$f"`

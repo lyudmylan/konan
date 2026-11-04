@@ -16,10 +16,10 @@ investigate skill, the rim document, the two documents, the receipts.
 1. Operator, any time before step 3: in Grafana Cloud, Administration, Users and access, Service accounts: a
    service account with the Viewer role and one token, exported as `GRAFANA_SERVICE_ACCOUNT_TOKEN`; the
    stack address exported as `GRAFANA_URL`; `brew install mcp-grafana` (the Homebrew core formula);
-   `mcp-grafana --help` for the exact category flags. Alloy and the lab run again for step 5.
+   `mcp-grafana --help` for the exact flag forms. Alloy and the lab run again for step 5.
 2. Agent: `git mv docs/rims/grafana-cloud.mcp.json.example docs/rims/grafana-cloud.mcp.json`; the arguments
-   `--disable-write` and the category flags that keep the Prometheus, Loki and datasource tools; the two
-   placeholders; check 1.
+   `--disable-write` and `--enabled-tools prometheus,loki,datasource` (the flag forms read from
+   `mcp-grafana --help` on the operator computer); the two placeholders; check 1.
 3. Operator with the agent, the rim skill: the interview, five questions in the conversation (the answers are
    mostly known: Prometheus and Loki in Grafana Cloud through `mcp-grafana`; no probe surface in this rim,
    it is plane-only; out of bounds: the lab's files, `eval/`, the tracker, every write surface; the owner:

@@ -10,7 +10,12 @@ this repo on top of them.
 ## Lab boundary (hard rule)
 
 - The investigator touches a target only through `scripts/probe.sh` — GET-only,
-  path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). The
+  path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). Under
+  a rim document (`docs/rims/<target>.md`, named by `KONAN_RIM` in the environment)
+  the investigator's hand is instead the rim's read-only MCP tools, named one by one
+  in `.claude/settings.json`, and the lab's files and probes are out of bounds by the
+  rule of the investigate skill; the mechanical boundary of a rim is on its server
+  side (a Viewer account, the server's write tools off, the allowlist). The
   boundary is mechanical, not prompted, and it is enforced by content: a `PreToolUse`
   hook (`hooks/boundary.py`, registered in `.claude/settings.json`) reads every Bash
   command whole and **denies** raw network clients anywhere in it (`curl`, `wget`,
