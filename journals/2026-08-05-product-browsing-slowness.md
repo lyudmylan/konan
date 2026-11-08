@@ -125,9 +125,9 @@ evidence:
       {"ts": "2026-08-05T17:51:07.047Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products -> 200", "request_id": "konan-1785952266-52632", "event": "request", "method": "GET", "path": "/products", "status": 200, "duration_ms": 8.026, "client": "127.0.0.1:52183"}
   - id: E16
     type: log
-    source: "lab/logs/app.log @ 2026-08-05T13:07:39.002Z — the first exception ever recorded in this process, on an investigator probe; stack trimmed ([...]) to the throwing frame, kept text unaltered"
+    source: "lab/logs/app.log @ 2026-08-05T13:07:39.002Z — the first exception ever recorded in this process, on an investigator probe; stack trimmed ([...]) to the throwing frame, kept text unaltered; the checkout prefix of the file paths is redacted"
     quote: |-
-      {"ts": "2026-08-05T13:07:39.002Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1785935258-48073", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  [...]  File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\nZeroDivisionError: division by zero"}
+      {"ts": "2026-08-05T13:07:39.002Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1785935258-48073", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  [...]  File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\nZeroDivisionError: division by zero"}
   - id: E17
     type: probe
     source: "probe /products/3, request_id=konan-1785935258-48073 @ 2026-08-05T13:07:39Z — deterministic on repeat: konan-1785935273-48148 and konan-1785935413-48218 also 500; 9/9 across the investigation, with interleaved /products/1,2,4,5 probes all 200"
