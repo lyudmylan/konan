@@ -51,7 +51,7 @@ untouched (check 1 reads the whole tree); `eval/BENCHMARK.md` carries one path, 
 2. The old paths, the old intent names and the old variable are gone, and the new ones exist.
    command: `! git grep -I -q -E 'KONAN_RIM|docs/rims|skills/rim|grafana-rim' -- . ':!intents/adapter-rename.md' ':!intents/adapter-rename.plan.md' && test -f docs/adapters/grafana-cloud.md && test -f docs/adapters/grafana-cloud.mcp.json && test -f docs/adapters/grafana-cloud.alloy && test -f skills/adapter/SKILL.md && test -f intents/grafana-adapter.md && test -f intents/grafana-adapter.plan.md && ! test -e docs/rims && ! test -e skills/rim`
 3. The skill carries the new name, the skill and the two READMEs name the command in its slash form (not a
-   path), and the plugin's description names the target adapter.
+   path), and the plugin's description names the target adapter (a guard against a regression: the plugin said so before the rename; check 1 is the proof for that file).
    command: `grep -q '^name: adapter$' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' README.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/README.md && grep -q 'target adapter' .claude-plugin/plugin.json`
 4. The settings allow the one read of the new variable, and the README's session command names the new
    path; the rest of the wiring (the skill reads the variable, the adapter document and `AGENTS.md` name
