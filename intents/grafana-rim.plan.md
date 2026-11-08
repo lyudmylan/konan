@@ -65,8 +65,9 @@ runs after step 5 only.
   the rim document is the one list, written from the served listing. Source: the `mcp-grafana` README.
 - Claude Code expands `${VAR}` in an MCP configuration file; `--mcp-config <file>` loads servers for one
   session; a permission rule `mcp__<server>__<tool>` allows one tool, `mcp__<server>` a whole server; a tool
-  that no rule allows asks in an interactive session and fails closed in `-p`. Source: the Claude Code
-  documentation (MCP, permissions).
+  that no rule allows asks in an interactive session in the default and manual modes, while in the auto
+  mode a classifier may let an unlisted call through (observed 2026-11-08, check 9); it fails closed in
+  `-p`. Source: the Claude Code documentation (MCP, permissions), and the observation of check 9.
 - The investigate skill reads one surface contract in Setup step 1, with `docs/lab.md` as the default; the
   journal schema requires `surface_contract`; the lenses name no lab path. `eval/run.py` sends
   `/konan <complaint>` and nothing else: the rim plumbing of the runner is #55's.

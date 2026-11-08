@@ -33,10 +33,12 @@ rim document with one service account.
   pinned tool names (the `mcp__grafana__` names appear only in that list, and no write tool is named in
   that form anywhere in the document); the boundary in three layers (the Viewer service account, `--disable-write`, the
   allowlist); the operator setup of the rim (the service account, the two variables, the Homebrew formula,
-  the session command with `--mcp-config`, `/mcp`, `KONAN_RIM`); the citation form of plane evidence (the
-  tool, the query, the time); the owner of the rim; the Alloy run command with its storage flag (the open
-  finding of #53); the known gaps, among them that the exclusion of the lab's files and probes is a rule of
-  the skill and not a mechanical boundary.
+  the session command with `--mcp-config` and `--permission-mode manual`, `/mcp`, `KONAN_RIM`); the
+  session command pins the manual permission mode, because the allowlist is not a boundary in the auto
+  mode, where the harness's classifier decides for an unlisted call; the citation form of plane evidence
+  (the tool, the query, the time); the owner of the rim; the Alloy run command with its storage flag (the
+  open finding of #53); the known gaps, among them that the exclusion of the lab's files and probes is a
+  rule of the skill and not a mechanical boundary.
 - `AGENTS.md`, the lab boundary: one sentence that under a rim document the investigator's hand is the rim's
   read-only MCP tools named in `.claude/settings.json`, and that `KONAN_RIM` names the rim.
 - `README.md`, "Bring your own target": the Grafana Cloud rim is live, with the session command.
@@ -71,13 +73,14 @@ the journal schema, the oncall and setup skills. Rims of other targets.
    command: `grep -q 'printenv KONAN_RIM' skills/investigate/SKILL.md && grep -q 'Bash(printenv KONAN_RIM)' .claude/settings.json && grep -q 'KONAN_RIM' docs/rims/grafana-cloud.md && grep -q 'KONAN_RIM' AGENTS.md`
 4. The rim document is the live contract: the status, no prepared or go-live wording, the session command,
    the owner, and the Alloy run command with its storage flag.
-   command: `grep -q '^Status: live' docs/rims/grafana-cloud.md && ! grep -qi 'prepared' docs/rims/grafana-cloud.md && ! grep -q 'TODO at go-live' docs/rims/grafana-cloud.md && grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' docs/rims/grafana-cloud.md && grep -q '^Owner:' docs/rims/grafana-cloud.md && grep -q 'alloy run --storage.path lab/alloy docs/rims/grafana-cloud.alloy' docs/rims/grafana-cloud.md`
+   command: `grep -q '^Status: live' docs/rims/grafana-cloud.md && ! grep -qi 'prepared' docs/rims/grafana-cloud.md && ! grep -q 'TODO at go-live' docs/rims/grafana-cloud.md && grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' docs/rims/grafana-cloud.md && grep -q -- '--permission-mode manual' docs/rims/grafana-cloud.md && grep -q '^Owner:' docs/rims/grafana-cloud.md && grep -q 'alloy run --storage.path lab/alloy docs/rims/grafana-cloud.alloy' docs/rims/grafana-cloud.md`
 5. The smoke-run journal names the rim as its surface contract, cites plane queries, and cites no lab file,
    no probe and no lab contract.
-   command: `f=$(grep -l 'surface_contract: docs/rims/grafana-cloud.md' journals/*.md) && test "$(printf '%s\n' "$f" | wc -l | tr -d ' ')" -eq 1 && grep -Eq 'query_prometheus|query_loki' "$f" && ! grep -Eq 'lab/logs|probe\.sh|docs/lab\.md' "$f"`
+   command: `f=$(grep -l 'surface_contract: docs/rims/grafana-cloud.md' journals/*.md) && test "$(printf '%s\n' "$f" | wc -l | tr -d ' ')" -eq 1 && grep -Eq 'query_prometheus|query_loki' "$f" && ! grep -Eq '(^|[^a-z])lab/|probe\.sh|docs/lab\.md' "$f"`
    (one smoke journal under this rim; the blind run's journal (#55) is scored under its own intent)
-6. The README section points at the live rim and its session command, and no longer calls it an example.
-   command: `grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' README.md && ! grep -q 'prepared example rim' README.md`
+6. The README section points at the live rim and its session command in the manual permission mode, and
+   no longer calls it an example.
+   command: `grep -q -- '--mcp-config docs/rims/grafana-cloud.mcp.json' README.md && grep -q -- '--permission-mode manual' README.md && ! grep -q 'prepared example rim' README.md`
 7. The quality checks of the contract pass. command: `charter-gate quality --contract charter.toml`
 
 ### Manual checks
@@ -88,11 +91,14 @@ the journal schema, the oncall and setup skills. Rims of other targets.
    shows the server connected and its tool list; the list is recorded as text in the change request, and the
    allowlist and the rim document hold exactly its read tools. who: the operator with the agent. Not
    automatic: the account and the token are the operator's hands, and the listing needs a live session.
-9. No write reaches Grafana: in the session of check 8 the listing holds no write tool; in one session started
-   with a temporary copy of the configuration outside the repository, without `--disable-write` and deleted
-   after the check, a write tool is listed, its call is asked and not allowed, and the operator declines;
-   nothing is sent, and the committed file keeps its flag. who: the operator with the agent. Not automatic:
-   it needs the live session, and the denial is shown to the operator as the rim skill asks.
+9. No write reaches Grafana: in the session of check 8 the listing holds no write tool; in one session in
+   the manual permission mode (`--permission-mode manual`), started with a temporary copy of the
+   configuration outside the repository, without `--disable-write` and deleted after the check, a write
+   tool is listed, its call is asked and not allowed, and the operator declines; nothing is sent, and the
+   committed file keeps its flag. The manual mode is the one the check needs: in the auto mode the
+   harness's classifier decides for an unlisted call and may let it through, so the allowlist is a boundary
+   in the manual mode only. who: the operator with the agent. Not automatic: it needs the live session, and
+   the denial is shown to the operator as the rim skill asks.
 10. The smoke run: with the lab and Alloy running and `KONAN_RIM` set, `/konan <a benign complaint the
     operator chooses>` in the rim session; the journal read together: every claim cites a plane query (the
     tool, the query, the time), no lab file; the journal is committed under `journals/` and check 5 reads it.
