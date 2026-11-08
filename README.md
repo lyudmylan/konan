@@ -142,7 +142,7 @@ builds one with you: it interviews you about your observability surface, writes 
 rim, pins the tool allowlist from what your server actually serves, and smoke-tests
 it. The first live rim is Grafana Cloud through the official `mcp-grafana` server,
 [docs/rims/grafana-cloud.md](docs/rims/grafana-cloud.md): a session under it starts
-with `claude --mcp-config docs/rims/grafana-cloud.mcp.json` and
+with `claude --permission-mode manual --mcp-config docs/rims/grafana-cloud.mcp.json` and
 `KONAN_RIM=docs/rims/grafana-cloud.md` in the environment.
 
 ## Install as a plugin

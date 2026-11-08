@@ -21,7 +21,7 @@ In a shell that holds the two credentials of the rim (the operator setup below):
 
 ```sh
 export KONAN_RIM=docs/rims/grafana-cloud.md
-claude --mcp-config docs/rims/grafana-cloud.mcp.json
+claude --permission-mode manual --mcp-config docs/rims/grafana-cloud.mcp.json
 ```
 
 The investigate skill reads `KONAN_RIM` in its Setup step and takes this document as the
@@ -55,7 +55,9 @@ process gauges, scraped every 15 s; the log stream `{job="faultline"}` with the 
 `level` and `event` and the JSON fields `request_id`, `method`, `path`, `status`,
 `duration_ms`, parsed with `| json`. Under this rim the investigator sends no probe, so
 every request line is user traffic or the eval-side staging; the matcher
-`request_id=~"konan-.*"` marks the probes of the lab rim, when both rims share a stack.
+`request_id=~"konan-.*"` marks the probes of the lab rim, when both rims share a stack. The
+datasource uids of a Grafana Cloud stack are `grafanacloud-prom` (Prometheus) and
+`grafanacloud-logs` (Loki); `list_datasources` confirms them.
 
 ## How to cite plane evidence
 
@@ -78,8 +80,11 @@ Three mechanical layers on the Grafana side, and one rule of the skill on the la
    and the raw API tool. The token lives in the environment
    (`GRAFANA_SERVICE_ACCOUNT_TOKEN`), never in a file of this repository.
 3. **The settings allow exactly the served read tools**, one entry each, no wildcard, no
-   server-wide rule. A tool outside the list asks in an interactive session and fails
-   closed in a headless one. The boundary hook stays active for Bash.
+   server-wide rule. A tool outside the list asks in an interactive session in the
+   manual permission mode (`--permission-mode manual`, the mode of the session command
+   above); in the auto mode the harness's classifier decides for it instead, so a
+   session under this rim runs in the manual mode; a headless session fails closed. The
+   boundary hook stays active for Bash.
 4. **The lab is out of bounds by the rule of the skill, not mechanically.** The Setup step
    of the investigate skill excludes the files under `lab/` and the probe script under a
    rim document; the settings keep the probe allowed and the hook is silent on `lab/`
@@ -143,8 +148,9 @@ that runs Alloy; none of them lands in a file of this repo.
    `/konan <complaint>` runs an investigation under this rim.
 
 The no-write check of the rim skill: once, with a temporary copy of the configuration
-outside this repository and without `--disable-write`, the write tools are listed and a
-call of one of them asks and is declined; the committed file keeps its flag.
+outside this repository, without `--disable-write` and in the manual permission mode, the
+write tools are listed and a call of one of them asks and is declined; the committed file
+keeps its flag.
 
 ## Known gaps of this rim
 
