@@ -51,20 +51,22 @@ worktree session (noted on #58).
    does not match.
    command: `! git grep -I -q -E '/Users/[A-Za-z]{2,}/|/home/[A-Za-z]{2,}/|@gmail\.com|ghp_[A-Za-z0-9]{10,}|github_pat_[A-Za-z0-9_]{10,}|sk-ant-[A-Za-z0-9-]{10,}|AKIA[A-Z0-9]{12,}|glsa_[A-Za-z0-9]{10,}|glc_[A-Za-z0-9+/=]{20,}|claude\.ai/code|grafanacloud-[a-z]+[0-9]{3,}-' -- . ':!intents/public-flip.md' ':!intents/public-flip.plan.md'`
 2. The archived runs say that they are redacted, and the README's issue links are absolute.
-   command: `grep -q 'checkout>' eval/BENCHMARK.md && ! grep -q '\.\./\.\./issues' README.md && grep -q 'https://github.com/lyudmylan/konan/issues/63' README.md`
+   command: `grep -q 'checkout>' eval/BENCHMARK.md && ! grep -q '\.\./\.\./issues' README.md && grep -q 'https://github.com/lyudmylan/konan/issues/63' README.md && test "$(grep -c 'https://github.com/lyudmylan/konan/issues/' README.md)" -ge 2`
 3. No private material in the tracker: the bodies and the comments of every issue and change request, open
    or closed, with one pattern for both lists and a guard that fails when a list is truncated.
-   command: `test "$(gh issue list --state all --limit 1000 --json number --jq length)" -lt 1000 && test "$(gh pr list --state all --limit 1000 --json number --jq length)" -lt 1000 && ! { gh issue list --state all --limit 1000 --json body,comments --jq '.[] | .body, .comments[].body'; gh pr list --state all --limit 1000 --json body,comments --jq '.[] | .body, .comments[].body'; } | grep -q -E '/Users/[A-Za-z]{2,}/|@gmail\.com|claude\.ai/code|glsa_[A-Za-z0-9]{10,}|glc_[A-Za-z0-9+/=]{20,}'`
+   command: `test "$(gh issue list --state all --limit 1000 --json number --jq length)" -lt 1000 && test "$(gh pr list --state all --limit 1000 --json number --jq length)" -lt 1000 && ! { gh issue list --state all --limit 1000 --json body,comments --jq '.[] | .body, .comments[].body'; gh pr list --state all --limit 1000 --json body,comments --jq '.[] | .body, .comments[].body'; } | grep -q -E '/Users/[A-Za-z]{2,}/|/home/[A-Za-z]{2,}/|@gmail\.com|ghp_[A-Za-z0-9]{10,}|github_pat_[A-Za-z0-9_]{10,}|sk-ant-[A-Za-z0-9-]{10,}|AKIA[A-Z0-9]{12,}|glsa_[A-Za-z0-9]{10,}|glc_[A-Za-z0-9+/=]{20,}|claude\.ai/code|grafanacloud-[a-z]+[0-9]{3,}-'`
 4. The lab repository carries the license and the notice, and names this repository.
    command: `gh api repos/lyudmylan/faultline/contents/LICENSE --jq .name | grep -q '^LICENSE$' && gh api repos/lyudmylan/faultline/contents/NOTICE --jq .name | grep -q '^NOTICE$' && gh api repos/lyudmylan/faultline/readme --jq .content | base64 -d | grep -q 'github.com/lyudmylan/konan'`
 5. The repository settings: delete-branch-on-merge on, the merged branches gone (only `main` remains, or
    `main` and the branch of the open change request), a description and at least one topic set.
    command: `test "$(gh repo view --json deleteBranchOnMerge --jq .deleteBranchOnMerge)" = true && test "$(gh api repos/lyudmylan/konan/branches --paginate --jq length)" -le 2 && test -n "$(gh repo view --json description --jq .description)" && test "$(gh repo view --json repositoryTopics --jq '.repositoryTopics | length')" -gt 0`
-6. Both repositories are public, and the ruleset of `main` exists under the name `main-protection`, the name
-   in the command recorded on #13 (this check runs after the switch; the rulesets endpoint answers 403
+6. The benchmark is on `main` at the switch, as the artifact-first rule of the product document asks
+   (`eval/BENCHMARK.md`, `eval/scorecard.md`, the results table of the README); both repositories are
+   public; and the ruleset of `main` exists under the name `main-protection`, the name in the command
+   recorded on #13 (this check runs after the switch; the rulesets endpoint answers 403
    while the repository is private). That the ruleset was the first action after the switch is not
    verifiable afterwards; it is the leader's word, recorded on #13.
-   command: `test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection'`
+   command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q -i 'benchmark' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection'`
 7. The redaction of the archived runs changes nothing but the prefixes: in the change request that carries
    it, every changed line under `eval/runs/` carries the home path or its replacement. The scorer reads
    the claim surface and the evidence references, never a quote, so a score cannot change; a re-score of
