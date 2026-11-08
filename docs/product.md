@@ -43,8 +43,8 @@ is the point.
   Datadog, Kubernetes) later; for the lab target, plain allowlisted Bash (curl + logs).
 - **faultline is a lab, not the architecture** — methodology skills, the report
   contract, and the eval scorer never encode a target's endpoints or defects. A target
-  plugs in as a thin rim — probe allowlist, runner, scenario controls — plus a
-  surface-contract doc (faultline's is `docs/lab.md`). Swapping targets swaps the rim;
+  plugs in as a thin target adapter — probe allowlist, runner, scenario controls — plus a
+  surface-contract doc (faultline's is `docs/lab.md`). Swapping targets swaps the target adapter;
   the methodology and scorer don't change.
 
 ## Investigation model
@@ -133,12 +133,12 @@ Exit criteria:
   runs is always reported, even where the corpus, not the agent, is what it measures.
 - **Onboarding is agent-run.** `/setup` runs the lab quickstart end to end (the human
   installs Claude Code, clones, trusts the workspace, approves operator prompts —
-  nothing else); the plugin installs the methodology with the boundary hook; `/rim`
+  nothing else); the plugin installs the methodology with the boundary hook; `/adapter`
   onboards a real target by interview (surface contract + permission profile + smoke
   run). Verified by a stranger test on a fresh clone.
-- **One real-stack rim proof.** An evidence plane outside the lab's files — Grafana Cloud
+- **One real-stack target adapter proof.** An evidence plane outside the lab's files — Grafana Cloud
   through the official MCP server — one blind investigation, journal committed and
-  scored. Proves "swapping targets swaps the rim" on real pipes.
+  scored. Proves "swapping targets swaps the target adapter" on real pipes.
 - The repo flips public together with the benchmark and the origin post.
 
 Out of scope for v0.2: remediation, the quota-resilience ladder, report contract v2
@@ -157,10 +157,10 @@ team-designated safe checks.
   allowlists, audit trail).
 - **Model-comparison content engine**: benchmark v1 lands in v0.2; re-run it on each
   model release; publish the scorecard.
-- **Real-stack integrations**: the first rim proof (Grafana Cloud via MCP) lands in v0.2;
+- **Real-stack integrations**: the first target adapter proof (Grafana Cloud via MCP) lands in v0.2;
   team-designated checks, change-context sources, and alert-webhook triggers follow.
 - **Enterprise distribution**: the plugin lands in v0.2 (methodology + boundary hook,
-  scoped to a konan workspace; the rim stays per-target). Team/Enterprise seats (verified:
+  scoped to a konan workspace; the target adapter stays per-target). Team/Enterprise seats (verified:
   full parity for skills, plugins, hooks, routines; org-managed policies make guardrails
   admin-enforced). Not Bedrock/Vertex — no skills/plugins/routines there per the current
   feature matrix.

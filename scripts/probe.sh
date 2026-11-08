@@ -4,7 +4,7 @@
 # /chaos are excluded on purpose — faultline serves mutating GETs there
 # (crash, hang, memory ballast), and chaos state is operator surface.
 # The allowlist below IS faultline's surface contract (docs/lab.md); a different
-# target replaces this rim (allowlist + runner + scenario controls), not konan.
+# target replaces this adapter (allowlist + runner + scenario controls), not konan.
 set -eu
 BASE="${KONAN_LAB_BASE:-http://127.0.0.1:8000}"
 raw="${1:?usage: scripts/probe.sh /path[?query]}"

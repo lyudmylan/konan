@@ -41,7 +41,7 @@ other project.
    silence pins hold inside an eval session and under the runner. The closing line counts the scope pins.
 3. `README.md`, "Install as a plugin": two sentences after the install lines: the hook decides only inside
    a konan workspace (a checkout of this repo, or a directory at or below a target that holds the marker
-   file `.konan-workspace`, which the rim writes) and is silent in every other directory;
+   file `.konan-workspace`, which the adapter writes) and is silent in every other directory;
    `KONAN_BOUNDARY=1` forces it on anywhere. `AGENTS.md`, "Lab boundary": one sentence after the plugin
    sentence that names the scope and points to the README section. `docs/product.md`, the
    enterprise-distribution line: "(methodology + boundary hook, scoped to a konan workspace; ...)"; the
@@ -49,7 +49,7 @@ other project.
 4. The checks: 1 to 9 of the intent, the two commands of `AGENTS.md`, and the manual check 10 by the
    engineer with the plugin installed in a directory that is not a workspace. One change request,
    `Closes #74`; the review loop (the branch touches `hooks/**`, high tier); the leader's approve in the
-   conversation; the merge. The note on #52 (the rim writes the marker) is posted.
+   conversation; the merge. The note on #52 (the adapter writes the marker) is posted.
 
 ## Files
 

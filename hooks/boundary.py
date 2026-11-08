@@ -28,7 +28,7 @@ action is a signal to stop, never a puzzle to solve. Threshold: KONAN_BOUNDARY_T
 Scope: the hook decides only inside a konan workspace — the session's `cwd`, or any
 parent of it up to the filesystem root, holds `docs/triggers.md` and `skills/investigate/`
 (a checkout of this repo, the runner's worktree included) or the marker file
-`.konan-workspace` (a target that a rim onboarded). `KONAN_BOUNDARY=1` or
+`.konan-workspace` (a target that an adapter onboarded). `KONAN_BOUNDARY=1` or
 `KONAN_EVAL_BLIND=1` forces it on in any directory. Outside a workspace the hook prints
 nothing, for every tool and every command, frozen or not, and the tripwire counts
 nothing: the freeze belongs to the workspace. An event without `cwd` is governed — fail
@@ -48,7 +48,7 @@ import tempfile
 
 # --- scope: the hook decides only inside a konan workspace ---------------------------
 WORKSPACE_SIGNATURE = ("docs/triggers.md", "skills/investigate")   # a file and a directory
-WORKSPACE_MARKER = ".konan-workspace"                               # written by the rim
+WORKSPACE_MARKER = ".konan-workspace"                               # written by the adapter
 
 
 def in_workspace(cwd: str | None, env) -> bool:
@@ -58,7 +58,7 @@ def in_workspace(cwd: str | None, env) -> bool:
     investigation (KONAN_EVAL_BLIND=1); when cwd is missing or empty (fail closed); or
     when cwd or any parent of it, up to the filesystem root, holds the two signature
     paths (a checkout of this repo, the runner's worktree included) or the marker file
-    (a target that a rim onboarded). Otherwise False: the hook is silent there."""
+    (a target that an adapter onboarded). Otherwise False: the hook is silent there."""
     if env.get("KONAN_BOUNDARY") == "1" or env.get("KONAN_EVAL_BLIND") == "1":
         return True
     if not cwd:

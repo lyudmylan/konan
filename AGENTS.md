@@ -11,10 +11,10 @@ this repo on top of them.
 
 - The investigator touches a target only through `scripts/probe.sh` — GET-only,
   path-allowlisted, timeout-guarded — and by reading files under `lab/` (logs). Under
-  a rim document (`docs/rims/<target>.md`, named by `KONAN_RIM` in the environment)
-  the investigator's hand is instead the rim's read-only MCP tools, named one by one
+  an adapter document (`docs/adapters/<target>.md`, named by `KONAN_ADAPTER` in the environment)
+  the investigator's hand is instead the adapter's read-only MCP tools, named one by one
   in `.claude/settings.json`, and the lab's files and probes are out of bounds by the
-  rule of the investigate skill; the mechanical boundary of a rim is on its server
+  rule of the investigate skill; the mechanical boundary of an adapter is on its server
   side (a Viewer account, the server's write tools off, the allowlist). The
   boundary is mechanical, not prompted, and it is enforced by content: a `PreToolUse`
   hook (`hooks/boundary.py`, registered in `.claude/settings.json`) reads every Bash

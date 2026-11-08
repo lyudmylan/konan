@@ -12,7 +12,7 @@ plugin keeps the read-only boundary on a target and loses nothing on other proje
 - `hooks/boundary.py`: a scope decision before every other decision, from the `cwd` of the hook event. A
   session is inside a konan workspace when its `cwd`, or any parent directory of it up to the filesystem
   root, holds `docs/triggers.md` and `skills/investigate/` (a checkout of this repo, the runner's worktree
-  included) or the marker file `.konan-workspace` (a target that a rim onboarded), or when
+  included) or the marker file `.konan-workspace` (a target that an adapter onboarded), or when
   `KONAN_BOUNDARY=1` or `KONAN_EVAL_BLIND=1` is set in the environment. The walk up the parents is the
   rule because the `cwd` of a session is its current directory, not the root of the project: a session
   that moved into a subdirectory of a workspace stays governed. Outside a workspace the hook returns no
@@ -32,11 +32,11 @@ plugin keeps the read-only boundary on a target and loses nothing on other proje
 - `docs/product.md`: the enterprise-distribution line of the roadmap ("the plugin lands in v0.2
   (methodology + boundary hook; ...)") names the scope of the plugin's hook, because `hooks/**` is a code
   path of the contract.
-- The rim marker is defined here; the rim skill writes it when #52 lands (noted on #52).
+- The adapter marker is defined here; the adapter skill writes it when #52 lands (noted on #52).
 
 ## Out of scope
 
-The rim skill (#52). The permission lists of `.claude/settings.json`: they are scoped to this repo already.
+The adapter skill (#52). The permission lists of `.claude/settings.json`: they are scoped to this repo already.
 A change to the content rules of the hook, to the pre-approved shapes, or to the tripwire threshold. The
 marketplace files of the plugin.
 
