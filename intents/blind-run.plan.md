@@ -29,7 +29,8 @@ adapter are already in the operator's shell configuration, which the agent's ses
 5. Agent: the receipts. The journal copied to `journals/` under its own name; `usage.tokens` stamped from
    the envelope (`modelUsage`, every category, every model); the sidecar written from the envelope's kept
    fields; `uv run eval/score.py --pair <fixture> <journal> -o eval/runs/2026-11-blind-grafana/scorecard.md`;
-   the hook's state file of the session read for the denial count; the worktree removed.
+   the hook's state file of the session read for the denial count; the transcripts of the session and of
+   its agents read for tool calls on `lab/` or the probe script; the worktree removed.
 6. Agent: `README.md`, one sentence under "Measured before believed" that links the journal and the
    scorecard. The checks 1 to 5. The two commands of `AGENTS.md` before the push.
 7. The change request: `Closes #55`; the tier is the one `charter.toml` gives the changed paths

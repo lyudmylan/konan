@@ -16,8 +16,7 @@ linked from the README as the real-stack receipt.
   memory: the smoke journal of 2026-11-08 investigates the same defect); `KONAN_EVAL_BLIND=1` (the hook's
   blind mode, mechanical); `KONAN_ADAPTER=docs/adapters/grafana-cloud.md`; the two credentials of the
   adapter in the environment; and one headless session, run by the agent's session with a 30-minute
-  timeout: `claude -p --model <model> --permission-mode acceptEdits --mcp-config
-  docs/adapters/grafana-cloud.mcp.json --output-format json "/konan <the fixture's complaint, verbatim>"`.
+  timeout, with the command the plan's step 4 gives (the fixture's complaint verbatim after `/konan`).
   A headless session fails closed on a tool outside the allowlist, so the adapter's boundary holds without
   a prompt; `acceptEdits` lets the investigator write its journal, as the runner does. The model is the
   one of the smoke run, `claude-fable-5-1`, and the journal's `usage.model` records it.
@@ -52,10 +51,15 @@ investigate skill, the adapter document, the allowlist, the hook. Sentry.
 
 ## Acceptance checks
 
+When the journal fails a matcher or its verdict differs from the fixture, checks 2 to 4 are replaced by one
+record in the change request: the scorecard as it came out, committed under `eval/runs/2026-11-blind-grafana/`,
+and the leader decides what the receipt is; the README sentence waits for that decision.
+
 ### Automatic checks
 
 1. The blind journal is committed, names the adapter as its surface contract, cites plane queries, cites
-   no lab file, and is the one journal under this adapter besides the smoke journal.
+   no lab file, and is the one journal under this adapter besides the smoke journal. A journal that
+   mentions a lab path in prose fails this check too, and the leader judges it.
    command: `f=$(grep -l 'surface_contract: docs/adapters/grafana-cloud.md' journals/*.md | grep -v '^journals/2026-11-08-product-page-500s.md$') && test "$(printf '%s\n' "$f" | wc -l | tr -d ' ')" -eq 1 && grep -Eq 'query_prometheus|query_loki' "$f" && ! grep -Eq '(^|[^a-z])lab/|probe\.sh|docs/lab\.md' "$f"`
 2. The journal passes the D1 fixture under the scorer, and the committed scorecard and sidecar exist.
    command: `f=$(grep -l 'surface_contract: docs/adapters/grafana-cloud.md' journals/*.md | grep -v '^journals/2026-11-08-product-page-500s.md$') && uv run eval/score.py --pair eval/scenarios/d1-zero-stock-product-page.yaml "$f" >/dev/null && grep -q 'Scenarios passed: 1/1' eval/runs/2026-11-blind-grafana/scorecard.md && test -f eval/runs/2026-11-blind-grafana/d1-zero-stock-product-page-r1.meta.json`
@@ -68,10 +72,14 @@ investigate skill, the adapter document, the allowlist, the hook. Sentry.
 
 ### Manual checks
 
-6. The blinding held: the session ran in a worktree whose `journals/` was empty, with `KONAN_EVAL_BLIND=1`,
-   and the hook's state file of that session shows its denial count, zero or each denial named; the change
-   request records it. who: the agent writes the record, the leader reads it. Not automatic: the state file
-   of a session lives outside the repository.
+6. The blinding held: the session ran in a worktree whose `journals/` was empty, with `KONAN_EVAL_BLIND=1`;
+   the hook's state file of that session shows its denial count, zero or each denial named; and the
+   session's tool-use list (the transcript of the headless session and of its agents, which the harness
+   keeps outside the repository under the session id of the envelope) shows no Read, Grep, Glob or Bash
+   call on `lab/` or on the probe script. The change request records all three. who: the agent writes the
+   record, the leader reads it. Not automatic: the state file and the transcripts live outside the
+   repository, and the mechanical exclusion of the lab under an adapter is a later work item (the #58
+   decision of 2026-11-08).
 7. The staging ran as the fixture says, after a fresh lab, with Alloy reporting no error, and before the
    session started; the change request records the timestamps of the staging and of the session's start.
    who: the agent writes the record, the leader reads it. Not automatic: the lab and Alloy run outside the
