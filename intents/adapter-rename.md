@@ -53,12 +53,14 @@ untouched (check 1 reads the whole tree).
 3. The skill carries the new name, the skill and the two READMEs name the command in its slash form (not a
    path), and the plugin's description names the per-target adapter.
    command: `grep -q '^name: adapter$' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' README.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/README.md && grep -q 'per-target adapter' .claude-plugin/plugin.json`
-4. The variable is wired end to end: the skill reads it, the settings allow that one read, the adapter
-   document and `AGENTS.md` name it, and the README's session command names the new path.
-   command: `grep -q 'printenv KONAN_ADAPTER' skills/investigate/SKILL.md && jq -r '.permissions.allow[]' .claude/settings.json | grep -qx 'Bash(printenv KONAN_ADAPTER)' && grep -q 'KONAN_ADAPTER=docs/adapters/grafana-cloud.md' docs/adapters/grafana-cloud.md && grep -q 'KONAN_ADAPTER' AGENTS.md && grep -q -- '--mcp-config docs/adapters/grafana-cloud.mcp.json' README.md`
-5. The renamed intent of the Grafana Cloud adapter holds with the new names: each of its automatic checks
-   passes as written there, with the new paths and the new variable in its commands.
-   command: `grep -oE '^ *command: `.*`$' intents/grafana-adapter.md | sed -E 's/^ *command: `(.*)`$/\1/' | while IFS= read -r c; do bash -c "$c" || exit 1; done`
+4. The settings allow the one read of the new variable, and the README's session command names the new
+   path; the rest of the wiring (the skill reads the variable, the adapter document and `AGENTS.md` name
+   it) is check 3 of the renamed intent, run by check 5.
+   command: `jq -r '.permissions.allow[]' .claude/settings.json | grep -qx 'Bash(printenv KONAN_ADAPTER)' && grep -q -- '--mcp-config docs/adapters/grafana-cloud.mcp.json' README.md`
+5. The renamed intent of the Grafana Cloud adapter holds with the new names: each of its six indented
+   `command:` lines passes as written there, with the new paths and the new variable (its inline quality
+   check, number 7, is the one check 6 runs); an extraction of fewer than six lines fails.
+   command: `test "$(grep -cE '^ *command: `' intents/grafana-adapter.md)" -eq 6 && grep -oE '^ *command: `.*`$' intents/grafana-adapter.md | sed -E 's/^ *command: `(.*)`$/\1/' | while IFS= read -r c; do bash -c "$c" || exit 1; done`
 6. No behavior changes: the hook's tests stay green and the gates of the contract pass.
    command: `python3 hooks/tests.py && charter-gate quality --contract charter.toml && charter-check all charter.toml`
 7. No open item of the milestone carries the old word in its title, outside #100 itself, and the body of

@@ -53,9 +53,8 @@ The commands of checks 1 to 7; `python3 hooks/tests.py` unchanged.
   and the fixtures under `eval/` carry none (check 1 reads the whole tree). `hooks/boundary.py` carries it
   in docstring and comment lines only; `scripts/probe.sh` in one comment line; `.claude/settings.json` only
   as `KONAN_RIM`.
-- `adapter` names the trigger adapter in `docs/triggers.md`, `docs/product.md`, `docs/architecture.md`,
-  `skills/konan/SKILL.md`, `README.md` and the plugin description: one adapter normalizes every delivery.
-  The per-target layer and the trigger adapter are two things, and the texts that hold both say which.
+- The homonym of `adapter` (the trigger adapter of `docs/triggers.md`) is handled by the rule in the
+  intent's In scope; the files that hold both words are read whole in step 3.
 - A skill's command is its name: the `name` field of the front matter and the directory agree, and both are
   renamed; a plugin's skills arrive as `/<plugin>:<name>`. Source: the Claude Code documentation (skills,
   plugins).
