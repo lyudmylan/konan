@@ -37,7 +37,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-24T17:11:40.146Z"
-    quote: "{\"ts\": \"2026-08-24T17:11:40.146Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787591500-27624\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"... File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n ... ZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-24T17:11:40.146Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787591500-27624\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"... File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n ... ZeroDivisionError: division by zero\"}"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-24T17:11:40.154Z"

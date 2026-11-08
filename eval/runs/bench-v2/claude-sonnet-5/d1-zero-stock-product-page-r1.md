@@ -27,7 +27,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-11-02T17:22:25.771Z–.780Z — first failing request, request_id 26f9e294ba3a (non-investigator traffic)"
     quote: |-
-      {"ts": "2026-11-02T17:22:25.771Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "26f9e294ba3a", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n...\nZeroDivisionError: division by zero"}
+      {"ts": "2026-11-02T17:22:25.771Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "26f9e294ba3a", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n...\nZeroDivisionError: division by zero"}
       {"ts": "2026-11-02T17:22:25.780Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products/3 -> 500", "request_id": "26f9e294ba3a", "event": "request", "method": "GET", "path": "/products/3", "status": 500, "duration_ms": 10.137, "client": "127.0.0.1:59686"}
   - id: E2
     type: log

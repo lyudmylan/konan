@@ -23,7 +23,7 @@
     },
     {
       "tool": "Bash",
-      "command": "sed -n '20p' lab/logs/app.log | grep -o 'File \\\\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py.*' | cut -c1-400; echo ---; sed -n '19p;22,23p;26,28p;31,33p' lab/logs/app.log | cut -c1-260"
+      "command": "sed -n '20p' lab/logs/app.log | grep -o 'File \\\\\"<checkout>/src/faultline/shop.py.*' | cut -c1-400; echo ---; sed -n '19p;22,23p;26,28p;31,33p' lab/logs/app.log | cut -c1-260"
     },
     {
       "tool": "Bash",

@@ -37,7 +37,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-19T21:55:04.776Z"
-    quote: "{\"ts\": \"2026-08-19T21:55:04.776Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"0bb350ca8452\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"... File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — identical stacks for request_id 2885fe17000e @21:55:05.855Z and request_id c99e17763820 @21:55:09.000Z"
+    quote: "{\"ts\": \"2026-08-19T21:55:04.776Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"0bb350ca8452\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"... File \\\"<checkout>/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — identical stacks for request_id 2885fe17000e @21:55:05.855Z and request_id c99e17763820 @21:55:09.000Z"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T21:55:04.787Z"

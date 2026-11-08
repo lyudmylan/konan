@@ -96,7 +96,7 @@ evidence:
       "faultline.request", "message": "unhandled exception: division by zero",
       "request_id": "konan-1793704455-30650", "event": "unhandled_exception",
       "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent
-      call last): … File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\",
+      call last): … File \"<checkout>/src/faultline/shop.py\",
       line 64, in get_product\n    \"turnover_score\": units_ordered /
       product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}
   - id: E6

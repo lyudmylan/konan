@@ -74,7 +74,7 @@ evidence:
     quote: |-
       {"ts": "2026-11-03T10:33:01.293Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793701981-29153", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):
         [trimmed middleware/routing frames]
-        File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product
+        File \"<checkout>/src/faultline/shop.py\", line 64, in get_product
           \"turnover_score\": units_ordered / product[\"units_in_stock\"],
                             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
       ZeroDivisionError: division by zero"}
@@ -104,7 +104,7 @@ evidence:
     type: log
     source: "lab/server.out, whole file as of 2026-11-03T10:34Z (exactly one start sequence; nothing precedes it — no earlier start, no shutdown, no traceback; first two lines quoted)"
     quote: |-
-      warning: `VIRTUAL_ENV=/Users/lyudmylan/.cache/uv/environments-v2/run-5cf50e8d1a8b3cfb` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+      warning: `VIRTUAL_ENV=<home>/.cache/uv/environments-v2/run-5cf50e8d1a8b3cfb` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
       {"ts": "2026-11-03T10:30:19.407Z", "level": "INFO", "logger": "uvicorn.error", "message": "Started server process [28895]"}
   - id: E13
     type: log

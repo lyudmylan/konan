@@ -70,7 +70,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-08-19T12:14:06.910Z (event unhandled_exception, request_id konan-1787141646-57953) — tail of the stack field"
     quote: |-
-      File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 64, in get_product
+      File "<checkout>/src/faultline/shop.py", line 64, in get_product
           "turnover_score": units_ordered / product["units_in_stock"],
                             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
       ZeroDivisionError: division by zero

@@ -70,7 +70,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:21.549Z"
-    quote: "{\"ts\": \"2026-08-19T07:15:21.549Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"4d02a2a48d9a\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"Traceback (most recent call last):\\n … \\n  File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\n                        ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"}"
+    quote: "{\"ts\": \"2026-08-19T07:15:21.549Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"4d02a2a48d9a\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"Traceback (most recent call last):\\n … \\n  File \\\"<checkout>/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\n                        ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"}"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:21.560Z"
@@ -78,7 +78,7 @@ evidence:
   - id: E3
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:22.617Z"
-    quote: "{\"ts\": \"2026-08-19T07:15:22.617Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"080ad366a415\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"… File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — stack byte-identical to E1"
+    quote: "{\"ts\": \"2026-08-19T07:15:22.617Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"080ad366a415\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"… File \\\"<checkout>/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — stack byte-identical to E1"
   - id: E4
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:22.622Z"
@@ -86,7 +86,7 @@ evidence:
   - id: E5
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:25.743Z"
-    quote: "{\"ts\": \"2026-08-19T07:15:25.743Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"0d937a5fd7d3\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"… File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — stack byte-identical to E1"
+    quote: "{\"ts\": \"2026-08-19T07:15:25.743Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"0d937a5fd7d3\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"… File \\\"<checkout>/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"} — stack byte-identical to E1"
   - id: E6
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:15:25.747Z"

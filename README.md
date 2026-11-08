@@ -51,7 +51,7 @@ rounds and the false-fail table: [eval/BENCHMARK.md](eval/BENCHMARK.md); generat
 | Sonnet 5 | 30/30 | 73% | 73% | **86%** | **100%** | 3.38M | 576 |
 
 The two pass columns are equal this round. The first round's gap between them was the
-incident-class label ([#63](../../issues/63)); the taxonomy fix ([#77](../../issues/77))
+incident-class label ([#63](https://github.com/lyudmylan/konan/issues/63)); the taxonomy fix ([#77](https://github.com/lyudmylan/konan/issues/77))
 removed it. What remains in the 26 failed runs is read row by row in the false-fail table
 of the protocol: 13 are a `must_claim` matcher that did not list the agent's wording while
 the verdict, the class and the cause were right; 12 are verdict errors on the two tier-2

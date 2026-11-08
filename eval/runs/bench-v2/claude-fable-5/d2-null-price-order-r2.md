@@ -62,7 +62,7 @@ evidence:
     source: "lab/logs/app.log @ 2026-11-02T14:45:48.147Z and .158Z — first failing order: exception line (stack trimmed to final frames) plus its access line, same request_id"
     quote: |-
       {"ts": "2026-11-02T14:45:48.147Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'", "request_id": "ec3f0f89f915", "event": "unhandled_exception", "exception_type": "TypeError"}
-        File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 82, in create_order
+        File "<checkout>/src/faultline/shop.py", line 82, in create_order
           total_price = round(product["price"] * order.quantity, 2)
                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
       TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'

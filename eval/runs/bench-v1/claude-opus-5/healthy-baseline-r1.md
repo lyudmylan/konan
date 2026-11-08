@@ -74,7 +74,7 @@ evidence:
   - id: E6
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:29:07.334Z - stack trimmed to the terminal frames, kept verbatim"
-    quote: "{\"ts\": \"2026-08-19T07:29:07.334Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787124547-50429\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"Traceback (most recent call last): ... File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\\nZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-19T07:29:07.334Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787124547-50429\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"Traceback (most recent call last): ... File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\\nZeroDivisionError: division by zero\"}"
   - id: E7
     type: probe
     source: "/products/3, request_id konan-1787124547-50429 (reproduced identically at konan-1787124552-50452 and konan-1787124574-50524)"

@@ -41,7 +41,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-08-19T01:30:41.895Z — unhandled exception from the deep-dive's reproduction of /products/3, stack trimmed to the throwing frame"
     quote: |-
-      {"ts": "2026-08-19T01:30:41.895Z", "level": "ERROR", "message": "unhandled exception: division by zero", "request_id": "konan-1787103041-36701", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}
+      {"ts": "2026-08-19T01:30:41.895Z", "level": "ERROR", "message": "unhandled exception: division by zero", "request_id": "konan-1787103041-36701", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}
   - id: E4
     type: log
     source: "lab/logs/app.log @ 2026-08-19T01:30:41.903Z — resulting response for the same request id as E3"

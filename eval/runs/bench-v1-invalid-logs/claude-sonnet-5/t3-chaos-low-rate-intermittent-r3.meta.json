@@ -83,11 +83,11 @@
     },
     {
       "tool": "Bash",
-      "command": "find /Users/lyudmylan/Projects/faultline -maxdepth 3 2>/dev/null; echo \"---exists?---\"; ls /Users/lyudmylan/Projects/ 2>/dev/null"
+      "command": "find <checkout> -maxdepth 3 2>/dev/null; echo \"---exists?---\"; ls <home>/Projects/ 2>/dev/null"
     },
     {
       "tool": "Bash",
-      "command": "ls /Users/lyudmylan/Projects/faultline 2>/dev/null || echo \"NOT_FOUND\""
+      "command": "ls <checkout> 2>/dev/null || echo \"NOT_FOUND\""
     },
     {
       "tool": "Bash",

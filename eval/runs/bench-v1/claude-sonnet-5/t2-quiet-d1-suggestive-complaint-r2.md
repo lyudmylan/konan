@@ -28,7 +28,7 @@ evidence:
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T02:12:33.462Z"
-    quote: "{\"ts\": \"2026-08-19T02:12:33.462Z\", \"level\": \"ERROR\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787105553-38627\", \"stack\": \"...File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\nZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-19T02:12:33.462Z\", \"level\": \"ERROR\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787105553-38627\", \"stack\": \"...File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\nZeroDivisionError: division by zero\"}"
   - id: E3
     type: probe
     source: "scripts/probe.sh /products @ request_id konan-1787105686-38695"

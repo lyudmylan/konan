@@ -39,7 +39,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-19T21:40:35.548Z"
-    quote: "{\"ts\": \"2026-08-19T21:40:35.548Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"e1deb12443f9\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"... File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n... ZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-19T21:40:35.548Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"e1deb12443f9\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"... File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n... ZeroDivisionError: division by zero\"}"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T21:40:35.559Z (identical exception+500 pairs also at 21:40:36.623/36.628 request_id 5daec58ade93, 21:40:39.765/39.770 db5cc60538fb, 21:40:41.912/41.917 591504c0b476 — all unstamped, non-konan ids)"

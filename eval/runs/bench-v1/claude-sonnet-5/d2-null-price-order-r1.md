@@ -43,7 +43,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-19T00:58:21.098Z"
-    quote: "{\"ts\": \"2026-08-19T00:58:21.098Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"53dfc2310765\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"...File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\n...TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"}"
+    quote: "{\"ts\": \"2026-08-19T00:58:21.098Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'\", \"request_id\": \"53dfc2310765\", \"event\": \"unhandled_exception\", \"exception_type\": \"TypeError\", \"stack\": \"...File \\\"<checkout>/src/faultline/shop.py\\\", line 82, in create_order\\n    total_price = round(product[\\\"price\\\"] * order.quantity, 2)\\n...TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'\"}"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T00:58:21.109Z, 00:58:22.169Z, 00:58:25.294Z"

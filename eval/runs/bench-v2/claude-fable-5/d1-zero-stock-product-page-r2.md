@@ -53,7 +53,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-11-02T13:57:12.886Z (stack trimmed to the last frame)"
     quote: |-
-      {"ts": "2026-11-02T13:57:12.886Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "e15ea16e433f", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "... File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n ... ZeroDivisionError: division by zero"}
+      {"ts": "2026-11-02T13:57:12.886Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "e15ea16e433f", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "... File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n ... ZeroDivisionError: division by zero"}
   - id: E3
     type: log
     source: "lab/logs/app.log @ 2026-11-02T13:57:12.897Z"

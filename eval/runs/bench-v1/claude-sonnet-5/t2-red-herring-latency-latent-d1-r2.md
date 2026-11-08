@@ -86,7 +86,7 @@ evidence:
   - id: E14
     type: log
     source: "lab/logs/app.log @ 2026-08-19T02:46:12.250Z"
-    quote: "{\"ts\": \"2026-08-19T02:46:12.250Z\", \"level\": \"ERROR\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787107571-39987\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"...File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n...\\nZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-19T02:46:12.250Z\", \"level\": \"ERROR\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787107571-39987\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"...File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n...\\nZeroDivisionError: division by zero\"}"
   - id: E15
     type: log
     source: "lab/logs/app.log @ 2026-08-19T02:46:19.935Z"
