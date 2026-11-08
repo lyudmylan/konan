@@ -151,7 +151,7 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   itself is the last fixture change: one matcher line on `t3-crash-hard-down`. Runner-only
   fixes after it do not affect what a run is asked or how it is scored.
   Stated against perfect identity: three files unrelated to investigating were added to
-  the repo mid-batch (`skills/setup/SKILL.md`, `skills/rim/SKILL.md`, `hooks/hooks.json`,
+  the repo mid-batch (`skills/setup/SKILL.md`, `skills/adapter/SKILL.md`, `hooks/hooks.json`,
   plus `skills/README.md`). Nothing on the investigation path reads them and no run
   invoked them, but the repository the later runs saw was not byte-identical to the
   earlier one. It is recorded rather than smoothed over.

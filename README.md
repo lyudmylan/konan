@@ -136,14 +136,14 @@ controls — is in [docs/lab.md](docs/lab.md).
 
 ## Bring your own target
 
-A target plugs in as a **thin rim** — a surface-contract doc, a read-only permission
-profile, and MCP/CLI config; the methodology never changes per target. `/rim`
+A target plugs in as a **thin target adapter** — a surface-contract doc, a read-only permission
+profile, and MCP/CLI config; the methodology never changes per target. `/adapter`
 builds one with you: it interviews you about your observability surface, writes the
-rim, pins the tool allowlist from what your server actually serves, and smoke-tests
-it. The first live rim is Grafana Cloud through the official `mcp-grafana` server,
-[docs/rims/grafana-cloud.md](docs/rims/grafana-cloud.md): a session under it starts
-with `claude --permission-mode manual --mcp-config docs/rims/grafana-cloud.mcp.json` and
-`KONAN_RIM=docs/rims/grafana-cloud.md` in the environment.
+adapter, pins the tool allowlist from what your server actually serves, and smoke-tests
+it. The first live target adapter is Grafana Cloud through the official `mcp-grafana` server,
+[docs/adapters/grafana-cloud.md](docs/adapters/grafana-cloud.md): a session under it starts
+with `claude --permission-mode manual --mcp-config docs/adapters/grafana-cloud.mcp.json` and
+`KONAN_ADAPTER=docs/adapters/grafana-cloud.md` in the environment.
 
 ## Install as a plugin
 
@@ -156,13 +156,13 @@ content-based hook, `hooks/hooks.json`):
 /plugin install konan@lyudmylan
 ```
 
-Then `/konan:setup` onboards you. The per-target rim — probe allowlist, surface
+Then `/konan:setup` onboards you. The per-target adapter — probe allowlist, surface
 contract, lab scripts — stays per-repo setup, by design. Working inside a clone of
 this repo? Don't also install the plugin there: the repo's own settings already run
 the same hook, and two registrations would double-count the tripwire's denials.
 
 The hook decides only inside a konan workspace: a checkout of this repo, or a
-directory at or below a target that holds the marker file `.konan-workspace` (the rim
+directory at or below a target that holds the marker file `.konan-workspace` (the adapter
 writes it when it onboards a target). In every other directory the hook is silent and
 the normal permission flow applies; `KONAN_BOUNDARY=1` in the environment forces it on
 anywhere.

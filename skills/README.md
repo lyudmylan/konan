@@ -12,7 +12,7 @@ per the trigger contract (`docs/triggers.md`) and starts the investigate loop.
 Monitor, investigates every alert serially, commits each journal, pages the owner.
 `setup` — agent-run onboarding (`/setup`): prerequisite checks, lab wiring, a first
 scored investigation, and the hand-over map; the operator's manual steps are only
-install / clone / trust / operator prompts. `rim` — bring your own target (`/rim`):
+install / clone / trust / operator prompts. `adapter` — bring your own target (`/adapter`):
 interview → surface-contract doc + read-only permission profile + MCP config →
 mechanical verification and a smoke investigation; configuration, never code.
 
@@ -26,5 +26,5 @@ ln -s ../../skills/<name> .claude/skills/<name>
 
 Plugin packaging: `.claude-plugin/plugin.json` + `hooks/hooks.json` ship these skills
 and the boundary hook as the `konan` plugin (`/plugin marketplace add lyudmylan/konan`,
-install `konan@lyudmylan`; skills arrive namespaced, e.g. `/konan:setup`). The rim
+install `konan@lyudmylan`; skills arrive namespaced, e.g. `/konan:setup`). The adapter
 stays per-target setup — see the README's plugin section.

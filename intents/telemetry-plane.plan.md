@@ -1,4 +1,4 @@
-# Plan: the telemetry plane of the rim proof (#53)
+# Plan: the telemetry plane of the adapter proof (#53)
 
 Intent: `intents/telemetry-plane.md`. Written 2026-11-03; the work starts after the leader accepts it in the
 conversation.
@@ -7,9 +7,9 @@ conversation.
 
 One branch, `53-telemetry-plane`. The work has two hands. The operator's: the Grafana Cloud stack, the write
 credentials in a shell, Alloy installed. The agent's: the committed configuration, the validate run, the
-operator section of the rim document, and the receipt in the change request. The plane goes live with the
+operator section of the adapter document, and the receipt in the change request. The plane goes live with the
 lab running on the operator computer, one staging, and two Explore views. Nothing of the investigate skill,
-the settings, or the contract part of the rim document changes here.
+the settings, or the contract part of the adapter document changes here.
 
 ## Steps
 
@@ -17,17 +17,17 @@ the settings, or the contract part of the rim document changes here.
    remote-write and the Loki push credentials (a URL, a user and a key for each) exported in a shell under
    the seven names of the intent, with `KONAN_REPO` as the absolute path of this checkout; Alloy installed with
    `brew tap grafana/grafana` and `brew install grafana/grafana/alloy`.
-2. Agent: `git mv docs/rims/alloy-config.example.alloy docs/rims/grafana-cloud.alloy` (`lab/` is not
-   tracked, so the configuration lives with the rim); the file-match target gains the static label
+2. Agent: `git mv docs/adapters/alloy-config.example.alloy docs/adapters/grafana-cloud.alloy` (`lab/` is not
+   tracked, so the configuration lives with the adapter); the file-match target gains the static label
    `job = "faultline"`; the `stage.json` expressions match the field names of the lab's request lines
    (`event`, `request_id`, verified below); check 1 with placeholder values once Alloy is installed; check 2.
-3. Agent: `docs/rims/grafana-cloud.md`, "Operator setup" rewritten as the steps that run: step 1, the
-   validate command, `alloy run docs/rims/grafana-cloud.alloy` in a shell that holds the seven variables,
+3. Agent: `docs/adapters/grafana-cloud.md`, "Operator setup" rewritten as the steps that run: step 1, the
+   validate command, `alloy run docs/adapters/grafana-cloud.alloy` in a shell that holds the seven variables,
    the Homebrew service as the optional form in one line (its own `config.alloy` and `config.env` under
    the Homebrew prefix), the two Explore views, and the LogQL query
    `{job="faultline"} | json | request_id=~"konan-.*"`; the pointer to the example file replaced by the
-   pointer to `docs/rims/grafana-cloud.alloy`; check 3.
-4. Operator with the agent: `scripts/lab.sh start`; `alloy run docs/rims/grafana-cloud.alloy` in a second
+   pointer to `docs/adapters/grafana-cloud.alloy`; check 3.
+4. Operator with the agent: `scripts/lab.sh start`; `alloy run docs/adapters/grafana-cloud.alloy` in a second
    terminal; the D1 staging (eval-side, prompted) with seeded traffic through `scripts/scenario.sh get` and
    `order` and one `scripts/probe.sh` call; Explore, Prometheus and Explore, Loki; the LogQL query; checks 5
    to 8 recorded in the change request as text.
@@ -38,8 +38,8 @@ the settings, or the contract part of the rim document changes here.
 
 ## Files
 
-`docs/rims/grafana-cloud.alloy` (renamed from `docs/rims/alloy-config.example.alloy`),
-`docs/rims/grafana-cloud.md`, `intents/telemetry-plane.md` (check 2, with the work), and this file. Not changed: `docs/rims/grafana-cloud.mcp.json.example`,
+`docs/adapters/grafana-cloud.alloy` (renamed from `docs/adapters/alloy-config.example.alloy`),
+`docs/adapters/grafana-cloud.md`, `intents/telemetry-plane.md` (check 2, with the work), and this file. Not changed: `docs/adapters/grafana-cloud.mcp.json.example`,
 `.claude/settings.json`, `.gitignore`, `skills/**`, `scripts/**`, `docs/product.md` (no code path changes).
 
 ## Tests

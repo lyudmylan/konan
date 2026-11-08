@@ -1,7 +1,7 @@
 // Grafana Alloy — ship the konan lab's telemetry to Grafana Cloud (#53).
 // Everything variable comes from the environment of the shell that runs Alloy: the six write
 // credentials from the Cloud portal and KONAN_REPO, the absolute path of this checkout.
-// Validate: `alloy validate docs/rims/grafana-cloud.alloy`; run: `alloy run docs/rims/grafana-cloud.alloy`.
+// Validate: `alloy validate docs/adapters/grafana-cloud.alloy`; run: `alloy run docs/adapters/grafana-cloud.alloy`.
 // The steps: grafana-cloud.md, "Operator setup".
 
 prometheus.scrape "faultline" {

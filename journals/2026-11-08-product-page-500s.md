@@ -8,7 +8,7 @@ investigation:
   concluded: "2026-11-08T11:39:10Z"
 target:
   name: faultline
-  surface_contract: docs/rims/grafana-cloud.md
+  surface_contract: docs/adapters/grafana-cloud.md
 verdict: root-cause-identified
 root_cause:
   hypothesis: H1
@@ -49,7 +49,7 @@ hypotheses:
 evidence:
   - id: E1
     type: probe
-    source: "check_datasources_health, uids grafanacloud-prom and grafanacloud-logs @ 2026-11-08T11:26Z — the rim's two datasources answer; the stack slug in the two names is redacted"
+    source: "check_datasources_health, uids grafanacloud-prom and grafanacloud-logs @ 2026-11-08T11:26Z — the adapter's two datasources answer; the stack slug in the two names is redacted"
     quote: |-
       {"uid":"grafanacloud-logs","name":"grafanacloud-<stack>-logs","type":"loki","status":"OK","message":"Data source successfully connected."}
       {"uid":"grafanacloud-prom","name":"grafanacloud-<stack>-prom","type":"prometheus","status":"OK","message":"Successfully queried the Prometheus API."}
@@ -128,7 +128,7 @@ evidence:
       {path="/products/3", status="500"} 9
   - id: E12
     type: log
-    source: "query_loki_logs, {job=\"faultline\", event=\"request\"} | json | path=\"/products/3\", now-7d to now, grafanacloud-logs — the five product-3 lines of 2026-11-04 (four unstamped, one konan-stamped probe of the rim smoke test); the log plane holds no line between 2026-11-04T12:53:16Z and 2026-11-08T11:23:25Z"
+    source: "query_loki_logs, {job=\"faultline\", event=\"request\"} | json | path=\"/products/3\", now-7d to now, grafanacloud-logs — the five product-3 lines of 2026-11-04 (four unstamped, one konan-stamped probe of the adapter smoke test); the log plane holds no line between 2026-11-04T12:53:16Z and 2026-11-08T11:23:25Z"
     quote: |-
       {"ts": "2026-11-04T12:52:57.252Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products/3 -> 500", "request_id": "2229d4214c7b", "event": "request", "method": "GET", "path": "/products/3", "status": 500, "duration_ms": 14.288, "client": "127.0.0.1:56945"}
       {"ts": "2026-11-04T12:52:58.298Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products/3 -> 500", "request_id": "915abb560c24", "event": "request", "method": "GET", "path": "/products/3", "status": 500, "duration_ms": 6.667, "client": "127.0.0.1:56946"}
@@ -179,7 +179,7 @@ evidence:
 gaps:
   - "The metric plane holds samples from 2026-11-08T11:23:00Z only (E6: 21 samples in 27 h). The process-life counters (E2, E3, E17) cover about 26 h, but how the 9 route 500s and 9 exceptions before 11:23:00Z (E7) were distributed in time is not observable; no log line ties those 9 to product 3 — they are tied to the product page route and to ZeroDivisionError only."
   - "The log plane holds two windows in seven days, 2026-11-04T12:52:25Z to 12:53:16Z and 2026-11-08T11:23:25Z onward (E11, E12). The current process (start near 2026-11-07T09:17Z per E5) has no startup line in the plane (E15) and no request line before 11:23:25Z today; orders 3 and 4 fall in that gap (E18 against E2). The metric plane and the log plane therefore do not describe the same traffic; log shipping coverage is an operator matter, recorded here and not concluded."
-  - "No probe surface exists under this rim. The current answer of GET /products/3, the catalogue value of units_in_stock for product 3, and its seed or last write cannot be read from the plane. H5 (an invalid zero rather than a legitimate out-of-stock state) stays inconclusive for that reason; the decisive evidence is outside the surface contract, so a second round could not buy it."
+  - "No probe surface exists under this adapter. The current answer of GET /products/3, the catalogue value of units_in_stock for product 3, and its seed or last write cannot be read from the plane. H5 (an invalid zero rather than a legitimate out-of-stock state) stays inconclusive for that reason; the decisive evidence is outside the surface contract, so a second round could not buy it."
   - "Prometheus range queries over 12 h and 27 h returned no data through the tool while instant queries returned values; every range entry (E6, E7, E19) uses a window of 2 h or shorter. The empty long ranges are consistent with a plane that holds no sample before 11:23:00Z, but the cause was not determined."
   - "Only the software-defect lens was spawned. The infra-process and interfaces domains were excluded from baseline evidence (E4, E19, E5, E6, E15, E16, E17) and not swept independently; a latent signal in those domains outside what those entries cover was not examined."
   - "User-vs-investigator attribution rests on the request-id convention of the surface contract: today's product-3 requests carry unstamped ids from 127.0.0.1 (E8) and the plane holds no konan-stamped line today (E14), so they are read as user traffic or the eval-side staging; whether they were real customers cannot be verified from the plane."
@@ -206,7 +206,7 @@ every visitor; the other pages, the catalogue list and ordering are unaffected (
 The chaos switch was off across the failure window (E19), the process has been up for
 about 26 hours without a reset (E5, E6), and latency is in milliseconds (E16). Confidence
 is high on the mechanism; whether the zero stock is a legitimate out-of-stock state or a
-bad record (H5) cannot be settled from this rim, which has no probe surface. The defect
+bad record (H5) cannot be settled from this adapter, which has no probe surface. The defect
 is not new today: the plane shows it on 2026-11-04.
 
 ## Timeline
@@ -214,7 +214,7 @@ is not new today: the plane shows it on 2026-11-04.
 All times UTC, from plane timestamps.
 
 - 2026-11-04 12:52:57Z–12:53:03Z — five `GET /products/3 -> 500` lines, four unstamped and
-  one investigator probe of the rim smoke test (E12). Products 1 and 2 answered 200 in the
+  one investigator probe of the adapter smoke test (E12). Products 1 and 2 answered 200 in the
   same minute and orders 1 and 2 were created (E18). The defect already exists.
 - 2026-11-04 12:53:16Z → 2026-11-08 11:23:25Z — no log line in the plane (E12). The
   current process started near 2026-11-07 09:17Z (E5); its startup is not in the plane (E15).
@@ -239,7 +239,7 @@ All times UTC, from plane timestamps.
 "startsAt": "2026-11-08T11:25:39Z"}`. Investigation start 2026-11-08T11:25:46Z; trigger
 latency 7 s. No severity was stated, none inferred.
 
-**Setup.** `KONAN_RIM=docs/rims/grafana-cloud.md`: the surface is the Grafana Cloud rim,
+**Setup.** `KONAN_ADAPTER=docs/adapters/grafana-cloud.md`: the surface is the Grafana Cloud adapter,
 read through the `mcp-grafana` tools on `grafanacloud-prom` and `grafanacloud-logs` (E1).
 The lab's files and the probe script were out of bounds and not touched. Budget: one
 triage round, at most 3 deep-dive agents per round, at most 2 rounds.
@@ -280,7 +280,7 @@ H5 inconclusive, settled only by the seed or last write of product 3's stock nex
 value the catalogue returns now. The judge also flagged that the metric plane and the log
 plane do not describe the same traffic (gap 2). The settling query for H2 was run (E19):
 0 at every 15 s sample from 11:23:00Z to 11:26:00Z. H5's settling evidence is not
-reachable under this rim; no second round was opened.
+reachable under this adapter; no second round was opened.
 
 ## Hypotheses
 
@@ -324,7 +324,7 @@ visible order and across the restart near 2026-11-07T09:17Z (E5). E18 does not e
 write either: order ids 3 and 4 fall in the log gap (E18 against E2). Zero stock is a legal
 state for a shop, so E9 proves the value, not its validity. Settling evidence: the seed or
 last write of `units_in_stock` for product 3 next to the catalogue's current value —
-outside this rim's surface (gap 3). Whatever the answer, the mechanism of the 500 stays H1:
+outside this adapter's surface (gap 3). Whatever the answer, the mechanism of the 500 stays H1:
 the handler divides by a stock value that can be zero.
 
 ## Safe next steps
@@ -332,7 +332,7 @@ the handler divides by a stock value that can be zero.
 Read-only suggestions; remediation is out of scope.
 
 - Read the catalogue's current value of `units_in_stock` for product 3 and its seed or last
-  write, through a surface that allows it (the lab rim's probe of `GET /products`, or the
+  write, through a surface that allows it (the lab adapter's probe of `GET /products`, or the
   owning team's data view). This settles H5 without changing anything.
 - Keep the log shipping continuous. The plane missed the current process's first 26 hours
   (gap 2); with the tail running, the next failure is tied to its input by a request line.
@@ -340,7 +340,7 @@ Read-only suggestions; remediation is out of scope.
   `http_requests_total{path="/products/{product_id}",status="500"}`; as long as they step
   together, every product-page 500 is this defect.
 - Count user impact from unstamped `GET /products/3` lines only; the one konan-stamped hit
-  (E12) is the rim smoke test of 2026-11-04.
+  (E12) is the adapter smoke test of 2026-11-04.
 
 ## Gaps
 
@@ -352,7 +352,7 @@ Read-only suggestions; remediation is out of scope.
    process (E15), no request line before 11:23:25Z today, orders 3 and 4 absent (E18 against
    E2). The metric plane and the log plane describe different spans of the same process.
 3. **No probe surface.** The current answer of `GET /products/3` and the stock value of
-   product 3 cannot be read under this rim; H5 stays inconclusive.
+   product 3 cannot be read under this adapter; H5 stays inconclusive.
 4. **Long range queries empty.** Ranges of 12 h and 27 h returned no data through the tool
    while instant queries answered; every range entry here is 2 h or shorter. Consistent with
    a plane that starts at 11:23:00Z; the cause was not determined.

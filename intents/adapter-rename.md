@@ -38,8 +38,8 @@ Any change of behavior: the hook's decisions and its tests, the probe, the steps
 the allowlisted tools, the content of the Alloy configuration beyond its comment line. The git history and
 the names of branches. Closed tracker items and the comments of any item. The word inside other words
 (`primitive`, `experiment`, `trim`). The trigger adapter and its documents keep their word. The journals of
-earlier investigations and the archived runs under `eval/` carry no occurrence of the word and are
-untouched (check 1 reads the whole tree).
+earlier investigations and the archived runs and fixtures under `eval/` carry no occurrence and are
+untouched (check 1 reads the whole tree); `eval/BENCHMARK.md` carries one path, which follows the rename.
 
 ## Acceptance checks
 
@@ -51,8 +51,8 @@ untouched (check 1 reads the whole tree).
 2. The old paths, the old intent names and the old variable are gone, and the new ones exist.
    command: `! git grep -I -q -E 'KONAN_RIM|docs/rims|skills/rim|grafana-rim' -- . ':!intents/adapter-rename.md' ':!intents/adapter-rename.plan.md' && test -f docs/adapters/grafana-cloud.md && test -f docs/adapters/grafana-cloud.mcp.json && test -f docs/adapters/grafana-cloud.alloy && test -f skills/adapter/SKILL.md && test -f intents/grafana-adapter.md && test -f intents/grafana-adapter.plan.md && ! test -e docs/rims && ! test -e skills/rim`
 3. The skill carries the new name, the skill and the two READMEs name the command in its slash form (not a
-   path), and the plugin's description names the per-target adapter.
-   command: `grep -q '^name: adapter$' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' README.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/README.md && grep -q 'per-target adapter' .claude-plugin/plugin.json`
+   path), and the plugin's description names the target adapter.
+   command: `grep -q '^name: adapter$' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/adapter/SKILL.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' README.md && grep -qE '(^|[^a-z/])/adapter([^a-z-]|$)' skills/README.md && grep -q 'target adapter' .claude-plugin/plugin.json`
 4. The settings allow the one read of the new variable, and the README's session command names the new
    path; the rest of the wiring (the skill reads the variable, the adapter document and `AGENTS.md` name
    it) is check 3 of the renamed intent, run by check 5.

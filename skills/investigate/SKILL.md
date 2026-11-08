@@ -23,10 +23,10 @@ Prime directives, in force for every step:
 ## 0. Setup
 
 1. Read the target surface contract — the document defining what you may probe, where
-   logs live, and what metrics exist. The rim in use is named by the environment
-   variable `KONAN_RIM` (read it with `printenv KONAN_RIM`; it holds the path of a rim
-   document under `docs/rims/`); when it is unset, the contract is this repo's lab,
-   `docs/lab.md`. Under a rim document the lab's files and probes are out of bounds,
+   logs live, and what metrics exist. The adapter in use is named by the environment
+   variable `KONAN_ADAPTER` (read it with `printenv KONAN_ADAPTER`; it holds the path of an adapter
+   document under `docs/adapters/`); when it is unset, the contract is this repo's lab,
+   `docs/lab.md`. Under an adapter document the lab's files and probes are out of bounds,
    and the journal's `surface_contract` field names the document in use. Touch
    nothing outside that contract.
 2. Record the complaint verbatim (who reports what, since when — as given).

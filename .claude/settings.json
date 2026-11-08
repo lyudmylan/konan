@@ -3,7 +3,7 @@
     "allow": [
       "Bash(scripts/probe.sh:*)",
       "Bash(./scripts/probe.sh:*)",
-      "Bash(printenv KONAN_RIM)",
+      "Bash(printenv KONAN_ADAPTER)",
       "Bash(git add journals/:*)",
       "Bash(git commit -m:*)",
       "mcp__grafana__query_prometheus",
