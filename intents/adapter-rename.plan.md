@@ -13,14 +13,17 @@ changed line. No behavior changes; the hook's tests and the gates pin that.
 1. The moves, with `git mv`: `docs/rims` to `docs/adapters`; `skills/rim` to `skills/adapter`;
    `intents/grafana-rim.md` to `intents/grafana-adapter.md`; `intents/grafana-rim.plan.md` to
    `intents/grafana-adapter.plan.md`.
-2. The words, one pass with `perl -pi` over the tracked text files that carry the word (the list of check 1,
+2. The words, one pass with `perl -pi` over the tracked text files that carry the word (check 1 lists them,
    without this intent and this plan), word-bounded, the article first: `\ba rim\b` to `an adapter`,
    `\bA rim\b` to `An adapter`, then `rims` to `adapters`, `rim` to `adapter`, `Rim` to `Adapter`, `RIM` to
    `ADAPTER`, and the literal `KONAN_RIM` to `KONAN_ADAPTER` (an underscore is a word character, so the
    bounded rule alone misses it). BSD `sed` has no `\b`; `perl` has.
-3. A read of the diff, line by line: grammar after the article rule; the merged plan of #54 names its branch
-   by the old name, and the text names the work item instead; the skill's front matter reads
-   `name: adapter`; the skill's command reads `/adapter` and `/konan:adapter` where the plugin form appears.
+3. A read of the diff, line by line, for three things. Grammar after the article rule. The homonym: where a
+   changed line also speaks of trigger adapters, the per-target layer reads `target adapter` (the intent's
+   first item); `docs/product.md`, `docs/architecture.md`, `README.md` and `.claude-plugin/plugin.json` are
+   read whole for it. The names: the merged plan of #54 names its branch by the old name, and the text
+   names the work item instead; the skill's front matter reads `name: adapter`; the skill's command reads
+   `/adapter`, and `/konan:adapter` where the plugin form appears.
 4. The tracker: the title of #58 and the lines of its body that are not dated decisions; one dated decision
    line on #58; any other open item of the milestone whose title carries the word (check 7 lists them).
 5. The checks 1 to 7; `python3 hooks/tests.py` green; the two commands of `AGENTS.md` before the push.
@@ -33,13 +36,12 @@ changed line. No behavior changes; the hook's tests and the gates pin that.
 ## Files
 
 Moved: `docs/rims/grafana-cloud.md`, `docs/rims/grafana-cloud.mcp.json`, `docs/rims/grafana-cloud.alloy`,
-`skills/rim/SKILL.md`, `intents/grafana-rim.md`, `intents/grafana-rim.plan.md`. Changed in text: the 19 files
-of the count, among them `docs/product.md`, `README.md`, `AGENTS.md`, `.claude/settings.json`,
-`.claude-plugin/plugin.json`, `docs/architecture.md`, `skills/README.md`, `skills/investigate/SKILL.md`,
-`hooks/boundary.py`, `scripts/probe.sh`, `eval/BENCHMARK.md`, `intents/telemetry-plane.md`,
-`intents/telemetry-plane.plan.md`, `intents/hook-scope.md`, `intents/hook-scope.plan.md`, and the smoke
-journal of #54 under `journals/`. Not changed: `charter.toml`, `hooks/hooks.json`, `hooks/tests.py`, the
-lenses, the report contract, the journal schema, `eval/**` beyond the one path, the earlier journals.
+`skills/rim/SKILL.md`, `intents/grafana-rim.md`, `intents/grafana-rim.plan.md`. Changed in text: the files
+check 1 finds, and the smoke journal of #54 under `journals/`. Three of them get a human read of every
+changed line: `hooks/boundary.py` and `scripts/probe.sh` (comment and docstring lines only, check 8) and
+`.claude/settings.json` (the one allow entry). Not changed: `charter.toml`, `hooks/hooks.json`,
+`hooks/tests.py`, the lenses, the report contract, the journal schema, `docs/triggers.md`, `eval/**` beyond
+one path in `eval/BENCHMARK.md`, the earlier journals.
 
 ## Tests
 
@@ -47,10 +49,13 @@ The commands of checks 1 to 7; `python3 hooks/tests.py` unchanged.
 
 ## Facts the plan rests on (as of 2026-11-08)
 
-- 19 tracked files carry the word, about 160 lines; 13 of them with the article `a`. `hooks/boundary.py`
-  carries it in two docstring lines and one trailing comment; `scripts/probe.sh` in one comment line;
-  `.claude/settings.json` only as `KONAN_RIM`; `charter.toml`, `hooks/hooks.json`, `hooks/tests.py`, the
-  journals and the fixtures under `eval/` carry none, except one path in `eval/BENCHMARK.md`.
+- The word lives in tracked text only: `charter.toml`, `hooks/hooks.json`, `hooks/tests.py`, the journals
+  and the fixtures under `eval/` carry none (check 1 reads the whole tree). `hooks/boundary.py` carries it
+  in docstring and comment lines only; `scripts/probe.sh` in one comment line; `.claude/settings.json` only
+  as `KONAN_RIM`.
+- `adapter` names the trigger adapter in `docs/triggers.md`, `docs/product.md`, `docs/architecture.md`,
+  `skills/konan/SKILL.md`, `README.md` and the plugin description: one adapter normalizes every delivery.
+  The per-target layer and the trigger adapter are two things, and the texts that hold both say which.
 - A skill's command is its name: the `name` field of the front matter and the directory agree, and both are
   renamed; a plugin's skills arrive as `/<plugin>:<name>`. Source: the Claude Code documentation (skills,
   plugins).
