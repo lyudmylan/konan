@@ -53,7 +53,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-08-19T06:51:34.689Z — final stack frames of E1, identical in all three exception lines"
     quote: |-
-      File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 82, in create_order
+      File "<checkout>/src/faultline/shop.py", line 82, in create_order
           total_price = round(product["price"] * order.quantity, 2)
                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
       TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'

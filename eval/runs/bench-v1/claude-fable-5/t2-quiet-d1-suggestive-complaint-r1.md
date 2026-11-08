@@ -50,7 +50,7 @@ evidence:
   - id: E3
     type: log
     source: "lab/logs/app.log @ 2026-08-24T17:04:28.511Z"
-    quote: "{\"ts\": \"2026-08-24T17:04:28.511Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787591068-27214\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"Traceback (most recent call last):\\n  File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/middleware.py\\\", line 72, in _handle\\n    return await call_next(request)\\n ... File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\nZeroDivisionError: division by zero\"}"
+    quote: "{\"ts\": \"2026-08-24T17:04:28.511Z\", \"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787591068-27214\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"Traceback (most recent call last):\\n  File \\\"<checkout>/src/faultline/middleware.py\\\", line 72, in _handle\\n    return await call_next(request)\\n ... File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\nZeroDivisionError: division by zero\"}"
   - id: E4
     type: log
     source: "lab/logs/app.log @ 2026-08-24T17:04:28.520Z"

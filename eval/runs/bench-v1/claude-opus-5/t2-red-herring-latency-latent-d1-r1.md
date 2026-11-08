@@ -113,7 +113,7 @@ evidence:
     source: "lab/logs/app.log @ 2026-08-19T12:34:00.514Z (stack tail, request_id konan-1787142839-58879)"
     quote: |-
       "level": "ERROR", "message": "unhandled exception: division by zero", "event": "unhandled_exception", "exception_type": "ZeroDivisionError"
-        File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 64, in get_product
+        File "<checkout>/src/faultline/shop.py", line 64, in get_product
           "turnover_score": units_ordered / product["units_in_stock"],
       ZeroDivisionError: division by zero
   - id: E15

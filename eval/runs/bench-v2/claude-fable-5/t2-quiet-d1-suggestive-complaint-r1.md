@@ -80,7 +80,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-11-03T10:53:22.514Z"
     quote: |-
-      {"ts": "2026-11-03T10:53:22.514Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793703202-29841", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last): [...] File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}
+      {"ts": "2026-11-03T10:53:22.514Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793703202-29841", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last): [...] File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}
       {"ts": "2026-11-03T10:53:22.522Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products/3 -> 500", "request_id": "konan-1793703202-29841", "event": "request", "method": "GET", "path": "/products/3", "status": 500, "duration_ms": 8.098, "client": "127.0.0.1:49942"}
   - id: E7
     type: probe

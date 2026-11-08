@@ -123,7 +123,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-11-03T11:28:17.116Z — triggered by the investigator's own deep-dive probe (konan-* id); stack trimmed to the first and final frames, kept frames verbatim"
     quote: |-
-      {"ts": "2026-11-03T11:28:17.116Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793705296-31113", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  File \"/Users/lyudmylan/Projects/faultline/src/faultline/middleware.py\", line 72, in _handle\n    return await call_next(request)\n  […]\n  File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\nZeroDivisionError: division by zero"}
+      {"ts": "2026-11-03T11:28:17.116Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793705296-31113", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  File \"<checkout>/src/faultline/middleware.py\", line 72, in _handle\n    return await call_next(request)\n  […]\n  File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~\nZeroDivisionError: division by zero"}
   - id: E16
     type: log
     source: "lab/logs/app.log @ 2026-11-03T11:28:17.134Z — the access line for E15's exception; the only 5xx in the log, investigator-stamped"

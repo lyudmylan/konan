@@ -76,7 +76,7 @@ evidence:
   - id: E14
     type: log
     source: "lab/logs/app.log @ 2026-08-18T20:11:52.043Z"
-    quote: "{\"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787083912-22619\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"...File \\\"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n...ZeroDivisionError: division by zero\"}"
+    quote: "{\"level\": \"ERROR\", \"logger\": \"faultline.request\", \"message\": \"unhandled exception: division by zero\", \"request_id\": \"konan-1787083912-22619\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"stack\": \"...File \\\"<checkout>/src/faultline/shop.py\\\", line 64, in get_product\\n    \\\"turnover_score\\\": units_ordered / product[\\\"units_in_stock\\\"],\\n...ZeroDivisionError: division by zero\"}"
   - id: E15
     type: probe
     source: "scripts/probe.sh /products @ 2026-08-18T20:26:13Z (request_id konan-1787084773-23295)"

@@ -38,7 +38,7 @@ evidence:
   - id: E1
     type: log
     source: "lab/logs/app.log @ 2026-08-18T20:11:52.043Z"
-    quote: "\"level\": \"ERROR\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"request_id\": \"konan-1787083912-22619\" ... File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\\n ... ZeroDivisionError: division by zero"
+    quote: "\"level\": \"ERROR\", \"event\": \"unhandled_exception\", \"exception_type\": \"ZeroDivisionError\", \"request_id\": \"konan-1787083912-22619\" ... File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\\n ... ZeroDivisionError: division by zero"
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-18T20:11:52.050Z"

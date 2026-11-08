@@ -31,7 +31,7 @@
     },
     {
       "tool": "Bash",
-      "command": "ls /Users/lyudmylan/.claude/projects/-Users-lyudmylan-Projects-konan/memory/ 2>&1"
+      "command": "ls <home>/.claude/projects/-Users-lyudmylan-Projects-konan/memory/ 2>&1"
     }
   ],
   "result_tail": "d exceptions and no restarts were found, ruling out a code defect or instability. All three triage lenses agreed; the finding was validated by an adversarial judge with no evidence against it.\n\n**Open gap worth your attention, separate from the investigation:** `git status` at session start showed nine existing journals under `journals/` deleted in the working tree but never committed (e.g. `2026-07-31-order-500s.md`, `2026-08-18-routine-handover-check.md`). I didn't touch them \u2014 just flagging in case that's unintentional, since they're still recoverable from git history if you want them back.",

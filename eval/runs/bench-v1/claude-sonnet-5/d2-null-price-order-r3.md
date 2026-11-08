@@ -50,7 +50,7 @@ evidence:
     type: log
     source: "lab/logs/app.log @ 2026-08-19T01:13:52.057Z (stack trimmed to the raise site)"
     quote: |-
-      {"ts": "2026-08-19T01:13:52.057Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'", "request_id": "9cd1b5118c1e", "event": "unhandled_exception", "exception_type": "TypeError", "stack": "...File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 82, in create_order\n    total_price = round(product[\"price\"] * order.quantity, 2)\n...TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'"}
+      {"ts": "2026-08-19T01:13:52.057Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: unsupported operand type(s) for *: 'NoneType' and 'int'", "request_id": "9cd1b5118c1e", "event": "unhandled_exception", "exception_type": "TypeError", "stack": "...File \"<checkout>/src/faultline/shop.py\", line 82, in create_order\n    total_price = round(product[\"price\"] * order.quantity, 2)\n...TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'"}
   - id: E3
     type: log
     source: "lab/logs/app.log @ 2026-08-19T01:13:52.068Z"

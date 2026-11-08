@@ -30,7 +30,7 @@ evidence:
     source: "lab/logs/app.log @ 2026-08-19T02:04:17.311Z"
     quote: |
       {"ts": "2026-08-19T02:04:17.311Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787105057-38237", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...
-        File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product
+        File \"<checkout>/src/faultline/shop.py\", line 64, in get_product
           \"turnover_score\": units_ordered / product[\"units_in_stock\"],
       ZeroDivisionError: division by zero"}
   - id: E3
@@ -42,7 +42,7 @@ evidence:
     source: "lab/logs/app.log @ 2026-08-19T02:04:24.751Z"
     quote: |
       {"ts": "2026-08-19T02:04:24.751Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787105064-38254", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...
-        File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product
+        File \"<checkout>/src/faultline/shop.py\", line 64, in get_product
           \"turnover_score\": units_ordered / product[\"units_in_stock\"],
       ZeroDivisionError: division by zero"}
   - id: E5

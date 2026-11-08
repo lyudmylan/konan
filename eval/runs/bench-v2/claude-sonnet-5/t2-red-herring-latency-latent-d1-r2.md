@@ -103,7 +103,7 @@ evidence:
   - id: E18
     type: log
     source: "lab/logs/app.log @ 2026-11-02T21:14:22.413Z"
-    quote: '{"ts": "2026-11-02T21:14:22.413Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793654062-6096", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}'
+    quote: '{"ts": "2026-11-02T21:14:22.413Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1793654062-6096", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "...File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\nZeroDivisionError: division by zero"}'
   - id: E19
     type: log
     source: "lab/logs/app.log @ 2026-11-02T21:14:22.427Z"

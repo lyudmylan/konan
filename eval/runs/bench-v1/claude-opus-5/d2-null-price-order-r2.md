@@ -62,7 +62,7 @@ evidence:
   - id: E2
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:03:50.166Z (stack field of E1, final frames)"
-    quote: "File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 82, in create_order\n    total_price = round(product[\"price\"] * order.quantity, 2)\n                        ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'"
+    quote: "File \"<checkout>/src/faultline/shop.py\", line 82, in create_order\n    total_price = round(product[\"price\"] * order.quantity, 2)\n                        ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~\nTypeError: unsupported operand type(s) for *: 'NoneType' and 'int'"
   - id: E3
     type: log
     source: "lab/logs/app.log @ 2026-08-19T07:03:50.177Z"

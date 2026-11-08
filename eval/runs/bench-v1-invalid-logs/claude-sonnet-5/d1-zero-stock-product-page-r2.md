@@ -54,7 +54,7 @@ evidence:
     source: "lab/logs/app.log @ 2026-08-18T18:48:10.692Z and .703Z — first observed exception in this process lifetime, paired access line, same request_id"
     quote: |-
       {"ts": "2026-08-18T18:48:10.692Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "19b4aea67888", "event": "unhandled_exception", "exception_type": "ZeroDivisionError"}
-        File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 64, in get_product
+        File "<checkout>/src/faultline/shop.py", line 64, in get_product
           "turnover_score": units_ordered / product["units_in_stock"],
                             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
       ZeroDivisionError: division by zero

@@ -84,7 +84,7 @@ evidence:
   - id: E11
     type: log
     source: "lab/logs/app.log @ 2026-08-19T11:57:31.765Z"
-    quote: '{"ts": "2026-08-19T11:57:31.765Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787140651-56869", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  File \"/Users/lyudmylan/Projects/faultline/src/faultline/middleware.py\", line 72, in _handle\n    return await call_next(request)"'
+    quote: '{"ts": "2026-08-19T11:57:31.765Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787140651-56869", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "Traceback (most recent call last):\n  File \"<checkout>/src/faultline/middleware.py\", line 72, in _handle\n    return await call_next(request)"'
   - id: E12
     type: probe
     source: "GET /products/2 (request_id konan-1787140646-56863)"

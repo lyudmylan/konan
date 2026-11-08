@@ -47,7 +47,7 @@
     },
     {
       "tool": "Bash",
-      "command": "find /Users/lyudmylan/.claude/projects/-Users-lyudmylan-Projects-konan/memory -iname '*validate-journal*'"
+      "command": "find <home>/.claude/projects/-Users-lyudmylan-Projects-konan/memory -iname '*validate-journal*'"
     },
     {
       "tool": "Bash",
