@@ -1,0 +1,37 @@
+{
+  "session_id": "4f04922e-5865-4c8b-9ffd-ad1673abbc70",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 54,
+  "duration_ms": 1188780,
+  "duration_api_ms": 1322683,
+  "total_cost_usd": 11.892427000000001,
+  "tokens_total": 3269531,
+  "model_usage": {
+    "claude-fable-5-1": {
+      "inputTokens": 808,
+      "outputTokens": 105799,
+      "cacheReadInputTokens": 2805788,
+      "cacheCreationInputTokens": 357136,
+      "costUSD": 11.892427000000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; echo $(( $(date +%s) - 1794146824 ))"
+    },
+    {
+      "tool": "Bash",
+      "command": "ruby -ryaml -rtime -e 'src = File.read(ARGV[0]); fm = src.split(/^---\\s*$/)[1]; d = YAML.safe_load(fm, permitted_classes: [Date, Time]); ids = d[\"evidence\"].map { |e| e[\"id\"] }; refs = d[\"hypotheses\"].flat_map { |h| h[\"evidence_for\"] + h[\"evidence_against\"] }; missing = refs - ids; rc = d[\"root_cause\"][\"hypothesis\"]; st = d[\"hypotheses\"].find { |h| h[\"id\"] == rc }[\"state\"]; wc = (Time.parse(d[\"investigation\"][\"concluded\"]) - Time.parse(d[\"investigation\"][\"started\"])).to_i; puts \"parsed ok; top keys=#{d.keys.inspect}; evidence=#{ids.size}; hypotheses=#{d[\"hypotheses\"].size}; unresolved refs=#{missing.inspect}; root_cause #{rc} state=#{st} cause=#{d[\"root_cause\"][\"cause\"]}; wall_clock computed=#{wc} declared=#{d[\"usage\"][\"wall_clock_seconds\"]}; version=#{d[\"konan_journal\"]}; id=#{d[\"investigation\"][\"id\"]}\"' journals/2026-11-08-products-3-division-by-zero.md"
+    }
+  ],
+  "result_tail": "that the wall clock matches the stamps.\n- The stored stock value of product 3 is not readable on this surface. The mechanism holds for any zero.\n- The cause of the 14:03:35Z restart and the version of the previous process are not in the plane. The collector paused with the application for two minutes, so the metric samples in that window are carry-forward.\n\nQuoted evidence carries `<checkout>` in place of the local path prefix, and the redaction is declared in each source note. I also corrected the memory note on journal validation: the inline Ruby form needs approval in a non-interactive run.",
+  "run_id": "2026-11-blind-grafana",
+  "model": "claude-fable-5-1",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 1,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "form": "the runner's recipe by hand with the adapter (intents/blind-run.md)",
+  "journal": "journals/2026-11-08-products-3-division-by-zero.md"
+}

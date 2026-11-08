@@ -12,6 +12,9 @@ Konan ≈ Conan, as in Doyle, the author behind the detective.)
 
 konan is scored by a deterministic eval harness against seeded faults before any claim
 is made about it. The committed scorecard: [eval/scorecard.md](eval/scorecard.md).
+The real-stack receipt: [the blind D1 investigation through Grafana Cloud queries only](journals/2026-11-08-products-3-division-by-zero.md),
+scored 1/1 in [its scorecard](eval/runs/2026-11-blind-grafana/scorecard.md); the lab's files were out of
+bounds and the evidence plane was the adapter's.
 
 | Corpus v1 (5 scenarios) | Result |
 |---|---|
