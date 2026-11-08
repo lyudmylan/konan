@@ -23,15 +23,16 @@ investigate skill, the rim document, the two documents, the receipts.
 3. Operator with the agent, the rim skill: the interview, five questions in the conversation (the answers are
    mostly known: Prometheus and Loki in Grafana Cloud through `mcp-grafana`; no probe surface in this rim,
    it is plane-only; out of bounds: the lab's files, `eval/`, the tracker, every write surface; the owner:
-   the leader). Then the rim session, `claude --mcp-config docs/rims/grafana-cloud.mcp.json`, and `/mcp`:
-   the served tool names, recorded as text; the allowlist written from that list (check 8); the no-write
+   the leader). Then the rim session in the manual permission mode,
+   `claude --permission-mode manual --mcp-config docs/rims/grafana-cloud.mcp.json`, and `/mcp`: the served
+   tool names, recorded as text; the allowlist written from that list (check 8); the no-write
    check with a temporary copy of the configuration outside the repository, deleted after it (check 9).
 4. Agent: `.claude/settings.json` (the pinned entries and `Bash(printenv KONAN_RIM)`); the Setup line of
    `skills/investigate/SKILL.md`; `docs/rims/grafana-cloud.md` rewritten as the live contract (the tool
    names, the three layers, the operator setup, the citation form, the owner, the gaps, the Alloy run command
    with `--storage.path lab/alloy`); one sentence in `AGENTS.md`; the README section; checks 2, 3, 4, 6, 7.
 5. Operator with the agent: the lab and Alloy running; `KONAN_RIM=docs/rims/grafana-cloud.md` exported; the
-   smoke run `/konan <complaint>` in the rim session; the journal read together and committed under
+   smoke run `/konan <complaint>` in the rim session, started as in step 3 (the manual mode); the journal read together and committed under
    `journals/` (check 10); check 5.
 6. The change request: `Closes #54` and `Closes #52` (the worked rim is the last item of the rim skill's
    definition of done); the served listing in its text; checks 1 to 7 run, 8 to 10 recorded; the tier is the
