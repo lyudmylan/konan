@@ -4,14 +4,15 @@ Work item: #13. Status: planned. Approval: a person merges the change request th
 
 ## Goal
 
-The repository and its lab are public on the same day as the origin post, with no private material in any
-tracked file, archived run or tracker item, and with the protection of `main` in force as the first action
-after the switch.
+The repository and its lab are public on the same day as the origin post, with no private material (a
+home-directory path, a personal-domain e-mail address, a token shape, a session link or a stack slug: the
+patterns of check 1) in any tracked file, archived run or tracker item, and with the protection of `main`
+in force as the first action after the switch.
 
 ## In scope
 
-- The register of the tracked tree: no home-directory path, e-mail address, token, session link or stack
-  slug in any tracked file, the archived runs under `eval/runs/` included (62 files carry the operator's
+- The register of the tracked tree: no home-directory path, personal-domain e-mail address, token shape,
+  session link or stack slug (the patterns of check 1) in any tracked file, the archived runs under `eval/runs/` included (62 files carry the operator's
   home path in quoted stack traces and recorded commands, as counted on 2026-11-08). The prefix becomes
   `<checkout>` for the lab checkout and `<home>` elsewhere; `eval/BENCHMARK.md` says so in one sentence; the
   claim surfaces, the evidence ids and the timestamps of the archived journals do not change. The five
@@ -60,19 +61,19 @@ worktree session (noted on #58).
 5. The repository settings: delete-branch-on-merge on, the merged branches gone (only `main` remains, or
    `main` and the branch of the open change request), a description and at least one topic set.
    command: `test "$(gh repo view --json deleteBranchOnMerge --jq .deleteBranchOnMerge)" = true && test "$(gh api repos/lyudmylan/konan/branches --paginate --jq length)" -le 2 && test -n "$(gh repo view --json description --jq .description)" && test "$(gh repo view --json repositoryTopics --jq '.repositoryTopics | length')" -gt 0`
-6. The benchmark is on `main` at the switch, as the artifact-first rule of the product document asks
+6. The benchmark is on `main` on the day of the switch, as the artifact-first rule of the product document asks
    (`eval/BENCHMARK.md`, `eval/scorecard.md`, the results table of the README); both repositories are
    public; and the ruleset of `main` exists under the name `main-protection`, the name in the command
    recorded on #13 (this check runs after the switch; the rulesets endpoint answers 403
-   while the repository is private). That the ruleset was the first action after the switch is not
-   verifiable afterwards; it is the leader's word, recorded on #13.
+   while the repository is private). That the ruleset was the first action after the switch, and that the benchmark was on `main` before
+   it, are not verifiable afterwards; they are the leader's word, recorded on #13.
    command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q -i 'benchmark' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection'`
 7. The redaction of the archived runs changes nothing but the prefixes: in the change request that carries
    it, every changed line under `eval/runs/` carries the home path or its replacement. The scorer reads
    the claim surface and the evidence references, never a quote, so a score cannot change; a re-score of
    the archive is not one command, because one archived journal is refused by the scorer by design, so the
    diff is the proof. On `main` after the merge the diff is empty and the check holds.
-   command: `test -z "$(git diff "$(git merge-base origin/main HEAD)" -- eval/runs | grep -E '^[-+][^-+]' | grep -v -E '/Users/[A-Za-z]{2,}/|<checkout>|<home>')"`
+   command: `test -z "$(git diff -U0 "$(git merge-base origin/main HEAD)" -- eval/runs | grep -E '^[-+]' | grep -v -E '^(---|\+\+\+) [ab]/' | grep -v -E '/Users/[A-Za-z]{2,}/|<checkout>|<home>')"`
 8. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`
 

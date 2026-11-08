@@ -32,7 +32,7 @@ operator step comes as one command or one click in the conversation, never as a 
 
 ## Files
 
-Changed: 62 files under `eval/runs/` (one or a few lines each), `eval/BENCHMARK.md` (one sentence),
+Changed: the archived runs under `eval/runs/` (the count is in the intent; one or a few lines each), `eval/BENCHMARK.md` (one sentence),
 `README.md` (two links), `intents/public-flip.md` (with the work, if a check changes), and this file. Not
 changed: `docs/product.md`, `skills/**`, `hooks/**`, `scripts/**`, `eval/score.py`, `eval/run.py`, the
 fixtures, `eval/scorecard.md`.
