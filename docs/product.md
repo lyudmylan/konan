@@ -103,7 +103,7 @@ Exit criteria:
 - A triggered investigation of D1 produces an evidence-cited report (journal committed).
 - The eval harness runs the scenario corpus, including the healthy baseline, and emits
   `scorecard.md`.
-- The repo flips public together with the scorecard and the retroactive origin post.
+- The repo flips public together with the scorecard.
 
 Out of scope for v0.1: remediation, the quota-resilience ladder, multi-model benchmark
 automation, real observability-stack integrations (MCP), enterprise distribution.
@@ -139,7 +139,7 @@ Exit criteria:
 - **One real-stack target adapter proof.** An evidence plane outside the lab's files — Grafana Cloud
   through the official MCP server — one blind investigation, journal committed and
   scored. Proves "swapping targets swaps the target adapter" on real pipes.
-- The repo flips public together with the benchmark and the origin post.
+- The repo flips public together with the benchmark.
 
 Out of scope for v0.2: remediation, the quota-resilience ladder, report contract v2
 (except its cause field, pulled forward because the benchmark cannot score false
@@ -171,8 +171,7 @@ team-designated safe checks.
   Stay indifferent to Anthropic's interactive-vs-programmatic billing split (announced,
   then paused).
 - **Artifact-first publishing**: a version is not announced; it flips public together
-  with its scorecard. Every public post ships same-day with its artifact. Each epic's
-  definition of done includes a publishable artifact.
+  with its scorecard. Each epic's definition of done includes a publishable artifact.
 - **Prior art** (researched 2026-07-29): closest cousin is HolmesGPT (agentic loop,
   per-source toolsets, own eval harness). Field gaps konan ships against, receipts
   committed: healthy-baseline testing (a corpus scenario whose correct verdict is "no

@@ -36,7 +36,7 @@ runs that a corrected corpus scores.
 ## Out of scope
 
 Role-tiered configurations (#65). New fixtures. Models beyond the three. The model-run half of the CI gate
-(#60). Re-scoring bench-v1 under the new semantics. The origin post and the flip (#13). The other gaps of the
+(#60). Re-scoring bench-v1 under the new semantics. The flip (#13). The other gaps of the
 review of 2026-10-28 — a process column, an injection scenario, a judge with an enforced empty tool list,
 the triage experiment (#26) — stay on the roadmap or come after the flip.
 

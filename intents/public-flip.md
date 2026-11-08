@@ -4,7 +4,7 @@ Work item: #13. Status: planned. Approval: a person merges the change request th
 
 ## Goal
 
-The repository and its lab are public on the same day as the origin post, with no private material (a
+The repository and its lab are public, with no private material (a
 home-directory path, a personal-domain e-mail address, a token shape, a session link or a stack slug: the
 patterns of check 1) in any tracked file, archived run or tracker item, and with the protection of `main`
 in force as the first action after the switch.
@@ -26,11 +26,8 @@ in force as the first action after the switch.
 - The lab repository, by the leader with its own session: the register scan (clean on 2026-11-08), the
   LICENSE and NOTICE (added), the README sentence that links this repository (added), the two unpushed
   commits pushed, the author identity of its early commits decided; flipped public in the same motion.
-- The posts: the origin post, the LinkedIn version and the Show HN title with its first comment, drafted on
-  2026-11-08 in the document "konan public flip: the posts", edited and published by the leader on the day
-  of the flip.
 - The switch, by the leader: the visibility of both repositories; then, as the first action, the ruleset on
-  `main` (deletion, non-fast-forward, linear history) with the command recorded on #13.
+  `main` (deletion, non-fast-forward) with the command recorded on #13.
 - The history, decided by the leader before the switch: three commit messages carry a session link and
   forty-one commits carry a personal e-mail address as the author. A rewrite is a force push, which the
   rules of this repository forbid to the agent; the leader rewrites, or publishes the history as it is.
@@ -39,8 +36,7 @@ in force as the first action after the switch.
 
 ## Out of scope
 
-Required status checks in the ruleset (they wait for eval CI). The publication of the posts and the Show HN
-submission are the leader's acts; this intent records their day, it does not automate them. The product
+Required status checks in the ruleset (they wait for eval CI). The product
 document, the skills, the hook, the scorer, the fixtures. Any change to the lab repository beyond the scan,
 the license and the README sentence. The runner's adapter plumbing and the memory isolation of a blinded
 worktree session (noted on #58).
@@ -69,10 +65,10 @@ worktree session (noted on #58).
 6. The benchmark is on `main` on the day of the switch, as the artifact-first rule of the product document asks
    (`eval/BENCHMARK.md`, `eval/scorecard.md`, and the README links `eval/BENCHMARK.md`); both repositories are
    public; and the ruleset of `main` exists under the name `main-protection`, the name in the command
-   recorded on #13 (this check runs after the switch; the rulesets endpoint answers 403
+   recorded on #13, with the rules deletion and non-fast-forward (this check runs after the switch; the rulesets endpoint answers 403
    while the repository is private). That the ruleset was the first action after the switch, and that the benchmark was on `main` before
    it, are not verifiable afterwards; they are the leader's word, recorded on #13.
-   command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q 'eval/BENCHMARK.md' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection'`
+   command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q 'eval/BENCHMARK.md' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection' && id=$(gh api repos/lyudmylan/konan/rulesets --jq '.[] | select(.name=="main-protection") | .id') && gh api "repos/lyudmylan/konan/rulesets/$id" --jq '[.rules[].type] | sort | join(",")' | grep -q '^deletion,non_fast_forward$'`
 7. The redaction of the archived runs changes nothing but the prefixes: in the change request that carries
    it, every changed file under `eval/runs/` equals its old version with the two prefixes substituted. The scorer reads
    the claim surface and the evidence references, never a quote, so a score cannot change; a re-score of
@@ -84,9 +80,6 @@ worktree session (noted on #58).
 
 ### Manual checks
 
-9. The origin post and the Show HN submission are published on the day of the flip, with the repository
-   link; #13 records the two links. who: the leader. Not automatic: the platforms are outside the
-   repository and the acts are the leader's.
-10. The history decision is taken for both repositories, this one and the lab, and recorded on #13 before
-    the switch: rewritten, or published as it is, with the reason. who: the leader. Not automatic: a rewrite
-    is a force push the agent may not make, and the decision is a judgment.
+9. The history decision is taken for both repositories, this one and the lab, and recorded on #13 before
+   the switch: rewritten, or published as it is, with the reason. who: the leader. Not automatic: a rewrite
+   is a force push the agent may not make, and the decision is a judgment.

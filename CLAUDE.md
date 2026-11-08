@@ -13,4 +13,4 @@ Rules that matter in this repo:
 - No custom loop or orchestration code — harness primitives only (architecture stance in
   product.md).
 - Artifact-first publishing applies (product.md): a version flips public together with
-  its scorecard; posts ship same-day with their artifact.
+  its scorecard.
