@@ -7,7 +7,7 @@ conversation and after the merge of the intent.
 
 Two hands. The agent's: the redaction of the archived runs, the README links, the sentence in the
 benchmark protocol, the tracker sweep, the proposals, the checks, the record. The leader's: the settings,
-the lab repository's push and flip, the history decision, the switch, the ruleset, the posts. Every
+the lab repository's push and flip, the history decision, the switch, the ruleset. Every
 operator step comes as one command or one click in the conversation, never as a description.
 
 ## Steps
@@ -22,12 +22,10 @@ operator step comes as one command or one click in the conversation, never as a 
    the description and the topics from the agent's proposal (check 5).
 5. Leader, in the lab repository's session: the author identity of the early commits decided; the two
    commits pushed (check 4).
-6. Leader: the history decision for both repositories, recorded on #13 (check 10).
-7. Leader: the posts edited in the document; the day chosen.
-8. Leader, on the day: the lab repository flipped public, then this repository; the ruleset command from
-   #13 run as the first action (check 6); the posts published and the Show HN submitted; the links
-   recorded on #13 (check 9).
-9. Agent: the checklist of #13 ticked, #13 closed, the milestone closed with its acceptance stated in a
+6. Leader: the history decision for both repositories, recorded on #13 (check 9).
+7. Leader, on the day: the lab repository flipped public, then this repository; the ruleset command from
+   #13 run as the first action (check 6).
+8. Agent: the checklist of #13 ticked, #13 closed, the milestone closed with its acceptance stated in a
    comment.
 
 ## Files
