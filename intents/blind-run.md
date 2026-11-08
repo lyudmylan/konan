@@ -26,7 +26,9 @@ linked from the README as the real-stack receipt.
   The plane also holds the earlier traffic of the same defect (2026-11-04 and 2026-11-08); the investigator
   may read it as history. The investigator never sees the staging.
 - The receipts. The journal, copied from the worktree to `journals/<date>-<slug>.md` under the name the
-  investigator gave it, with `usage.tokens` stamped from the envelope's `modelUsage` total (the runner's
+  investigator gave it (when that name is the smoke journal's, `2026-11-08-product-page-500s.md`, the
+  blind journal is renamed `<date>-<slug>-blind.md` before the copy; the smoke journal is never
+  overwritten), with `usage.tokens` stamped from the envelope's `modelUsage` total (the runner's
   definition: every category, subagents included) and `usage.model` as reported. The envelope's kept
   fields as `eval/runs/2026-11-blind-grafana/d1-zero-stock-product-page-r1.meta.json` (the runner's
   fields: session id, turns, durations, cost, tokens per model, permission denials). The scorecard
@@ -56,6 +58,9 @@ record in the change request: the scorecard as it came out, committed under `eva
 and the leader decides what the receipt is; the README sentence waits for that decision.
 
 ### Automatic checks
+
+The selector of the blind journal is written out in each of checks 1 to 4, so that every command runs on
+its own.
 
 1. The blind journal is committed, names the adapter as its surface contract, cites plane queries, cites
    no lab file, and is the one journal under this adapter besides the smoke journal. A journal that
