@@ -16,22 +16,23 @@ investigate skill, the rim document, the two documents, the receipts.
 1. Operator, any time before step 3: in Grafana Cloud, Administration, Users and access, Service accounts: a
    service account with the Viewer role and one token, exported as `GRAFANA_SERVICE_ACCOUNT_TOKEN`; the
    stack address exported as `GRAFANA_URL`; `brew install mcp-grafana` (the Homebrew core formula);
-   `mcp-grafana --help` for the exact category flags. Alloy and the lab run again for step 5.
+   `mcp-grafana --help` for the exact flag forms. Alloy and the lab run again for step 5.
 2. Agent: `git mv docs/rims/grafana-cloud.mcp.json.example docs/rims/grafana-cloud.mcp.json`; the arguments
-   `--disable-write` and the category flags that keep the Prometheus, Loki and datasource tools; the two
-   placeholders; check 1.
+   `--disable-write` and `--enabled-tools prometheus,loki,datasource` (the flag forms read from
+   `mcp-grafana --help` on the operator computer); the two placeholders; check 1.
 3. Operator with the agent, the rim skill: the interview, five questions in the conversation (the answers are
    mostly known: Prometheus and Loki in Grafana Cloud through `mcp-grafana`; no probe surface in this rim,
    it is plane-only; out of bounds: the lab's files, `eval/`, the tracker, every write surface; the owner:
-   the leader). Then the rim session, `claude --mcp-config docs/rims/grafana-cloud.mcp.json`, and `/mcp`:
-   the served tool names, recorded as text; the allowlist written from that list (check 8); the no-write
+   the leader). Then the rim session in the manual permission mode,
+   `claude --permission-mode manual --mcp-config docs/rims/grafana-cloud.mcp.json`, and `/mcp`: the served
+   tool names, recorded as text; the allowlist written from that list (check 8); the no-write
    check with a temporary copy of the configuration outside the repository, deleted after it (check 9).
 4. Agent: `.claude/settings.json` (the pinned entries and `Bash(printenv KONAN_RIM)`); the Setup line of
    `skills/investigate/SKILL.md`; `docs/rims/grafana-cloud.md` rewritten as the live contract (the tool
    names, the three layers, the operator setup, the citation form, the owner, the gaps, the Alloy run command
    with `--storage.path lab/alloy`); one sentence in `AGENTS.md`; the README section; checks 2, 3, 4, 6, 7.
 5. Operator with the agent: the lab and Alloy running; `KONAN_RIM=docs/rims/grafana-cloud.md` exported; the
-   smoke run `/konan <complaint>` in the rim session; the journal read together and committed under
+   smoke run `/konan <complaint>` in the rim session, started as in step 3 (the manual mode); the journal read together and committed under
    `journals/` (check 10); check 5.
 6. The change request: `Closes #54` and `Closes #52` (the worked rim is the last item of the rim skill's
    definition of done); the served listing in its text; checks 1 to 7 run, 8 to 10 recorded; the tier is the
@@ -65,8 +66,9 @@ runs after step 5 only.
   the rim document is the one list, written from the served listing. Source: the `mcp-grafana` README.
 - Claude Code expands `${VAR}` in an MCP configuration file; `--mcp-config <file>` loads servers for one
   session; a permission rule `mcp__<server>__<tool>` allows one tool, `mcp__<server>` a whole server; a tool
-  that no rule allows asks in an interactive session and fails closed in `-p`. Source: the Claude Code
-  documentation (MCP, permissions).
+  that no rule allows asks in an interactive session in the default and manual modes, while in the auto
+  mode a classifier may let an unlisted call through (observed 2026-11-08, check 9); it fails closed in
+  `-p`. Source: the Claude Code documentation (MCP, permissions), and the observation of check 9.
 - The investigate skill reads one surface contract in Setup step 1, with `docs/lab.md` as the default; the
   journal schema requires `surface_contract`; the lenses name no lab path. `eval/run.py` sends
   `/konan <complaint>` and nothing else: the rim plumbing of the runner is #55's.
