@@ -67,10 +67,10 @@ evidence:
       process_max_rss_bytes 46940160
   - id: E4
     type: log
-    source: "lab/logs/app.log @ 2026-08-06T10:04:03.215Z and .222Z — first burst request, exception line (stack trimmed to final frames) plus its access line, same request_id"
+    source: "lab/logs/app.log @ 2026-08-06T10:04:03.215Z and .222Z — first burst request, exception line (stack trimmed to final frames) plus its access line, same request_id; the checkout prefix of the file paths is redacted"
     quote: |-
       {"ts": "2026-08-06T10:04:03.215Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "76d12cc0356e", "event": "unhandled_exception", "exception_type": "ZeroDivisionError"}
-        File "/Users/lyudmylan/Projects/faultline/src/faultline/shop.py", line 64, in get_product
+        File "<checkout>/src/faultline/shop.py", line 64, in get_product
           "turnover_score": units_ordered / product["units_in_stock"],
                             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
       ZeroDivisionError: division by zero

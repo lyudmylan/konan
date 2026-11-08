@@ -70,9 +70,9 @@ evidence:
       -- HTTP 500 in 0.010229s request_id=konan-1787053030-5015
   - id: E9
     type: log
-    source: "lab/logs/app.log @ 2026-08-18T11:37:10.984Z — the exception event for E8 (stack trimmed to the throwing frame) and its access line"
+    source: "lab/logs/app.log @ 2026-08-18T11:37:10.984Z — the exception event for E8 (stack trimmed to the throwing frame) and its access line; the checkout prefix of the file paths is redacted"
     quote: |-
-      {"ts": "2026-08-18T11:37:10.984Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787053030-5015", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "... File \"/Users/lyudmylan/Projects/faultline/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n ... ZeroDivisionError: division by zero"}
+      {"ts": "2026-08-18T11:37:10.984Z", "level": "ERROR", "logger": "faultline.request", "message": "unhandled exception: division by zero", "request_id": "konan-1787053030-5015", "event": "unhandled_exception", "exception_type": "ZeroDivisionError", "stack": "... File \"<checkout>/src/faultline/shop.py\", line 64, in get_product\n    \"turnover_score\": units_ordered / product[\"units_in_stock\"],\n ... ZeroDivisionError: division by zero"}
       {"ts": "2026-08-18T11:37:10.993Z", "level": "INFO", "logger": "faultline.request", "message": "GET /products/3 -> 500", "request_id": "konan-1787053030-5015", "event": "request", "method": "GET", "path": "/products/3", "status": 500, "duration_ms": 9.394, "client": "127.0.0.1:62747"}
   - id: E10
     type: probe
