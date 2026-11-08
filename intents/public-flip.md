@@ -65,10 +65,10 @@ worktree session (noted on #58).
 6. The benchmark is on `main` on the day of the switch, as the artifact-first rule of the product document asks
    (`eval/BENCHMARK.md`, `eval/scorecard.md`, and the README links `eval/BENCHMARK.md`); both repositories are
    public; and the ruleset of `main` exists under the name `main-protection`, the name in the command
-   recorded on #13 (this check runs after the switch; the rulesets endpoint answers 403
+   recorded on #13, with the rules deletion and non-fast-forward (this check runs after the switch; the rulesets endpoint answers 403
    while the repository is private). That the ruleset was the first action after the switch, and that the benchmark was on `main` before
    it, are not verifiable afterwards; they are the leader's word, recorded on #13.
-   command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q 'eval/BENCHMARK.md' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection'`
+   command: `test -s eval/BENCHMARK.md && test -s eval/scorecard.md && grep -q 'eval/BENCHMARK.md' README.md && test "$(gh repo view lyudmylan/konan --json visibility --jq .visibility)" = PUBLIC && test "$(gh repo view lyudmylan/faultline --json visibility --jq .visibility)" = PUBLIC && gh api repos/lyudmylan/konan/rulesets --jq '.[].name' | grep -q 'main-protection' && id=$(gh api repos/lyudmylan/konan/rulesets --jq '.[] | select(.name=="main-protection") | .id') && gh api "repos/lyudmylan/konan/rulesets/$id" --jq '[.rules[].type] | sort | join(",")' | grep -q '^deletion,non_fast_forward$'`
 7. The redaction of the archived runs changes nothing but the prefixes: in the change request that carries
    it, every changed file under `eval/runs/` equals its old version with the two prefixes substituted. The scorer reads
    the claim surface and the evidence references, never a quote, so a score cannot change; a re-score of
