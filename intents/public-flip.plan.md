@@ -44,8 +44,8 @@ check 8.
 
 ## Facts the plan rests on (as of 2026-11-08)
 
-The counts of the intent (the archived runs, the commits, the lab repository's state), verified on 2026-11-08.
-Beyond them:
+The counts of the intent (the archived runs, the commits, the lab repository's state), verified on
+2026-11-08. Beyond them:
 
 - The scorer reads the claim surface (the root cause statement and the validated hypotheses) and the
   evidence references, never the quoted text; a redaction inside a quote changes no score. One archived
