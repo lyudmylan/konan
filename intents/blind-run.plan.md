@@ -29,7 +29,8 @@ adapter are already in the operator's shell configuration, which the agent's ses
 5. Agent: the receipts. The journal copied to `journals/` under its own name, or as `<date>-<slug>-blind.md` when that
    name is the smoke journal's (`2026-11-08-product-page-500s.md` is never overwritten); `usage.tokens` stamped and
    the sidecar written with the runner's own functions `stamp_tokens` and `envelope_meta` of `eval/run.py`,
-   called on the saved envelope (the low finding of review round 3 of #104); `uv run eval/score.py --pair <fixture> <journal> -o eval/runs/2026-11-blind-grafana/scorecard.md`;
+   called on the saved envelope; when `stamp_tokens` returns `False`, the journal is not edited by hand: the
+   change request says so and the leader decides; `uv run eval/score.py --pair <fixture> <journal> -o eval/runs/2026-11-blind-grafana/scorecard.md`;
    the hook's state file of the session read for the denial count; the transcripts of the session and of
    its agents read for tool calls on `lab/` or the probe script; the worktree removed.
 6. Agent: `README.md`, one sentence under "Measured before believed" that links the journal and the
