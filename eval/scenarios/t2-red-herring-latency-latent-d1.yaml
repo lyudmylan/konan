@@ -37,7 +37,7 @@ expected:
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: switch-flipped
       all_of: ["(?i)enab|(?<!not )(?<!never )\\bturned\\s+on\\b|\\barmed\\b"]
     - id: symptom-latency

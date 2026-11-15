@@ -51,10 +51,10 @@ expected:
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: switch-flipped
       all_of: ["(?i)enab|(?<!not )(?<!never )\\bturned\\s+on\\b|\\barmed\\b"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: spread
       all_of: ["(?i)intermittent|across|multiple|(?<!not )(?<!non-)(?<!pseudo-)\\brandom(ly)?\\b|\\b(a|small|random)\\s+fraction\\b|\\bprobabilist|\\b[1-9]\\d?\\s?%\\s+of\\b"]
   must_not_claim:

@@ -39,10 +39,10 @@ expected:
   must_claim:
     - id: mechanism
       all_of: ["(?i)zero.?division|divi\\w*[\\s-]+by[\\s-]+zero"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: location
       all_of: ["(?i)/products/3|product\\s*3\\b|product\\s+id\\s*3\\b"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: data-condition
       all_of: ["(?i)units_in_stock\\s*=?\\s*0|zero[\\s-]stock|stock\\s+(is\\s+)?0\\b|units_in_stock,?\\s+(which\\s+is|equal\\s+to)\\s+0\\b(?![.\\d])"]
   must_not_claim:

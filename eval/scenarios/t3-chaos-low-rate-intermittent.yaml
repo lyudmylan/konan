@@ -61,10 +61,10 @@ expected:
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: switch-flipped
       all_of: ["(?i)enab|(?<!not )(?<!never )\\bturned\\s+on\\b|\\barmed\\b"]
-    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
+    # widened on the false-fail table of bench-v2 (#90); the pin "matcher widening" of eval/tests.py
     - id: rare-but-real
       # calibrated on the committed bench-v1 journals (#75): "a/random fraction" and a one-digit percentage added; pin 18 of eval/tests.py
       all_of: ["(?i)intermittent|occasional|rare|low[\\s-]rate|\\b(a|small|random)\\s+fraction|\\b(a|small|random)\\s+(share|subset)\\s+of\\s+(\\w+\\s+)?requests\\b|a\\s+few|sporadic|probabilist|(?<![\\d.])\\d\\s*%"]

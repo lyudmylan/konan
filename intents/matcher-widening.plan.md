@@ -27,7 +27,7 @@ Intent: `intents/matcher-widening.md`. Written 2026-11-15. Accepted by the leade
 6. `no-restart-after` (`t3-crash-hard-down`) keeps every form and gains two: `nothing started it again` -
    Opus r1; `no process listening` - Sonnet r3.
 7. Each widened matcher gets one comment line in its fixture: widened on the false-fail table of bench-v2
-   (#90), pin 24 of `eval/tests.py`.
+   (#90), the pin "matcher widening" of `eval/tests.py`.
 8. `eval/tests.py`: pin 24, "matcher widening", after pin 23 in `run()`; the closing line says 24 pins. Five
    cases:
    - the 13 rows of the table that read "No", named by path, have no claim miss (check 1);
@@ -69,8 +69,8 @@ with the new patterns.
 - I ran the patterns of steps 1 to 6 in a copy of the repository, not in the repository. bench-v2: 64 of
   89 scored journals pass under the old patterns and 77 under the new ones; the 13 that newly pass are the
   13 rows of the table; no pass is lost. The 33 pins of `eval/tests.py` hold.
-- With the new patterns the scorer gives Fable 26 of 30 and Sonnet 25 of 30 on bench-v2. These are the
-  numbers "by content" that the leader confirmed on 2026-11-03.
+- With the new patterns `eval/bench.py` gives the rates by content over bench-v2, the ones that the
+  leader confirmed on 2026-11-03. The numbers are in `eval/BENCHMARK.md`, at the table of bench-v2.
 - The round of 2026-11-15 (not committed): 16 of 30 under the old patterns, 28 of 30 under the new ones.
 
 ## Three places where the plan is narrower than the table, for the leader
