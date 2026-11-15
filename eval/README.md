@@ -23,7 +23,12 @@ investigation:
 In manual runs this contract is held by the investigate skill's setup rule ("touch
 nothing outside the surface contract") and by session discipline. Runner runs make it
 mechanical: `eval/run.py` starts each investigation in a detached git worktree of HEAD
-with `journals/` emptied (no incident memory) and sets `KONAN_EVAL_BLIND=1`, which
+with `journals/` emptied (no incident memory). The worktree stands on one commit with no
+parent and a neutral subject, and it is reset to that commit before each investigation, so
+its `git status` is clean and its `git log` shows that one commit: the harness puts both
+into the context of a session, and they carry no name of a removed journal and no commit
+subject of the repository (#110). `git log --all` and `git show <id>` still reach the
+history of the repository from the worktree. The runner sets `KONAN_EVAL_BLIND=1`, which
 switches the boundary hook (`hooks/boundary.py`) into eval-blind mode — Bash commands
 that call `gh`, mention `eval/`, touch the faultline checkout, or run git against eval
 are denied by content; Read/Grep/Glob/Edit/Write calls whose paths reach under `eval/`
@@ -141,7 +146,7 @@ uv run eval/score.py --pair eval/scenarios/<id>.yaml journals/<id>.md [--pair ..
 
 ```sh
 uv run eval/run.py --run-id 2026-08-19-bench --model claude-sonnet-5 --repeat 3 \
-  [--fixtures eval/scenarios/*.yaml] [--max-runs 5] [--timeout-min 30] [--dry-run]
+  [--effort high] [--fixtures eval/scenarios/*.yaml] [--max-runs 5] [--timeout-min 30] [--dry-run]
 ```
 
 Per (fixture, repetition) the runner gives the fixture a clean lab when it says
@@ -152,7 +157,8 @@ session (`claude -p --model <m> --permission-mode acceptEdits`) inside a blinded
 worktree, copies the journal to `eval/runs/<run-id>/<model>/<scenario>-r<n>.md`, writes
 `<scenario>-r<n>.meta.json` from the run's JSON envelope (session id, turns, duration,
 `modelUsage` = tokens for the whole run including subagents, API-equivalent cost,
-permission denials), appends a line to `results.jsonl`, and finally scores every pair of
+permission denials) with the effort level and the version of the harness (below), appends a
+line to `results.jsonl`, and finally scores every pair of
 the run into `eval/runs/<run-id>/scorecard.md`. Runs already present are skipped
 (resume with the same `--run-id`); the batch stops on a quota / rate-limit error.
 Probabilistic fixtures (`--restage-check`, default: `chaos-error-rate`,
@@ -160,6 +166,15 @@ Probabilistic fixtures (`--restage-check`, default: `chaos-error-rate`,
 before the investigation starts — the runner restages up to three times and records the
 count in the sidecar (`restages`). A run that exceeds `--timeout-min` is killed and
 recorded as `timeout` (a failed run, not retried); two consecutive timeouts stop the batch.
+
+**Effort and version, recorded:** `--effort <level>` goes to each session
+(`claude --effort`), and `plan.json` and each sidecar record it in `effort`. Without the
+option the settings and the environment of the operator decide, and the record says
+`unset`. The level is part of the pre-registered plan: a later invocation of the run id
+with another level, or with none when the plan holds one, is refused; a `plan.json`
+written before the field reads as `unset`. `harness_version` is the line that
+`claude --version` prints, in `plan.json` at registration and in each sidecar for its own
+invocation; the harness updates itself, so the version is recorded and not compared.
 
 **Tokens, defined:** the runner stamps the journal's `usage.tokens: null` with the
 run's total tokens = input + output + cache-read + cache-creation across every model
