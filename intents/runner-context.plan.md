@@ -75,8 +75,8 @@ arguments and stays as it is: the new arguments have defaults.
 - The harness puts the output of `git status` and the last five commit subjects into the context of a
   session. In the session records of the round of 2026-11-15 the block lists eleven deleted journals and
   five subjects, in 30 of 30 sessions.
-- A run does not see the journal of the run before it today: an investigation writes its journal and does
-  not commit it, and the runner deletes the file. Step 2 keeps that true also when an investigator commits.
+- A run does not see the journal of the run before it today: the runner deletes the file. Step 2 keeps
+  that true also when an investigator commits its journal (the on-call shift does).
 - The session record of a run holds the effort level. All 30 runs of 2026-11-15 ran at `high` and all 30
   Fable runs of bench-v2 at `xhigh`.
 

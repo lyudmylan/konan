@@ -14,8 +14,8 @@ repository, and its files say at which effort level and on which version of the 
   commit subjects into the context of each session, and the deleted journals are listed there by name. In
   the round of 2026-11-15 (30 investigations on `claude-fable-5-2`, not committed) every session record
   carries the names. After the change the working copy of a run has a clean `git status`, and its history
-  holds no commit subject of the repository. The investigator still writes its journal to `journals/` and
-  commits it there.
+  holds no commit subject of the repository. The investigator writes its journal to `journals/`, and may
+  commit it there.
 - `eval/run.py`, the record of a run. An option `--effort <level>` goes to each session. `plan.json` and
   each sidecar record the level and the version of the harness. Without the option the record reads
   `unset`: the settings of the operator decided. The level is part of the pre-registered plan (#76): a
@@ -23,8 +23,9 @@ repository, and its files say at which effort level and on which version of the 
 - `eval/tests.py`: the pins of the checks below.
 - `AGENTS.md`: the command line of the runner, in the section "Commands", names the option.
 - `eval/README.md`, the blinding contract: the sentence on the emptied `journals/` says that the names are
-  gone from the session context too, and states which routes stay open. `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits
-  section says that bench-v2 ran at `xhigh` with the journal names in the session context (from the session
+  gone from the session context too, and states which routes stay open.
+- `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits section
+  says that bench-v2 ran at `xhigh` with the journal names in the session context (from the session
   records of the operator, outside the repository).
 
 ## Out of scope
