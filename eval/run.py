@@ -134,21 +134,35 @@ def make_working_copy(repo, wt):
     intents/runner-context.md). No branch and no ref is created: the commit is reachable from the
     worktree's HEAD only, and git prunes it after the worktree is removed. Returns the commit."""
     sh(["git", "worktree", "add", "--detach", str(wt), "HEAD"], repo, timeout=60)
-    sh(["git", "rm", "-q", "--ignore-unmatch", "--", "journals/*.md"], wt)   # the index and the files
-    tree = sh(["git", "write-tree"], wt).stdout.strip()
-    base = sh(["git", "commit-tree", tree, "-m", WORKING_COPY_SUBJECT], wt,
-              env=dict(os.environ, **NEUTRAL_AUTHOR)).stdout.strip()
-    sh(["git", "checkout", "-q", "--detach", base], wt)
-    (wt / "journals").mkdir(exist_ok=True)   # git keeps no empty directory; the investigator writes here
+    try:
+        sh(["git", "rm", "-q", "--ignore-unmatch", "--", "journals/*.md"], wt)   # the index and the files
+        tree = sh(["git", "write-tree"], wt).stdout.strip()
+        base = sh(["git", "commit-tree", tree, "-m", WORKING_COPY_SUBJECT], wt,
+                  env=dict(os.environ, **NEUTRAL_AUTHOR)).stdout.strip()
+        sh(["git", "checkout", "-q", "--detach", base], wt)
+        (wt / "journals").mkdir(exist_ok=True)   # git keeps no empty directory; the investigator writes here
+    except Exception:   # a half-made working copy is removed, not left registered in the repository
+        sh(["git", "worktree", "remove", "--force", str(wt)], repo, timeout=60, check=False)
+        raise
     return base
 
 
 def reset_working_copy(wt, base):
     """Before each investigation: back to the one commit, nothing untracked, an empty `journals/`.
     A journal that the investigator of the run before committed, or a file that it left, would show
-    in the status or the log of the next session. Ignored paths (`lab/`) are not touched."""
-    sh(["git", "reset", "-q", "--hard", base], wt)
-    sh(["git", "clean", "-fdq"], wt)
+    in the status or the log of the next session. Ignored paths (`lab/`) are not touched. A session
+    that the runner killed at its timeout can leave the lock of the index behind; the reset then
+    fails once, the stale lock is removed, and the second try decides."""
+    for attempt in (1, 2):
+        try:
+            sh(["git", "reset", "-q", "--hard", base], wt)
+            sh(["git", "clean", "-fdq"], wt)
+            break
+        except RuntimeError:
+            if attempt == 2:
+                raise
+            git_dir = Path(sh(["git", "rev-parse", "--absolute-git-dir"], wt).stdout.strip())
+            (git_dir / "index.lock").unlink(missing_ok=True)
     (wt / "journals").mkdir(exist_ok=True)
 
 
@@ -174,6 +188,11 @@ def harness_version(claude):
         return None
     lines = p.stdout.strip().splitlines()
     return lines[0].strip() if p.returncode == 0 and lines else None
+
+
+def invocation_record(effort, version):
+    """Pure: the two fields that every sidecar of an invocation carries (#110)."""
+    return {"effort": effort or EFFORT_UNSET, "harness_version": version}
 
 
 def envelope_meta(env_json):
@@ -307,10 +326,12 @@ def main():
     fixtures = load_fixtures(a.fixtures)
     out = RUNS / a.run_id
     model_dir = out / re.sub(r"[^A-Za-z0-9._-]", "_", a.model)
-    version = harness_version(claude) if claude else None
+    if not a.dry_run and not claude:   # before the plan is registered: a plan holds the harness version
+        sys.exit("claude CLI not found (set CLAUDE_BIN)")
+    version = None if a.dry_run else harness_version(claude)   # a preview does not call the harness
     registered = register_plan(out, [fx["scenario"]["id"] for _, fx in fixtures], a.repeat,
                                dry_run=a.dry_run, effort=a.effort, harness=version)
-    if registered.get("harness_version") not in (None, version):
+    if version and registered.get("harness_version") not in (None, version):
         print(f"note: the plan was registered on harness {registered['harness_version']}; "
               f"this invocation runs on {version}. Each sidecar records its own.")
 
@@ -337,8 +358,6 @@ def main():
             print(f"  {fx['scenario']['id']} r{r}  lab={fx.get('setup', {}).get('lab')} "
                   f"stage={len(fx.get('setup', {}).get('stage', []))} complaint={fx['complaint'][:60]!r}")
         return 0
-    if not claude:
-        sys.exit("claude CLI not found (set CLAUDE_BIN)")
     if not Path(faultline).is_dir():
         sys.exit(f"no faultline checkout at {faultline} (set FAULTLINE_DIR)")
     dirty = sh("git status --porcelain -- skills hooks .claude scripts docs", REPO).stdout.strip()
@@ -406,8 +425,7 @@ def main():
             meta = envelope_meta(envelope)
             meta.update({"run_id": a.run_id, "model": a.model, "scenario": sid, "rep": r,
                          "fixture": str(fp.relative_to(REPO)), "started_at": started, "ended_at": ended,
-                         "restages": restages, "effort": a.effort or EFFORT_UNSET,
-                         "harness_version": version,
+                         "restages": restages, **invocation_record(a.effort, version),
                          "wall_seconds_runner": round(time.time() - t0)})
             journals = list((wt / "journals").glob("*.md"))
             status = "ok"

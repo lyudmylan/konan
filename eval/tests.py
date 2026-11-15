@@ -473,6 +473,23 @@ def test_runner_working_copy_shows_no_removed_journal():
         assert (wt / "notes.txt").read_text() == "x\n"            # the rest of the tree is the tree of HEAD
         assert _git(repo, "branch", "--format=%(refname:short)").split() == [_git(repo, "branch", "--show-current").strip()]
         assert len(_git(repo, "log", "--format=%s").splitlines()) == 2   # the source is as it was
+        # A working copy that cannot be finished is removed again, not left registered in the source.
+        broken = runner.worktree_dir(base=tmp)
+        real_sh = runner.sh
+
+        def failing(cmd, cwd, **kw):
+            if cmd[:2] == ["git", "commit-tree"]:
+                raise RuntimeError("commit-tree failed")
+            return real_sh(cmd, cwd, **kw)
+        runner.sh = failing
+        try:
+            runner.make_working_copy(repo, broken)
+            raise AssertionError("a failed step did not raise")
+        except RuntimeError:
+            pass
+        finally:
+            runner.sh = real_sh
+        assert not broken.exists() and len(_git(repo, "worktree", "list").splitlines()) == 2
 
 
 def test_runner_working_copy_takes_a_journal():
@@ -492,7 +509,10 @@ def test_runner_working_copy_takes_a_journal():
         (wt / "left-behind.py").write_text("pass\n")
         (wt / "journals" / "2026-11-15-not-committed.md").write_text("k\n")
         (wt / "notes.txt").write_text("changed\n")
+        lock = Path(_git(wt, "rev-parse", "--absolute-git-dir").strip()) / "index.lock"
+        lock.write_text("")                                    # a killed session left the lock of the index
         runner.reset_working_copy(wt, base)
+        assert not lock.exists()
         assert _git(wt, "status", "--porcelain") == ""
         assert _git(wt, "log", "--format=%s").splitlines() == [runner.WORKING_COPY_SUBJECT]
         assert (wt / "journals").is_dir() and list((wt / "journals").iterdir()) == []
@@ -520,8 +540,9 @@ def test_runner_records_effort_and_version():
         assert plan["effort"] == "high" and plan["harness_version"] == "9.9.9 (stub harness)", plan
         runner.register_plan(Path(tmp) / "without", SCENARIO_IDS, 3, harness=version)
         assert json.loads((Path(tmp) / "without" / "plan.json").read_text())["effort"] == "unset"
+    assert runner.invocation_record("high", "9.9.9") == {"effort": "high", "harness_version": "9.9.9"}
+    assert runner.invocation_record(None, None) == {"effort": "unset", "harness_version": None}
     src = (EVAL / "run.py").read_text()
-    assert '"effort": a.effort or EFFORT_UNSET' in src and '"harness_version": version' in src, "the sidecar fields"
     assert src.count('"-p", "--model"') == 1, "one place builds the command of a session"
 
 

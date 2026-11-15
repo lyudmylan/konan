@@ -27,8 +27,11 @@ with `journals/` emptied (no incident memory). The worktree stands on one commit
 parent and a neutral subject, and it is reset to that commit before each investigation, so
 its `git status` is clean and its `git log` shows that one commit: the harness puts both
 into the context of a session, and they carry no name of a removed journal and no commit
-subject of the repository (#110). `git log --all` and `git show <id>` still reach the
-history of the repository from the worktree. The runner sets `KONAN_EVAL_BLIND=1`, which
+subject of the repository (#110). That closes the route that reaches every session with no
+action of its own. Two routes stay open to an investigator that leaves its surface
+contract: `git log --all` and `git show <id>` still reach the history of the repository
+from the worktree, and tracked files outside `eval/` (the top-level README, some intents)
+name earlier journals. The runner sets `KONAN_EVAL_BLIND=1`, which
 switches the boundary hook (`hooks/boundary.py`) into eval-blind mode — Bash commands
 that call `gh`, mention `eval/`, touch the faultline checkout, or run git against eval
 are denied by content; Read/Grep/Glob/Edit/Write calls whose paths reach under `eval/`
