@@ -34,7 +34,7 @@ The routes that stay open: tracked files outside `eval/` that name earlier journ
 three files under `intents/`, `hooks/tests.py`), and `git log --all` and `git show <id>` in the worktree,
 which still reach the history of the repository. Which instruction files and settings of the operator a
 run loads: a run loads them today, and that is a separate decision. The boundary hook and its pins. The fixtures, the scorer, the journal schema. bench-v2:
-its runs and its table stay as they are.
+its runs and its table stay as they are; only the limits sentence in `eval/BENCHMARK.md` names its level.
 
 ## Acceptance checks
 
@@ -45,7 +45,8 @@ its runs and its table stay as they are.
    journal commit.
    test: `eval/tests.py::test_runner_working_copy_shows_no_removed_journal`. command: `uv run eval/tests.py`
 2. The working copy has an empty `journals/` directory, and a journal written there can be added and
-   committed.
+   committed. After a journal was committed and the working copy was reset for the next investigation,
+   `git status --porcelain` is empty, `journals/` is empty, and `git log` holds one commit.
    test: `eval/tests.py::test_runner_working_copy_takes_a_journal`
 3. With `--effort high` the command of the session carries the level, and `plan.json` and the sidecar
    record `high` and the version of the harness, as `claude --version` prints it. Without the option they
