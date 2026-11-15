@@ -84,3 +84,29 @@ with the new patterns.
   again" alone, and the intent of #75 says that a symptom is not the fact. The plan leaves it out. "no
   process listening" is the only wording of Sonnet r3 for the fact, and the table reads that row as "No", so
   it stays in.
+
+## Changes after the code review, 2026-11-15
+
+The code review (`/code-review`, on the first commit of the code) probed the patterns of steps 1 to 6 with
+statements that deny the claim, and found that several matched. The forms stay the ones of the plan, each
+from the same journal; they are tighter:
+
+- `switch-flipped`: "turned on" does not match after "not " or "never ".
+- `spread`: "random" does not match after "not ", "non-" or "pseudo-"; the percentage starts with a digit
+  from 1 to 9, so "0% of" does not match; `probabilist` has a word boundary.
+- `data-condition`: the words between the field and the zero are "which is" or "equal to", the two
+  wordings of the journals, and the zero is not the start of a decimal. "units_in_stock is not 0" and
+  "units_in_stock 10 and price 0" do not match.
+- `rare-but-real`: "a share" and "a subset" count only "of requests", with one word allowed between
+  ("of incoming requests"). "a subset of products" does not match.
+- `no-restart-after`: the two added forms have word boundaries.
+- Pin 24 holds the old `no-restart-after` pattern as a literal like the other five, and gains the denial
+  cases above.
+- Step 10 changes: `eval/BENCHMARK.md` gains one sentence at the table of bench-v2. `eval/bench.py`
+  scores the committed journals with the live fixtures, so after this change it gives the rates by
+  content (87%, 87%, 83%); the sentence says that the committed table reproduces at its own commit.
+
+Left as it is, by the rule of manual check 6 (no form beyond the wording of the journals): near variants
+that no committed journal carries, such as "switched on" or "units_in_stock is zero", still fail. "no
+process listening" also matches a report that goes on to say the process was restarted; the review named
+this, and the leader's reading of Sonnet r3 in the table is the reason the form is in.

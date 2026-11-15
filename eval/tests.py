@@ -400,16 +400,17 @@ def run():
         ("t3-chaos-low-rate-intermittent", "rare-but-real"):
             r"(?i)intermittent|occasional|rare|low[\s-]rate|\b(a|small|random)\s+fraction|a\s+few|sporadic"
             r"|probabilist|(?<![\d.])\d\s*%",
+        ("t3-crash-hard-down", "no-restart-after"):
+            r"(?i)no\s+(new\s+)?startup|not\s+(been\s+)?restarted|never\s+(been\s+)?restarted|\bnot\s+restart\b"
+            r"|nothing\s+restart(ed|ing)\s+it|no\s+(supervisor|process)\s+restarted|no\s+auto[\s-]restart"
+            r"|never\s+came\s+back|no\s+restart|since\s+the\s+crash|remains\s+down|still\s+down|stayed\s+down"
+            r"|has\s+not\s+restarted|not\s+resumed|not\s+come\s+back|nothing\s+is\s+listening",
     }
-    no_restart_added = r"|nothing\s+started\s+it\s+again|no\s+process\s+listening"
     live = {p.stem: score.load_fixture(p, FV) for p in scenarios}
 
     def matcher(sid, mid):
         return next(e for e in live[sid]["expected"]["must_claim"] if e["id"] == mid)
 
-    crash_now = matcher("t3-crash-hard-down", "no-restart-after")["all_of"][0]
-    assert crash_now.endswith(no_restart_added), "the two added forms close the pattern"
-    widened_old[("t3-crash-hard-down", "no-restart-after")] = crash_now[: -len(no_restart_added)]
     before = copy.deepcopy(live)
     for (sid, mid), pattern in widened_old.items():
         entry = next(e for e in before[sid]["expected"]["must_claim"] if e["id"] == mid)
@@ -457,9 +458,19 @@ def run():
             assert not hits(sid, mid, flat), (sid, mid)
     other = "Products 30 and 31 return 500; product id 31 has units_in_stock 10 and a price of 0."
     assert not hits("d1-zero-stock-product-page", "location", other)
-    assert not hits("d1-zero-stock-product-page", "data-condition", other)
+    for text in (other, "units_in_stock is not 0", "units_in_stock is greater than 0",
+                 "units_in_stock 10 and price 0", "units_in_stock equal to 0.5"):
+        assert not hits("d1-zero-stock-product-page", "data-condition", text), text
     back = "The process crashed, the supervisor started it again, and a process is listening on the port."
     assert not hits("t3-crash-hard-down", "no-restart-after", back)
+    # A denial is not the claim: the added forms carry the negation guards of the tripwires.
+    denied = ("The switch was never turned on and was not turned on by a deploy; the failures are not random "
+              "and non-random: one route fails, 0% of the others.")
+    for sid, mid in widened_old:
+        if mid in ("switch-flipped", "spread"):
+            assert not hits(sid, mid, denied), (sid, mid)
+    scope = "Every request fails on a subset of products and on a share of the routes."
+    assert not hits("t3-chaos-low-rate-intermittent", "rare-but-real", scope)
 
     # Check 3, the wording of the round of 2026-11-15: the statements of the comment on #90, as literals.
     said = {
@@ -538,7 +549,6 @@ def run():
         ("bench-v2/claude-sonnet-5/t2-healthy-after-chaos-window-r3.md", "spread"),
         ("bench-v1/claude-fable-5/t2-healthy-after-chaos-window-r3.md", "spread"),
     }, gains
-    assert not any("healthy-baseline" in rel for rel, _ in gains)
 
     print("OK: 24 semantics pins hold")
 
