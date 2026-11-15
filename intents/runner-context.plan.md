@@ -11,8 +11,8 @@ Intent: `intents/runner-context.md`. Written 2026-11-15. Accepted by the leader 
    with no parent from that tree (`git commit-tree`), with the subject "working copy" and a fixed neutral
    author. It checks that commit out detached, creates the empty `journals/` again, and returns the commit
    id. After it, `git status --porcelain` is empty and `git log` shows one commit, "working copy". No
-   branch and no ref is created in the repository; the commit has no ref, and git prunes it after the
-   worktree is removed.
+   branch and no ref is created in the repository; the commit has no ref, so no branch or tag shows it,
+   and `git gc` removes it later.
 2. `eval/run.py`, between runs. A function `reset_working_copy(wt, base)` replaces the loop that deletes
    the journal of the run before: `git reset --hard` to the commit of step 1, then the files under
    `journals/` are deleted and the directory is kept. A journal that the investigator committed is gone
@@ -27,7 +27,8 @@ Intent: `intents/runner-context.md`. Written 2026-11-15. Accepted by the leader 
    when the plan holds one, stops the runner with a message that names both. A `plan.json` without the
    field reads as `unset`, so the run ids on record keep working. The version is not compared: the harness
    updates itself between batches, so each sidecar records the version of its own invocation, and the
-   runner prints one line when it differs from the plan. Each sidecar gains `effort` and `harness_version`.
+   runner prints one line when it differs from the plan (not pinned; the sidecar field is the record). Each
+   sidecar gains `effort` and `harness_version`.
 5. `eval/run.py`, the docstring: the working copy and the option, in the words of steps 1 to 4.
 6. `eval/tests.py`: four runner pins after the five that exist; the closing line says 9 runner pins.
    - `test_runner_working_copy_shows_no_removed_journal`: a temporary repository with two commits and two
@@ -47,10 +48,11 @@ Intent: `intents/runner-context.md`. Written 2026-11-15. Accepted by the leader 
    working copy of a run has a clean status and one commit, so the session context carries no journal name
    and no commit subject of the repository. In the runner section, the option `--effort` and the two new
    fields.
-8. `eval/BENCHMARK.md`: the protocol names the effort level as part of a configuration, given with
-   `--effort` and recorded in `plan.json`. The limits section gains one sentence: bench-v2 ran at `xhigh`
-   and its sessions carried the names of the journals of that time in their context (from the session
-   records of the operator, outside the repository).
+8. `eval/BENCHMARK.md`. The protocol: item 5 names the neutral commit, and a new item 11 names the effort
+   level as part of a configuration, given with `--effort` and recorded in `plan.json`. The limits section
+   gains one sentence: bench-v1 and bench-v2 record no level; bench-v2 ran at `xhigh`, and its sessions
+   carried the names of the journals of that time in their context (from the session records of the
+   operator, outside the repository).
 9. Manual check 6, after the code: one investigation, `healthy-baseline`, one repetition,
    `--model claude-fable-5-2 --effort high`, under a run id of its own. I search the session record for
    each journal name of the repository and for each of the last twenty commit subjects, and I put the two
@@ -60,7 +62,8 @@ Intent: `intents/runner-context.md`. Written 2026-11-15. Accepted by the leader 
 
 ## Files
 
-`eval/run.py`, `eval/tests.py`, `eval/README.md`, `eval/BENCHMARK.md`, and this file.
+`eval/run.py`, `eval/tests.py`, `eval/README.md`, `eval/BENCHMARK.md`, `AGENTS.md` (the `[--effort <level>]`
+token in the runner command), the intent (one line of its scope, for `AGENTS.md`), and this file.
 
 ## Tests
 

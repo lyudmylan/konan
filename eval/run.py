@@ -132,7 +132,7 @@ def make_working_copy(repo, wt):
     shows one neutral subject, so the block that the harness puts into the context of a session
     names no removed journal and no commit of the repository (check 1 of
     intents/runner-context.md). No branch and no ref is created: the commit is reachable from the
-    worktree's HEAD only, and git prunes it after the worktree is removed. Returns the commit."""
+    worktree's HEAD only, and `git gc` removes it later. Returns the commit."""
     sh(["git", "worktree", "add", "--detach", str(wt), "HEAD"], repo, timeout=60)
     try:
         sh(["git", "rm", "-q", "--ignore-unmatch", "--", "journals/*.md"], wt)   # the index and the files

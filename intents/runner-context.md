@@ -21,6 +21,7 @@ say at which effort level and on which version of the harness it ran.
   `unset`: the settings of the operator decided. The level is part of the pre-registered plan (#76): a
   later invocation of the same run id with another level is refused.
 - `eval/tests.py`: the pins of the checks below.
+- `AGENTS.md`: the command line of the runner, in the section "Commands", names the option.
 - `eval/README.md`, the blinding contract: the sentence on the emptied `journals/` says that the names are
   gone too. `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits
   section says that bench-v2 ran at `xhigh` with the journal names in the session context (from the session
