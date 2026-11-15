@@ -78,7 +78,7 @@ this repo on top of them.
 - `scripts/scenario.sh chaos-on|chaos-off|chaos-status|sim|order|get` — eval-side
   scenario triggers and simulated user traffic; prompts by design. Full lab contract:
   `docs/lab.md`.
-- `uv run eval/run.py --run-id <id> --model <m> [--repeat N] [--fixtures …]` — the eval
+- `uv run eval/run.py --run-id <id> --model <m> [--repeat N] [--effort <level>] [--fixtures …]` — the eval
   runner: staged, blinded, headless investigations per fixture; journals + sidecars under
   `eval/runs/<id>/`, scored into `eval/runs/<id>/scorecard.md`. Operator side; it draws
   from the same subscription pool as everything else — batch with `--max-runs`.

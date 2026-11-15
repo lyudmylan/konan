@@ -8,30 +8,36 @@ score the pair, and record what the run cost. Operator-side, deterministic code:
 reasons about incidents; it only makes runs comparable and honest.
 
     uv run eval/run.py --run-id 2026-08-19-bench --model claude-sonnet-5 \
-        [--repeat 3] [--fixtures eval/scenarios/*.yaml] [--max-runs 5] [--timeout-min 30] \
-        [--dry-run] [--keep-worktree]
+        [--repeat 3] [--effort high] [--fixtures eval/scenarios/*.yaml] [--max-runs 5] \
+        [--timeout-min 30] [--dry-run] [--keep-worktree]
 
 Per (fixture, repetition):
   1. Lab — `setup.lab: fresh` restarts faultline (clean logs and counters), from the
      run's worktree so `lab/` is the worktree's.
   2. Stage — executes the fixture's `setup.stage` list (eval-side, operator surface).
-  3. Investigate — `claude -p --model <m> --permission-mode acceptEdits` in a detached git
-     worktree of HEAD under a neutral temporary name (neither `eval` nor the run id in the
-     path the model sees), whose `journals/` is emptied (no incident memory, no ground truth),
-     with `KONAN_EVAL_BLIND=1` so the boundary hook denies `gh`, reads under `eval/`, and
-     the faultline checkout mechanically. The prompt is `/konan <complaint verbatim>` —
-     nothing else.
+  3. Investigate — `claude -p --model <m> [--effort <level>] --permission-mode acceptEdits` in
+     a detached git worktree of HEAD under a neutral temporary name (neither `eval` nor the
+     run id in the path the model sees), whose `journals/` is emptied (no incident memory, no
+     ground truth), with `KONAN_EVAL_BLIND=1` so the boundary hook denies `gh`, reads under
+     `eval/`, and the faultline checkout mechanically. The worktree stands on one commit with
+     no parent, made from the tree of HEAD without the journals, and it is reset to that
+     commit before each investigation: the harness puts `git status` and the last commit
+     subjects into the context of a session, and a clean status on one neutral commit shows
+     neither the name of a removed journal nor a commit subject of the repository (#110).
+     The prompt is `/konan <complaint verbatim>` — nothing else.
   4. Record — the run's JSON envelope (session id, turns, duration, `modelUsage` = tokens
      for the whole run including subagents, API-equivalent cost, permission denials) into
-     `<out>/<model>/<scenario>-r<n>.meta.json`; the journal is copied beside it and its
+     `<out>/<model>/<scenario>-r<n>.meta.json`, with the effort level of the invocation
+     (`unset` without `--effort`: the settings of the operator decided) and the version of
+     the harness, as `claude --version` prints it; the journal is copied beside it and its
      `usage.tokens: null` is stamped with the measured total (documented in eval/README).
   5. Score — every (fixture, journal) pair of the run into `<out>/scorecard.md` via
      eval/score.py; per-run exit codes and failures land in `<out>/results.jsonl`.
 
 `<out>` = eval/runs/<run-id>. Runs already present there are skipped (resume). The batch
 stops on a rate-limit / quota error so a half-run never masquerades as a result. The first
-invocation of a run id writes `<out>/plan.json` (the fixture ids and the repetitions); a later
-one with another plan is refused — the plan is pre-registered (#76).
+invocation of a run id writes `<out>/plan.json` (the fixture ids, the repetitions, the effort
+level); a later one with another plan is refused — the plan is pre-registered (#76, #110).
 """
 import argparse
 import datetime as dt
@@ -115,6 +121,80 @@ def worktree_dir(base=None):
     return Path(tempfile.mkdtemp(prefix="konan-wt-", dir=base)) / "wt"
 
 
+WORKING_COPY_SUBJECT = "working copy"
+NEUTRAL_AUTHOR = {"GIT_AUTHOR_NAME": "konan runner", "GIT_AUTHOR_EMAIL": "runner@localhost",
+                  "GIT_COMMITTER_NAME": "konan runner", "GIT_COMMITTER_EMAIL": "runner@localhost"}
+
+
+def make_working_copy(repo, wt):
+    """The working copy of a run: a detached worktree of HEAD that stands on ONE commit with no
+    parent, made from the tree of HEAD without the journals. `git status` is empty and `git log`
+    shows one neutral subject, so the block that the harness puts into the context of a session
+    names no removed journal and no commit of the repository (check 1 of
+    intents/runner-context.md). No branch and no ref is created: the commit is reachable from the
+    worktree's HEAD only, and `git gc` removes it later. Returns the commit."""
+    sh(["git", "worktree", "add", "--detach", str(wt), "HEAD"], repo, timeout=60)
+    try:
+        sh(["git", "rm", "-q", "--ignore-unmatch", "--", "journals/*.md"], wt)   # the index and the files
+        tree = sh(["git", "write-tree"], wt).stdout.strip()
+        base = sh(["git", "commit-tree", tree, "-m", WORKING_COPY_SUBJECT], wt,
+                  env=dict(os.environ, **NEUTRAL_AUTHOR)).stdout.strip()
+        sh(["git", "checkout", "-q", "--detach", base], wt)
+        (wt / "journals").mkdir(exist_ok=True)   # git keeps no empty directory; the investigator writes here
+    except Exception:   # a half-made working copy is removed, not left registered in the repository
+        sh(["git", "worktree", "remove", "--force", str(wt)], repo, timeout=60, check=False)
+        raise
+    return base
+
+
+def reset_working_copy(wt, base):
+    """Before each investigation: back to the one commit, nothing untracked, an empty `journals/`.
+    A journal that the investigator of the run before committed, or a file that it left, would show
+    in the status or the log of the next session. Ignored paths (`lab/`) are not touched. A session
+    that the runner killed at its timeout can leave the lock of the index behind; the reset then
+    fails once, the stale lock is removed, and the second try decides."""
+    for attempt in (1, 2):
+        try:
+            sh(["git", "reset", "-q", "--hard", base], wt)
+            sh(["git", "clean", "-fdq"], wt)
+            break
+        except RuntimeError:
+            if attempt == 2:
+                raise
+            git_dir = Path(sh(["git", "rev-parse", "--absolute-git-dir"], wt).stdout.strip())
+            (git_dir / "index.lock").unlink(missing_ok=True)
+    (wt / "journals").mkdir(exist_ok=True)
+
+
+EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
+EFFORT_UNSET = "unset"   # no --effort: the settings and the environment of the operator decided
+
+
+def session_command(claude, model, effort, prompt):
+    """Pure: the command of one headless investigation. `--effort` only when a level is given."""
+    cmd = [claude, "-p", "--model", model]
+    if effort:
+        cmd += ["--effort", effort]
+    return cmd + ["--permission-mode", "acceptEdits", "--output-format", "json", prompt]
+
+
+def harness_version(claude):
+    """The version of the harness, as `claude --version` prints it (first line); None when the
+    command cannot run."""
+    try:
+        p = subprocess.run([claude, "--version"], stdin=subprocess.DEVNULL, capture_output=True,
+                           text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    lines = p.stdout.strip().splitlines()
+    return lines[0].strip() if p.returncode == 0 and lines else None
+
+
+def invocation_record(effort, version):
+    """Pure: the two fields that every sidecar of an invocation carries (#110)."""
+    return {"effort": effort or EFFORT_UNSET, "harness_version": version}
+
+
 def envelope_meta(env_json):
     """Pure: the fields we keep from a `claude -p --output-format json` envelope."""
     mu = env_json.get("modelUsage") or {}
@@ -191,24 +271,31 @@ def load_fixtures(patterns):
 PLAN_FILE = "plan.json"
 
 
-def register_plan(out, fixture_ids, repeat, dry_run=False):
+def register_plan(out, fixture_ids, repeat, dry_run=False, effort=None, harness=None):
     """The plan of a run id is pre-registered (#76): the first invocation writes `<out>/plan.json`
-    (the scenario ids and the repetition count); a later invocation with another plan stops the
-    runner and leaves the file untouched. A dry run compares but writes nothing: a preview does
-    not pre-register a plan."""
+    (the scenario ids, the repetition count, the effort level); a later invocation with another
+    plan stops the runner and leaves the file untouched. A dry run compares but writes nothing: a
+    preview does not pre-register a plan. The effort level is part of the plan (#110): another
+    level, or none when the plan holds one, is another plan; a plan file without the field reads
+    as `unset`. The version of the harness is recorded and not compared: the harness updates
+    itself between batches, and each sidecar carries the version of its own invocation."""
     out = Path(out)
-    want = {"fixtures": sorted(fixture_ids), "repeat": int(repeat)}
+    want = {"fixtures": sorted(fixture_ids), "repeat": int(repeat), "effort": effort or EFFORT_UNSET}
     path = out / PLAN_FILE
     if path.exists():
         have = json.loads(path.read_text())
-        got = {"fixtures": sorted(have.get("fixtures", [])), "repeat": have.get("repeat")}
-        if got != want:
+        got = {"fixtures": sorted(have.get("fixtures", [])), "repeat": have.get("repeat"),
+               "effort": have.get("effort", EFFORT_UNSET)}
+        if (got["fixtures"], got["repeat"]) != (want["fixtures"], want["repeat"]):
             sys.exit(f"run {out.name}: the plan is pre-registered in {path}: "
                      f"{len(got['fixtures'])} fixtures x {got['repeat']} ({', '.join(got['fixtures'])}); "
                      f"this invocation says {len(want['fixtures'])} fixtures x {want['repeat']} "
                      f"({', '.join(want['fixtures'])}). Use another --run-id for another plan.")
+        if got["effort"] != want["effort"]:
+            sys.exit(f"run {out.name}: the plan is pre-registered in {path} at effort {got['effort']}; "
+                     f"this invocation says {want['effort']}. Use another --run-id for another effort level.")
         return have
-    plan = {"run_id": out.name, **want, "registered_at": now_iso()}
+    plan = {"run_id": out.name, **want, "harness_version": harness, "registered_at": now_iso()}
     if not dry_run:
         out.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(plan, indent=2) + "\n")
@@ -220,6 +307,9 @@ def main():
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--model", required=True, help="model id or alias passed to `claude --model`")
     ap.add_argument("--repeat", type=int, default=1)
+    ap.add_argument("--effort", choices=EFFORT_LEVELS, default=None,
+                    help="effort level passed to `claude --effort` and recorded in plan.json and each "
+                         "sidecar; without it the settings of the operator decide and the record says unset")
     ap.add_argument("--fixtures", nargs="+", default=[str(REPO / "eval/scenarios/*.yaml")])
     ap.add_argument("--max-runs", type=int, default=0, help="stop after this many runs this invocation (0 = all)")
     ap.add_argument("--timeout-min", type=int, default=30)
@@ -236,7 +326,14 @@ def main():
     fixtures = load_fixtures(a.fixtures)
     out = RUNS / a.run_id
     model_dir = out / re.sub(r"[^A-Za-z0-9._-]", "_", a.model)
-    register_plan(out, [fx["scenario"]["id"] for _, fx in fixtures], a.repeat, dry_run=a.dry_run)
+    if not a.dry_run and not claude:   # before the plan is registered: a plan holds the harness version
+        sys.exit("claude CLI not found (set CLAUDE_BIN)")
+    version = None if a.dry_run else harness_version(claude)   # a preview does not call the harness
+    registered = register_plan(out, [fx["scenario"]["id"] for _, fx in fixtures], a.repeat,
+                               dry_run=a.dry_run, effort=a.effort, harness=version)
+    if version and registered.get("harness_version") not in (None, version):
+        print(f"note: the plan was registered on harness {registered['harness_version']}; "
+              f"this invocation runs on {version}. Each sidecar records its own.")
 
     plan = [(fp, fx, r) for fp, fx in fixtures for r in range(1, a.repeat + 1)]
     def already_done(fx, r):
@@ -254,26 +351,23 @@ def main():
         return False
 
     todo = [(fp, fx, r) for fp, fx, r in plan if not already_done(fx, r)]
-    print(f"run {a.run_id}: model={a.model} fixtures={len(fixtures)} repeat={a.repeat} "
-          f"planned={len(plan)} todo={len(todo)} out={out}")
+    print(f"run {a.run_id}: model={a.model} effort={a.effort or EFFORT_UNSET} fixtures={len(fixtures)} "
+          f"repeat={a.repeat} planned={len(plan)} todo={len(todo)} out={out}")
     if a.dry_run:
         for fp, fx, r in todo:
             print(f"  {fx['scenario']['id']} r{r}  lab={fx.get('setup', {}).get('lab')} "
                   f"stage={len(fx.get('setup', {}).get('stage', []))} complaint={fx['complaint'][:60]!r}")
         return 0
-    if not claude:
-        sys.exit("claude CLI not found (set CLAUDE_BIN)")
     if not Path(faultline).is_dir():
         sys.exit(f"no faultline checkout at {faultline} (set FAULTLINE_DIR)")
     dirty = sh("git status --porcelain -- skills hooks .claude scripts docs", REPO).stdout.strip()
     if dirty:
         print("WARNING: uncommitted changes under skills/hooks/.claude/scripts/docs — the worktree runs HEAD, not them:\n" + dirty)
 
-    # Worktree of HEAD with an empty journals/ — no memory, no ground truth in reach.
+    # Worktree of HEAD with an empty journals/ — no memory, no ground truth in reach, and nothing
+    # of either in `git status` or `git log`.
     wt = worktree_dir()
-    sh(["git", "worktree", "add", "--detach", str(wt), "HEAD"], REPO, timeout=60)
-    for j in (wt / "journals").glob("*.md"):
-        j.unlink()
+    base_commit = make_working_copy(REPO, wt)
     env = dict(os.environ, FAULTLINE_DIR=faultline, KONAN_EVAL_BLIND="1")
     model_dir.mkdir(parents=True, exist_ok=True)
     results = out / "results.jsonl"
@@ -304,15 +398,13 @@ def main():
                     raise RuntimeError(f"{tag}: no user-visible 5xx after 3 restages — fixture staging is off")
                 print(f"   restage {restages}: no user-visible 5xx landed yet", flush=True)
                 lab_fresh(wt, env, base)
-            for j in (wt / "journals").glob("*.md"):
-                j.unlink()
+            reset_working_copy(wt, base_commit)
             prompt = f"/konan {fx['complaint']}"
             started = now_iso()
             t0 = time.time()
             timed_out = False
             try:
-                p = subprocess.run([claude, "-p", "--model", a.model, "--permission-mode", "acceptEdits",
-                                    "--output-format", "json", prompt],
+                p = subprocess.run(session_command(claude, a.model, a.effort, prompt),
                                    cwd=wt, env=env, stdin=subprocess.DEVNULL, capture_output=True,
                                    text=True, timeout=a.timeout_min * 60)
                 out_text, rc_code, err_text = p.stdout, p.returncode, p.stderr
@@ -333,7 +425,7 @@ def main():
             meta = envelope_meta(envelope)
             meta.update({"run_id": a.run_id, "model": a.model, "scenario": sid, "rep": r,
                          "fixture": str(fp.relative_to(REPO)), "started_at": started, "ended_at": ended,
-                         "restages": restages,
+                         "restages": restages, **invocation_record(a.effort, version),
                          "wall_seconds_runner": round(time.time() - t0)})
             journals = list((wt / "journals").glob("*.md"))
             status = "ok"

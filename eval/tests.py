@@ -605,6 +605,142 @@ def test_runner_worktree_name_is_neutral():
     assert "mkdtemp(" in src.split("def worktree_dir", 1)[1].split("\ndef ", 1)[0]
 
 
+# --- the working copy and the record of a run - the pins of intents/runner-context.md ---------
+def _git(cwd, *args):
+    return runner.sh(["git", "-c", "user.name=t", "-c", "user.email=t@localhost", *args], cwd).stdout
+
+
+def _source_repo(tmp):
+    """A repository with two commits, two journals and one other file: the source of a working copy."""
+    repo = Path(tmp) / "source"
+    (repo / "journals").mkdir(parents=True)
+    _git(repo, "init", "-q")
+    (repo / "journals" / "2026-01-01-first-defect.md").write_text("a\n")
+    (repo / "notes.txt").write_text("x\n")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "first subject of the source")
+    (repo / "journals" / "2026-01-02-second-defect.md").write_text("b\n")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "second subject of the source")
+    return repo
+
+
+def test_runner_working_copy_shows_no_removed_journal():
+    # Check 1: the harness puts `git status` and the last commit subjects into the context of a
+    # session. The working copy has an empty status and one commit with a neutral subject, so the
+    # block names no removed journal and no commit of the source repository.
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = _source_repo(tmp)
+        wt = runner.worktree_dir(base=tmp)
+        base = runner.make_working_copy(repo, wt)
+        assert _git(wt, "status", "--porcelain") == "", _git(wt, "status", "--porcelain")
+        assert _git(wt, "log", "--format=%s").splitlines() == [runner.WORKING_COPY_SUBJECT]
+        assert _git(wt, "rev-parse", "HEAD").strip() == base
+        assert "defect" not in _git(wt, "status") + _git(wt, "log", "--stat")
+        assert (wt / "notes.txt").read_text() == "x\n"            # the rest of the tree is the tree of HEAD
+        assert _git(repo, "branch", "--format=%(refname:short)").split() == [_git(repo, "branch", "--show-current").strip()]
+        assert len(_git(repo, "log", "--format=%s").splitlines()) == 2   # the source is as it was
+        # A working copy that cannot be finished is removed again, not left registered in the source.
+        broken = runner.worktree_dir(base=tmp)
+        real_sh = runner.sh
+
+        def failing(cmd, cwd, **kw):
+            if cmd[:2] == ["git", "commit-tree"]:
+                raise RuntimeError("commit-tree failed")
+            return real_sh(cmd, cwd, **kw)
+        runner.sh = failing
+        try:
+            runner.make_working_copy(repo, broken)
+            raise AssertionError("a failed step did not raise")
+        except RuntimeError:
+            pass
+        finally:
+            runner.sh = real_sh
+        assert not broken.exists() and len(_git(repo, "worktree", "list").splitlines()) == 2
+
+
+def test_runner_working_copy_takes_a_journal():
+    # Check 2, and the last sentence of check 1: `journals/` is there and empty, the investigator can
+    # add and commit its journal, and the reset before the next investigation leaves one commit, a
+    # clean status and an empty `journals/` again - also when the run before left a file behind.
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = _source_repo(tmp)
+        wt = runner.worktree_dir(base=tmp)
+        base = runner.make_working_copy(repo, wt)
+        assert (wt / "journals").is_dir() and list((wt / "journals").iterdir()) == []
+        (wt / "journals" / "2026-11-15-new.md").write_text("j\n")
+        _git(wt, "add", "journals/2026-11-15-new.md")
+        _git(wt, "commit", "-q", "-m", "the journal of this investigation")
+        assert _git(wt, "log", "--format=%s").splitlines() == ["the journal of this investigation",
+                                                               runner.WORKING_COPY_SUBJECT]
+        (wt / "left-behind.py").write_text("pass\n")
+        (wt / "journals" / "2026-11-15-not-committed.md").write_text("k\n")
+        (wt / "notes.txt").write_text("changed\n")
+        lock = Path(_git(wt, "rev-parse", "--absolute-git-dir").strip()) / "index.lock"
+        lock.write_text("")                                    # a killed session left the lock of the index
+        runner.reset_working_copy(wt, base)
+        assert not lock.exists()
+        assert _git(wt, "status", "--porcelain") == ""
+        assert _git(wt, "log", "--format=%s").splitlines() == [runner.WORKING_COPY_SUBJECT]
+        assert (wt / "journals").is_dir() and list((wt / "journals").iterdir()) == []
+        assert not (wt / "left-behind.py").exists() and (wt / "notes.txt").read_text() == "x\n"
+
+
+def test_runner_records_effort_and_version():
+    # Check 3: with a level the command of the session carries it, and plan.json records the level
+    # and the version of the harness; without one the command is the command of before, and the
+    # record says `unset`. The version comes from a stub, not from the installed harness.
+    cmd = runner.session_command("claude", "m", "high", "/konan x")
+    assert cmd[cmd.index("--effort") + 1] == "high" and cmd[-1] == "/konan x", cmd
+    assert runner.session_command("claude", "m", None, "/konan x") == [
+        "claude", "-p", "--model", "m", "--permission-mode", "acceptEdits", "--output-format", "json", "/konan x"]
+    assert runner.EFFORT_LEVELS == ("low", "medium", "high", "xhigh", "max")
+    with tempfile.TemporaryDirectory() as tmp:
+        stub = Path(tmp) / "harness"
+        stub.write_text("#!/bin/sh\necho '9.9.9 (stub harness)'\n")
+        stub.chmod(0o755)
+        version = runner.harness_version(str(stub))
+        assert version == "9.9.9 (stub harness)", version
+        assert runner.harness_version(str(Path(tmp) / "absent")) is None
+        runner.register_plan(Path(tmp) / "with", SCENARIO_IDS, 3, effort="high", harness=version)
+        plan = json.loads((Path(tmp) / "with" / "plan.json").read_text())
+        assert plan["effort"] == "high" and plan["harness_version"] == "9.9.9 (stub harness)", plan
+        runner.register_plan(Path(tmp) / "without", SCENARIO_IDS, 3, harness=version)
+        assert json.loads((Path(tmp) / "without" / "plan.json").read_text())["effort"] == "unset"
+    assert runner.invocation_record("high", "9.9.9") == {"effort": "high", "harness_version": "9.9.9"}
+    assert runner.invocation_record(None, None) == {"effort": "unset", "harness_version": None}
+    src = (EVAL / "run.py").read_text()
+    assert src.count('"-p", "--model"') == 1, "one place builds the command of a session"
+
+
+def test_runner_refuses_a_changed_effort():
+    # Check 4: the effort level is part of the pre-registered plan. Another level, or none when the
+    # plan holds one, exits non-zero and leaves plan.json unchanged; the same level passes. A
+    # plan.json from before the field reads as `unset`.
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "bench-e"
+        runner.register_plan(out, SCENARIO_IDS, 3, effort="high")
+        before = (out / "plan.json").read_bytes()
+        for effort in ("xhigh", None):
+            try:
+                runner.register_plan(out, SCENARIO_IDS, 3, effort=effort)
+                raise AssertionError(f"effort {effort!r} was accepted on a plan registered at high")
+            except SystemExit as e:
+                assert e.code not in (0, None) and "effort" in str(e.code), e.code
+            assert (out / "plan.json").read_bytes() == before
+        runner.register_plan(out, SCENARIO_IDS, 3, effort="high")
+        assert (out / "plan.json").read_bytes() == before
+        old = Path(tmp) / "bench-old"
+        old.mkdir()
+        (old / "plan.json").write_text(json.dumps({"run_id": "bench-old", "fixtures": SCENARIO_IDS, "repeat": 3}))
+        runner.register_plan(old, SCENARIO_IDS, 3)              # no field, no level: the same plan
+        try:
+            runner.register_plan(old, SCENARIO_IDS, 3, effort="high")
+            raise AssertionError("a level was accepted on a plan that reads as unset")
+        except SystemExit as e:
+            assert "unset" in str(e.code), e.code
+
+
 # --- coverage (eval/bench.py, eval/run.py) — the pins of intents/bench-coverage.md ----------
 SCENARIO_IDS = sorted(p.stem for p in (EVAL / "scenarios").glob("*.yaml"))
 
@@ -726,9 +862,13 @@ if __name__ == "__main__":
               test_runner_stamps_tokens_once_in_the_machine_core_only,
               test_runner_user_error_detection_ignores_investigator_probes,
               test_runner_recognizes_quota_errors,
-              test_runner_worktree_name_is_neutral):
+              test_runner_worktree_name_is_neutral,
+              test_runner_working_copy_shows_no_removed_journal,
+              test_runner_working_copy_takes_a_journal,
+              test_runner_records_effort_and_version,
+              test_runner_refuses_a_changed_effort):
         t()
-    print("OK: 5 runner pins hold")
+    print("OK: 9 runner pins hold")
     for t in (test_bench_coverage_short_plan, test_bench_coverage_complete_plan,
               test_bench_coverage_quota_stops, test_bench_coverage_plan_source,
               test_bench_coverage_plan_is_pre_registered):

@@ -78,7 +78,9 @@ Coverage and the classes this lab cannot exercise: `eval/README.md`.
    default budget (one triage round, at most 3 deep-dives per round, at most 2 rounds);
    `--permission-mode acceptEdits`; no other prompt text.
 5. **Blinding and contamination control.** Fresh worktree per benchmark id with
-   `journals/` emptied (no incident memory); `KONAN_EVAL_BLIND=1` makes the boundary hook
+   `journals/` emptied (no incident memory), on one commit with no parent and reset before
+   each investigation, so that the session context names no removed journal and no commit
+   of the repository (#110); `KONAN_EVAL_BLIND=1` makes the boundary hook
    deny the tracker (`gh`), reads under `eval/`, and the faultline checkout — mechanically,
    with denials counted by the tripwire; ground truth lives only in fixtures the session
    cannot read.
@@ -101,6 +103,10 @@ Coverage and the classes this lab cannot exercise: `eval/README.md`.
     missing, with the quota stops that explain a gap — at its head, rendered from that
     file and never from the live fixtures; a table with a missing count above zero is not
     published as complete.
+11. **Effort.** The effort level is part of a configuration: one level per benchmark id,
+    given with `--effort`, pre-registered in `plan.json` and recorded in each sidecar with
+    the version of the harness (#110). A run without the option records `unset`, and its
+    level is whatever the settings of the operator were.
 
 ## What the benchmark is for, beyond ranking
 
@@ -144,6 +150,10 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
 - N = 3 is variance-aware, not statistically strong; report counts, not significance.
 - Blinding is mechanical for the tracker, fixtures, and the lab checkout; the model's
   prior knowledge of the public faultline repository cannot be controlled.
+- bench-v1 and bench-v2 ran before #110. Their run files record no effort level; bench-v2
+  ran at `xhigh`, and its sessions carried the names of the journals of that time in their
+  context, through the `git status` of the worktree (both from the session records of the
+  operator, outside the repository).
 
 ## Results — bench-v1 (complete: 90 runs, three models)
 
