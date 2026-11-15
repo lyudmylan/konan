@@ -44,7 +44,8 @@ its runs and its table stay as they are.
    committed.
    test: `eval/tests.py::test_runner_working_copy_takes_a_journal`
 3. With `--effort high` the command of the session carries the level, and `plan.json` and the sidecar
-   record `high` and the version of the harness. Without the option they record `unset`.
+   record `high` and the version of the harness, as `claude --version` prints it. Without the option they
+   record `unset` for the level.
    test: `eval/tests.py::test_runner_records_effort_and_version`
 4. A second invocation of a run id with another effort level, or with none when the run id recorded one,
    is refused before any investigation starts.

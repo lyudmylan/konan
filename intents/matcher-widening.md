@@ -50,7 +50,7 @@ table stays as pre-registered. The two runs of the round of 2026-11-15 that fail
    the test, not into this file.
    test: the same pin.
 4. `switch-flipped` is the same expression in the four fixtures that carry it.
-   command: `test "$(grep -h -A1 'id: switch-flipped' eval/scenarios/*.yaml | grep all_of | sort -u | wc -l | tr -d ' ')" -eq 1`
+   command: `test "$(grep -l 'id: switch-flipped' eval/scenarios/*.yaml | wc -l | tr -d ' ')" -eq 4 && test "$(grep -h -A1 'id: switch-flipped' eval/scenarios/*.yaml | grep all_of | sort -u | wc -l | tr -d ' ')" -eq 1`
 5. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`
 
