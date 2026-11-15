@@ -4,8 +4,8 @@ Work item: #110. Status: planned. Approval: a person merges the change request t
 
 ## Goal
 
-A benchmark run sees no name of an earlier journal and no commit subject of the repository, and its files
-say at which effort level and on which version of the harness it ran.
+The session context of a benchmark run carries no name of an earlier journal and no commit subject of the
+repository, and its files say at which effort level and on which version of the harness it ran.
 
 ## In scope
 
@@ -23,14 +23,16 @@ say at which effort level and on which version of the harness it ran.
 - `eval/tests.py`: the pins of the checks below.
 - `AGENTS.md`: the command line of the runner, in the section "Commands", names the option.
 - `eval/README.md`, the blinding contract: the sentence on the emptied `journals/` says that the names are
-  gone too. `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits
+  gone from the session context too, and states which routes stay open. `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits
   section says that bench-v2 ran at `xhigh` with the journal names in the session context (from the session
   records of the operator, outside the repository).
 
 ## Out of scope
 
-Which instruction files and settings of the operator a run loads: a run loads them today, and that is a
-separate decision. The boundary hook and its pins. The fixtures, the scorer, the journal schema. bench-v2:
+The routes that stay open: tracked files outside `eval/` that name earlier journals (the top-level README,
+three files under `intents/`, `hooks/tests.py`), and `git log --all` and `git show <id>` in the worktree,
+which still reach the history of the repository. Which instruction files and settings of the operator a
+run loads: a run loads them today, and that is a separate decision. The boundary hook and its pins. The fixtures, the scorer, the journal schema. bench-v2:
 its runs and its table stay as they are.
 
 ## Acceptance checks

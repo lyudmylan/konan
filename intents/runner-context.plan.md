@@ -82,10 +82,10 @@ arguments and stays as it is: the new arguments have defaults.
 
 ## What the plan does not do
 
-- `git log --all` and `git show <id>` in the working copy still reach the history of the repository, as
-  today: a worktree shares the objects of its repository. A copy with a history of its own (an export and a
-  new repository) would close that, and it changes how the boundary hook finds its workspace and how the
-  runner removes the copy. That is a larger change than this work item.
+- The routes named in the out-of-scope section of the intent stay open. For the history, the reason is
+  that a worktree shares the objects of its repository. A copy with a history of its own (an export and a
+  new repository) would close that route, and it changes how the boundary hook finds its workspace and how
+  the runner removes the copy. That is a larger change than this work item.
 - Without `--effort` the level comes from the settings and the environment of the operator, and the record
   says `unset`. Making the option required is the stricter choice; the intent leaves it optional.
 
@@ -108,10 +108,9 @@ or the documents:
 
 Not changed, and named here:
 
-- Tracked files outside `eval/` name earlier journals: the top-level README, three files under
-  `intents/`, and `hooks/tests.py`. A session that reads them sees the names. In the round of 2026-11-15
-  no session opened one of them. This work item closes the route through the session context; these
-  files are a decision of their own.
+- The open routes of the intent's out-of-scope section. The review found the tracked files that name
+  earlier journals; in the round of 2026-11-15 no session opened one of them. After review round 2 the
+  goal of the intent says "the session context", which is what the checks prove.
 - `eval/bench.py` does not read the effort level. The table of a round does not show it yet.
 - A `plan.json` without the field reads as `unset`, also for a run id that ran at a known level before
   this change.
