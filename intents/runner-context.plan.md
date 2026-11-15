@@ -1,7 +1,7 @@
 # Plan: what a benchmark run sees, and what it records (#110)
 
-Intent: `intents/runner-context.md`. Written 2026-11-15; the code starts after the leader accepts it in the
-conversation.
+Intent: `intents/runner-context.md`. Written 2026-11-15. Accepted by the leader in the conversation on
+2026-11-15.
 
 ## Steps
 
@@ -85,3 +85,35 @@ arguments and stays as it is: the new arguments have defaults.
   runner removes the copy. That is a larger change than this work item.
 - Without `--effort` the level comes from the settings and the environment of the operator, and the record
   says `unset`. Making the option required is the stricter choice; the intent leaves it optional.
+
+## Changes after the code review, 2026-11-15
+
+The code review (`/code-review`, on the first commit of the code) gave ten findings. Five changed the code
+or the documents:
+
+- Step 1: a working copy that cannot be finished is removed again, so that no half-made worktree stays
+  registered in the repository.
+- Step 2: the reset also removes untracked files (`git clean`), since a file that the run before left
+  behind would show in the status of the next session. A session that the runner killed at its timeout
+  can leave the lock of the index; the reset removes a stale lock and tries once more.
+- Step 4: the two fields of the sidecar come from one pure function, `invocation_record`, and the pin
+  reads that function. The runner checks that the harness exists before it registers a plan, and a dry
+  run does not call the harness.
+- Step 7: `eval/README.md` states which routes stay open (below).
+- `AGENTS.md`: the command line of the runner gains `[--effort <level>]`, one token, so that the reference
+  and the protocol say the same.
+
+Not changed, and named here:
+
+- Tracked files outside `eval/` name earlier journals: the top-level README, three files under
+  `intents/`, and `hooks/tests.py`. A session that reads them sees the names. In the round of 2026-11-15
+  no session opened one of them. This work item closes the route through the session context; these
+  files are a decision of their own.
+- `eval/bench.py` does not read the effort level. The table of a round does not show it yet.
+- A `plan.json` without the field reads as `unset`, also for a run id that ran at a known level before
+  this change.
+
+One more fact from the session records of the round of 2026-11-15, found while answering the review: one
+session of 30 read a removed journal back from the history, with `git show HEAD:journals/<name>`, after
+it saw the name in the session context. With the working copy of step 1 that command finds nothing: the
+one commit holds no journal.
