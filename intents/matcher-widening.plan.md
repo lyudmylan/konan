@@ -1,7 +1,7 @@
 # Plan: the widened matchers of the corpus (#90)
 
-Intent: `intents/matcher-widening.md`. Written 2026-11-15; the code starts after the leader accepts it in the
-conversation.
+Intent: `intents/matcher-widening.md`. Written 2026-11-15. Accepted by the leader in the conversation on
+2026-11-15.
 
 ## Steps
 
@@ -49,13 +49,15 @@ conversation.
      result of a healthy-trap journal changes.
 9. `eval/README.md`: one sentence where the calibration of the tier-3 matchers is named: six matchers were
    widened on the false-fail table of bench-v2 (#90) and pinned in `eval/tests.py`.
-10. `eval/BENCHMARK.md`: no change. bench-v2 stays scored as pre-registered at its commit.
+10. `eval/BENCHMARK.md`: one sentence at the table of bench-v2, saying that the committed table is the
+    pre-registered scoring and reproduces at its own commit; the table itself is not re-scored.
 11. The two commands of `AGENTS.md`, then the automatic checks of the intent by hand. One change request,
     `Closes #90`, on this branch. No file under a code path changes.
 
 ## Files
 
-Six fixtures under `eval/scenarios/`, `eval/tests.py`, `eval/README.md`, and this file.
+Six fixtures under `eval/scenarios/`, `eval/tests.py`, `eval/README.md`, `eval/BENCHMARK.md`, the intent
+(two sentences of its scope, after review round 1), and this file.
 
 ## Tests
 
@@ -102,9 +104,9 @@ from the same journal; they are tighter:
 - `no-restart-after`: the two added forms have word boundaries.
 - Pin 24 holds the old `no-restart-after` pattern as a literal like the other five, and gains the denial
   cases above.
-- Step 10 changes: `eval/BENCHMARK.md` gains one sentence at the table of bench-v2. `eval/bench.py`
-  scores the committed journals with the live fixtures, so after this change it gives the rates by
-  content (87%, 87%, 83%); the sentence says that the committed table reproduces at its own commit.
+- Step 10 was "no change" in the accepted plan. `eval/bench.py` scores the committed journals with the
+  live fixtures, so after this change it gives the rates by content (87%, 87%, 83%); step 10 now adds the
+  sentence that says so.
 
 Left as it is, by the rule of manual check 6 (no form beyond the wording of the journals): near variants
 that no committed journal carries, such as "switched on" or "units_in_stock is zero", still fail. "no

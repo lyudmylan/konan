@@ -463,6 +463,8 @@ def run():
         assert not hits("d1-zero-stock-product-page", "data-condition", text), text
     back = "The process crashed, the supervisor started it again, and a process is listening on the port."
     assert not hits("t3-crash-hard-down", "no-restart-after", back)
+    # Not covered, and known: "found no process listening and restarted it" matches the form "no process
+    # listening" although the report says the process came back. The plan names this limit.
     # A denial is not the claim: the added forms carry the negation guards of the tripwires.
     denied = ("The switch was never turned on and was not turned on by a deploy; the failures are not random "
               "and non-random: one route fails, 0% of the others.")

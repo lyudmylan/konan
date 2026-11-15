@@ -21,9 +21,13 @@ every statement carries.
 - The rule of the widening: every added alternative is anchored, and none matches a word that every
   statement carries ("requests", a timestamp).
 - A reference check runs the widened matchers over the 90 journals of bench-v2: the 13 rows of the table
-  that read "No" pass, no passing row changes, and no healthy-trap journal gains a match it did not have.
-- `eval/tests.py`: one pin per widened matcher, negative-tested with the vacuous forms that the review of
-  the round named.
+  that read "No" pass, no passing row changes, no healthy-trap journal changes its result, and the
+  journals that gain a match on a widened matcher of another fixture are named in the pin.
+- `eval/tests.py`: one pin, "matcher widening", that covers the six matchers, negative-tested with the
+  vacuous forms that the review of the round named.
+- `eval/README.md` and `eval/BENCHMARK.md`: one sentence each. The first names the widening where the
+  calibration of the matchers is described; the second says that the committed table of bench-v2 is the
+  pre-registered scoring and reproduces at its own commit.
 - The fixtures are pinned paths of a round, so the change lands between rounds, and the next round
   measures it.
 
