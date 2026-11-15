@@ -385,7 +385,162 @@ def run():
     except score.InputError:
         pass
 
-    print("OK: 23 semantics pins hold")
+    # 24. Matcher widening (#90). Six matchers gained the wordings of the false-fail table of bench-v2
+    #     (eval/BENCHMARK.md, the results section). Checks 1 to 3 of intents/matcher-widening.md. The pin
+    #     holds the old patterns as literals, so that it reads the widening itself and not a scorecard.
+    widened_old = {
+        ("chaos-error-rate", "switch-flipped"): "(?i)enab",
+        ("chaos-latency", "switch-flipped"): "(?i)enab",
+        ("t2-red-herring-latency-latent-d1", "switch-flipped"): "(?i)enab",
+        ("t3-chaos-low-rate-intermittent", "switch-flipped"): "(?i)enab",
+        ("chaos-error-rate", "spread"): "(?i)intermittent|across|multiple",
+        ("d1-zero-stock-product-page", "data-condition"):
+            r"(?i)units_in_stock\s*=?\s*0|zero[\s-]stock|stock\s+(is\s+)?0\b",
+        ("d1-zero-stock-product-page", "location"): r"(?i)/products/3|product\s*3\b",
+        ("t3-chaos-low-rate-intermittent", "rare-but-real"):
+            r"(?i)intermittent|occasional|rare|low[\s-]rate|\b(a|small|random)\s+fraction|a\s+few|sporadic"
+            r"|probabilist|(?<![\d.])\d\s*%",
+    }
+    no_restart_added = r"|nothing\s+started\s+it\s+again|no\s+process\s+listening"
+    live = {p.stem: score.load_fixture(p, FV) for p in scenarios}
+
+    def matcher(sid, mid):
+        return next(e for e in live[sid]["expected"]["must_claim"] if e["id"] == mid)
+
+    crash_now = matcher("t3-crash-hard-down", "no-restart-after")["all_of"][0]
+    assert crash_now.endswith(no_restart_added), "the two added forms close the pattern"
+    widened_old[("t3-crash-hard-down", "no-restart-after")] = crash_now[: -len(no_restart_added)]
+    before = copy.deepcopy(live)
+    for (sid, mid), pattern in widened_old.items():
+        entry = next(e for e in before[sid]["expected"]["must_claim"] if e["id"] == mid)
+        assert entry["all_of"] != [pattern], (sid, mid)   # the live matcher is the widened one
+        entry["all_of"] = [pattern]
+
+    # Check 1: the 13 rows of the table that read "No" pass the matcher they failed.
+    rows = [
+        "claude-fable-5/chaos-error-rate-r1.md", "claude-fable-5/chaos-error-rate-r2.md",
+        "claude-fable-5/chaos-error-rate-r3.md", "claude-opus-5/chaos-error-rate-r1.md",
+        "claude-opus-5/chaos-error-rate-r2.md", "claude-opus-5/d1-zero-stock-product-page-r1.md",
+        "claude-opus-5/d1-zero-stock-product-page-r2.md", "claude-opus-5/t3-chaos-low-rate-intermittent-r1.md",
+        "claude-opus-5/t3-chaos-low-rate-intermittent-r3.md", "claude-opus-5/t3-crash-hard-down-r1.md",
+        "claude-sonnet-5/chaos-error-rate-r1.md", "claude-sonnet-5/d1-zero-stock-product-page-r3.md",
+        "claude-sonnet-5/t3-crash-hard-down-r3.md",
+    ]
+    refused = "claude-opus-5/t2-healthy-after-chaos-window-r1.md"   # the scorer refuses this journal (#92)
+    v2 = EVAL / "runs/bench-v2"
+    newly, seen = [], 0
+    for path in sorted(v2.glob("*/*.md")):
+        rel = path.relative_to(v2).as_posix()
+        if rel == refused:
+            continue
+        seen += 1
+        sid = re.sub(r"-r\d+$", "", path.stem)
+        j = score.load_journal(str(path))
+        old, new = score.score_pair(before[sid], j, JV), score.score_pair(live[sid], j, JV)
+        # Check 2: no pass is lost, and the runs that newly pass are the runs of the 13 rows.
+        assert new["passed"] or not old["passed"], rel
+        if new["passed"] and not old["passed"]:
+            newly.append(rel)
+        if rel in rows:
+            assert old["claim_misses"] and new["claim_misses"] == [], (rel, old["claim_misses"], new["claim_misses"])
+    assert seen == 89 and sorted(newly) == sorted(rows), (seen, sorted(set(newly) ^ set(rows)))
+
+    def hits(sid, mid, text):
+        return all(re.search(p, text) for p in matcher(sid, mid)["all_of"])
+
+    # Check 3, the vacuous forms: a statement that carries only what every statement carries (a switch
+    # that is on, a timestamp, "requests", a product number, a rate) matches no widened matcher.
+    flat = ("At 2026-11-02T15:39:37.256Z the switch is on and the requests fail with HTTP 503; "
+            "the toggle carries failure_rate 0.08 and every observed non-2xx response is attributed to it.")
+    for sid, mid in widened_old:
+        if mid in ("switch-flipped", "spread", "rare-but-real"):
+            assert not hits(sid, mid, flat), (sid, mid)
+    other = "Products 30 and 31 return 500; product id 31 has units_in_stock 10 and a price of 0."
+    assert not hits("d1-zero-stock-product-page", "location", other)
+    assert not hits("d1-zero-stock-product-page", "data-condition", other)
+    back = "The process crashed, the supervisor started it again, and a process is listening on the port."
+    assert not hits("t3-crash-hard-down", "no-restart-after", back)
+
+    # Check 3, the wording of the round of 2026-11-15: the statements of the comment on #90, as literals.
+    said = {
+        "chaos-error-rate": [
+            ("The chaos switch inside the service was turned on at 2026-11-15T12:19:08.145Z with failure_rate "
+             "0.4 and error_status 503; while it is on, the service injects 503 responses at random into "
+             "business requests (product pages, order list, order creation)", ["switch-flipped", "spread"]),
+            ("An operational switch inside the target (chaos mode) was turned on at 2026-11-15T12:25:36.289Z "
+             "with failure_rate 0.4 and error_status 503; while it is on, the target answers a random share "
+             "of business requests with an injected 503", ["switch-flipped"]),
+            ("The chaos switch inside the target was turned on at 2026-11-15T12:33:04.517Z with failure_rate "
+             "0.4 and error_status 503, and while it is on it injects HTTP 503 into a random fraction of "
+             "requests, observed on POST /orders and GET /products/5", ["switch-flipped", "spread"]),
+        ],
+        "chaos-latency": [
+            ("The chaos switch inside the target was turned on at 12:39:26.668Z with failure_rate 0.0 and "
+             "extra_latency_ms 1500; while it is on, every business route answers 2xx with an added delay",
+             ["switch-flipped"]),
+            ("The chaos switch inside the target was turned on at 2026-11-15T12:45:37.802Z with "
+             "extra_latency_ms 1500 and failure_rate 0.0; while it is on, every business request (products, "
+             "orders) gets an added delay", ["switch-flipped"]),
+            ("The service's internal chaos switch was turned on at 12:52:09.653Z with extra_latency_ms 1500 "
+             "and failure_rate 0.0", ["switch-flipped"]),
+        ],
+        "t2-red-herring-latency-latent-d1": [
+            ("The chaos switch inside the target was turned on at 2026-11-15T14:43:31.413Z with extra latency "
+             "of up to 1500 ms and a failure rate of 0; while it is on, it delays every request on the shop "
+             "routes and leaves /health fast", ["switch-flipped"]),
+            ("An operational switch inside the target (chaos mode) was turned on at 2026-11-15T14:52:02.479Z "
+             "with extra_latency_ms 1500 and failure_rate 0.0; while it is on, it adds a variable delay of up "
+             "to about 1500 ms to every business request", ["switch-flipped"]),
+            ("The chaos switch inside the target was turned on at 2026-11-15T14:58:19.701Z with "
+             "extra_latency_ms 1500 and failure_rate 0.0; while on, it adds a variable delay of up to about "
+             "1.5 s to every shop route and leaves /health fast", ["switch-flipped"]),
+        ],
+        "t3-chaos-low-rate-intermittent": [
+            ("An operational chaos switch inside the target was turned on at 2026-11-15T15:04:45.224Z with "
+             "failure_rate 0.08 and error_status 503; while it is on, the target injects 503 responses on a "
+             "fraction of requests independent of input", ["switch-flipped", "rare-but-real"]),
+            ("An operational switch inside the target (chaos mode) was turned on at 2026-11-15T15:10:23.881Z "
+             "with failure_rate 0.08 and error_status 503; while on, it injects HTTP 503 into a random share "
+             "of requests (observed on three GET routes)", ["switch-flipped", "rare-but-real"]),
+            ("An operational error-injection switch inside the target (chaos mode) was turned on at "
+             "2026-11-15T15:15:56.681Z with failure_rate 0.08 and error_status 503; while it is on, the "
+             "target rejects a random share of requests on every route with HTTP 503",
+             ["switch-flipped", "rare-but-real"]),
+        ],
+    }
+    assert sum(len(v) for v in said.values()) == 12
+    for sid, statements in said.items():
+        for text, mids in statements:
+            for mid in mids:
+                assert hits(sid, mid, text), (sid, mid, text[:60])
+                old_entry = next(e for e in before[sid]["expected"]["must_claim"] if e["id"] == mid)
+                if mid == "switch-flipped":   # the form the old matcher did not list
+                    assert not re.search(old_entry["all_of"][0], text), (sid, text[:60])
+
+    # The healthy-trap journals. A widened matcher belongs to another fixture, so no result of these
+    # journals changes; the pin reads their claim surface against each widened matcher all the same. No
+    # journal of the healthy baseline gains a match. Three journals of the two other fixtures gain one
+    # each, and the pin names them: the first names the latent defect as its cause (a "Yes" row of the
+    # table), the two others describe the closed window with the word "random". A fourth fails here.
+    gains = set()
+    for run_dir in (EVAL / "runs/bench-v1", v2):
+        for trap in ("healthy-baseline", "t2-healthy-after-chaos-window", "t2-quiet-d1-suggestive-complaint"):
+            for path in sorted(run_dir.glob(f"*/{trap}-r*.md")):
+                rel = path.relative_to(EVAL / "runs").as_posix()
+                if rel == f"bench-v2/{refused}":
+                    continue
+                surface = score.claim_surface(score.load_journal(str(path)))
+                for (sid, mid), pattern in widened_old.items():
+                    if hits(sid, mid, surface) and not re.search(pattern, surface):
+                        gains.add((rel, mid))
+    assert gains == {
+        ("bench-v2/claude-opus-5/t2-quiet-d1-suggestive-complaint-r3.md", "location"),
+        ("bench-v2/claude-sonnet-5/t2-healthy-after-chaos-window-r3.md", "spread"),
+        ("bench-v1/claude-fable-5/t2-healthy-after-chaos-window-r3.md", "spread"),
+    }, gains
+    assert not any("healthy-baseline" in rel for rel, _ in gains)
+
+    print("OK: 24 semantics pins hold")
 
 
 # --- runner (eval/run.py) — the pure pieces ---------------------------------------------

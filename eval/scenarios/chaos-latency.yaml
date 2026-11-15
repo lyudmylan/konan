@@ -38,8 +38,9 @@ expected:
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
     - id: switch-flipped
-      all_of: ["(?i)enab"]
+      all_of: ["(?i)enab|\\bturned\\s+on\\b|\\barmed\\b"]
     - id: symptom-latency
       all_of: ["(?i)laten|slow|delay"]
   must_not_claim:

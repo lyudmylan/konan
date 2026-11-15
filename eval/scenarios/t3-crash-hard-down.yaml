@@ -31,9 +31,10 @@ expected:
   must_claim:
     - id: process-died
       all_of: ["(?i)crash|exit(ed)?|died|terminat|not\\s+running|process\\s+(is\\s+)?(down|gone)"]
+    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
     - id: no-restart-after
       # calibrated on the committed bench-v1 journals (#75): five forms added, none removed; pin 18 of eval/tests.py
-      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+(been\\s+)?restarted|\\bnot\\s+restart\\b|nothing\\s+restart(ed|ing)\\s+it|no\\s+(supervisor|process)\\s+restarted|no\\s+auto[\\s-]restart|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening"]
+      all_of: ["(?i)no\\s+(new\\s+)?startup|not\\s+(been\\s+)?restarted|never\\s+(been\\s+)?restarted|\\bnot\\s+restart\\b|nothing\\s+restart(ed|ing)\\s+it|no\\s+(supervisor|process)\\s+restarted|no\\s+auto[\\s-]restart|never\\s+came\\s+back|no\\s+restart|since\\s+the\\s+crash|remains\\s+down|still\\s+down|stayed\\s+down|has\\s+not\\s+restarted|not\\s+resumed|not\\s+come\\s+back|nothing\\s+is\\s+listening|nothing\\s+started\\s+it\\s+again|no\\s+process\\s+listening"]
   must_not_claim:
     - id: not-code-defect
       any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]

@@ -51,10 +51,12 @@ expected:
   must_claim:
     - id: cause-switch
       all_of: ["(?i)chaos|degrad|inject|failure\\s+mode"]
+    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
     - id: switch-flipped
-      all_of: ["(?i)enab"]
+      all_of: ["(?i)enab|\\bturned\\s+on\\b|\\barmed\\b"]
+    # widened on the false-fail table of bench-v2 (#90); pin 24 of eval/tests.py
     - id: spread
-      all_of: ["(?i)intermittent|across|multiple"]
+      all_of: ["(?i)intermittent|across|multiple|\\brandom(ly)?\\b|\\b(a|small|random)\\s+fraction\\b|probabilist|\\b\\d{1,2}\\s?%\\s+of\\b"]
   must_not_claim:
     - id: not-code-defect
       any_of: ["(?i)(?<!not )(?<!no )(?<!than )zero.?division", "(?i)(?<!not )(?<!no )(?<!than )type.?error"]

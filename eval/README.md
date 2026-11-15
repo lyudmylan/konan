@@ -195,7 +195,9 @@ traps and a healthy battery (the null verdict under pressure, past vs present). 
 faint or dead surfaces. Tiers 2–3 landed with corpus v2 (#49); their matchers are
 calibrated on the tier-1 known-good journals where the mechanism is shared; the tier-3
 matchers were first-cut until bench-v1 and are calibrated on its committed journals since
-#75, pinned in `eval/tests.py`.
+#75, pinned in `eval/tests.py`. Six matchers were widened on the false-fail table of bench-v2
+(`eval/BENCHMARK.md`, the results section) in #90, with the wordings that correct reports used, and
+are pinned in `eval/tests.py`.
 
 | Tier | Scenario | Class exercised | Expected verdict |
 | --- | --- | --- | --- |
