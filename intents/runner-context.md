@@ -23,7 +23,8 @@ say at which effort level and on which version of the harness it ran.
 - `eval/tests.py`: the pins of the checks below.
 - `eval/README.md`, the blinding contract: the sentence on the emptied `journals/` says that the names are
   gone too. `eval/BENCHMARK.md`, the protocol: the effort level is part of a configuration, and the limits
-  section says that bench-v2 ran at `xhigh` with the journal names in the session context.
+  section says that bench-v2 ran at `xhigh` with the journal names in the session context (from the session
+  records of the operator, outside the repository).
 
 ## Out of scope
 
@@ -36,7 +37,8 @@ its runs and its table stay as they are.
 ## Automatic checks
 
 1. The working copy that the runner builds has an empty `git status --porcelain`, and its `git log` holds
-   no commit subject of the source repository.
+   no commit subject of the source repository. The only commit that a run adds is the investigator's own
+   journal commit.
    test: `eval/tests.py::test_runner_working_copy_shows_no_removed_journal`. command: `uv run eval/tests.py`
 2. The working copy has an empty `journals/` directory, and a journal written there can be added and
    committed.
@@ -44,7 +46,8 @@ its runs and its table stay as they are.
 3. With `--effort high` the command of the session carries the level, and `plan.json` and the sidecar
    record `high` and the version of the harness. Without the option they record `unset`.
    test: `eval/tests.py::test_runner_records_effort_and_version`
-4. A second invocation of a run id with another effort level is refused before any investigation starts.
+4. A second invocation of a run id with another effort level, or with none when the run id recorded one,
+   is refused before any investigation starts.
    test: `eval/tests.py::test_runner_refuses_a_changed_effort`
 5. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`

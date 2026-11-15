@@ -45,7 +45,9 @@ table stays as pre-registered. The two runs of the round of 2026-11-15 that fail
    and the runs that newly pass are the runs of those 13 rows.
    test: the same pin.
 3. Each widened matcher rejects its vacuous forms: a statement whose only match would be a word that every
-   statement carries does not match.
+   statement carries does not match. Each widened matcher accepts a statement in the wording of the rows on
+   #90 for its fixture, as a literal string in the pin; the strings are copied from the comment on #90 into
+   the test, not into this file.
    test: the same pin.
 4. `switch-flipped` is the same expression in the four fixtures that carry it.
    command: `test "$(grep -h -A1 'id: switch-flipped' eval/scenarios/*.yaml | grep all_of | sort -u | wc -l | tr -d ' ')" -eq 1`
