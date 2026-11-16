@@ -41,6 +41,14 @@ each line as it does today.
   when it starts, and skips a line that does not parse. An alert with the status `resolved` adds no line.
   Both get 200. The number of investigations for one incident follows from the routing and the inhibition
   rules of the stack.
+- The stance "adding a stack costs a profile, never code" of `docs/product.md` and `docs/triggers.md`
+  stays. The receiver is the adapter for the HTTP transport, written once. It takes the group form of the
+  shape that the complaint contract adopted, and it holds no mapping for a stack. The decision record of
+  the trigger epic (#4) says that Grafana Alerting emits the same alert fields. A stack with another
+  payload delivers this shape through its profile, as `docs/triggers.md` says today, and adds no code
+  here. The two documents say so where they state the stance.
+- `scripts/receive.py`, one call at a time. The script answers calls one after the other, in one thread,
+  so the test of a pair and the append of its line are one step.
 - `scripts/receive.py`, the log: one line per call with the time, the answer code and the three counts
   (new, known, resolved). The token and the body of a call are never logged.
 - `skills/oncall/SKILL.md`. When the token file exists, the shift starts the receiver as a background
@@ -61,10 +69,11 @@ each line as it does today.
   the address and `credentials_file`, its sentence on sender-side templating is removed because the
   receiver takes the native payload, and the line states two limits: a call that finds no receiver is not
   stored by konan, and Alertmanager sends a firing alert again after its repeat interval; a host other
-  than loopback sends the token in clear text. `docs/architecture.md`: the receiver in the system picture and in the
-  on-call trigger path. `docs/product.md`: the roadmap line on alert-webhook triggers. `AGENTS.md`: the
-  command in "Commands", and the new allow entries in the sentence on unattended shift writes.
-  `skills/README.md`: the line on `oncall`.
+  than loopback sends the token in clear text. `docs/architecture.md`: the receiver in the system picture
+  and in the on-call trigger path. `docs/product.md`: the roadmap line on alert-webhook triggers, and the
+  stance line on triggers, which names the receiver as the trigger plumbing of the HTTP transport.
+  `AGENTS.md`: the command in "Commands", and the new allow entries in the sentence on unattended shift
+  writes. `skills/README.md`: the line on `oncall`.
 
 ## Out of scope
 
@@ -86,13 +95,13 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
    one line.
    test: `scripts/tests.py::test_firing_group_becomes_one_line_per_alert`
 3. The same call a second time gets 200 and adds no line, also after the receiver restarts on the same
-   inbox, and also when the inbox holds a line that does not parse. A call with the same fingerprint and
-   a later `startsAt` adds one line.
+   inbox, and also when the inbox holds a line that does not parse. Two identical calls that are sent at
+   the same time add one line. A call with the same fingerprint and a later `startsAt` adds one line.
    test: `scripts/tests.py::test_repeat_adds_no_line_and_a_new_start_adds_one`
 4. A call with the status `resolved` gets 200 and adds no line. A call that holds one firing alert and
    one resolved alert adds one line.
    test: `scripts/tests.py::test_resolved_alert_adds_no_line`
-5. A body that is not JSON, a payload without the list `alerts`, an alert without `fingerprint`, and a
+5. A body that is not JSON, a payload without the list `alerts`, an alert without `fingerprint`, an alert without `startsAt`, and a
    body over the size limit each get an answer in the 400 range, and the inbox does not change, also for
    the valid alerts of the same call. A path other than `/alerts` and a method other than POST write
    nothing.
