@@ -23,14 +23,15 @@ document says what they are and what they do not claim.
 - `eval/BENCHMARK.md`, one section for the two rounds:
   - the pins, the model, the effort level, the version of the harness, the dates;
   - the scores of each round, under the scorer of its commit and under the scorer of main;
-  - the false-fail table of each round, one row for each failed run of its scorecard: 14 rows and 1 row;
+  - the false-fail table of each round, one row for each failed run of its scorecard: 14 rows and 1 row.
+    Each row starts with the run id of its round, and no other line of the document starts so;
   - the limits of each round. Both rounds: the sessions loaded instruction files and memory notes of the
     operator; the effort level was `high`, and bench-v2 ran at `xhigh`. The first round: the session context
     named the removed journals (#110), and no file of the round records the effort level. The second round:
     two investigations ran across a sleep of the computer, past the limit of 30 minutes by the clock, and
     the runner did not stop them;
-  - one sentence that the two rounds are no part of the published table and support no comparison of
-    models.
+  - one sentence with these words: the two rounds are "no part of the published table" and support "no
+    comparison of models".
 
 ## Out of scope
 
@@ -52,22 +53,25 @@ fixtures, the scorer, the runner.
    command: `uv run eval/bench.py --runs eval/runs/move-fable-5-2 | grep -qE '^\| all \| claude-fable-5-2 \| 30 \| 0 \| 93% '`
 4. The scorecard of the first round stays as the runner wrote it at its commit: 16 of 30.
    command: `grep -q 'Scenarios passed: 16/30' eval/runs/move-fable-5-2/scorecard.md`
-5. No file of the two folders carries a home-directory path.
-   command: `! grep -rIqE '/Users/|/home/[a-z]' eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2`
+5. No file of the two folders carries a home-directory path of macOS, Linux or Windows.
+   command: `! grep -rIqE '/Users/|/home/[a-z]|/root/|[A-Za-z]:\\Users' eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2`
 6. The protocol document carries the section of the two rounds, as a heading, and the section carries the
-   false-fail tables.
-   command: `grep -qE '^#+ .*claude-fable-5-2' eval/BENCHMARK.md && grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'false-fail'`
+   false-fail tables: 14 rows for the first round and 1 row for the second.
+   command: `grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'false-fail' && test "$(grep -cE '^\| move-fable-5-2 \| ' eval/BENCHMARK.md)" = 14 && test "$(grep -cE '^\| fable-5-2-round-2 \| ' eval/BENCHMARK.md)" = 1`
 7. The section states the sleep of the computer as a limit of the second round.
    command: `grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'sleep'`
-8. The quality checks and the contract checks pass.
+8. The section states the limits and what the rounds do not claim: the loaded instruction files of the
+   operator, the effort level against the `xhigh` of bench-v2, and the sentence of the scope.
+   command: `s=$(grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md); echo "$s" | grep -qi 'instruction files' && echo "$s" | grep -q 'xhigh' && echo "$s" | grep -q 'no part of the published table' && echo "$s" | grep -q 'no comparison of models'`
+9. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`
 
 ## Manual checks
 
-9. The false-fail table of each round has one row for each failed run of its scorecard, and each row says
-   whether the agent was wrong. who: drafted by the agent, reviewed by an agent that is not the author,
-   confirmed by the leader. Not automatic: whether the agent was wrong is a reading.
-10. The two investigations of the second round that ran across a sleep of the computer count as completed
+10. The false-fail table of each round has one row for each failed run of its scorecard, and each row says
+    whether the agent was wrong. who: drafted by the agent, reviewed by an agent that is not the author,
+    confirmed by the leader. Not automatic: whether the agent was wrong is a reading.
+11. The two investigations of the second round that ran across a sleep of the computer count as completed
     runs. who: the leader. Not automatic: the protocol has no rule for a sleep, so it is a decision.
-11. Each `usage-readings.md` carries the readings that the leader stated. who: the engineer records them,
+12. Each `usage-readings.md` carries the readings that the leader stated. who: the engineer records them,
     the leader reads them. Not automatic: a person reads the usage panel.
