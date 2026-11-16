@@ -15,9 +15,9 @@ document says what they are and what they do not claim.
   as 28 of 30 since #90; the section of the protocol document states both numbers.
 - `eval/runs/fable-5-2-round-2/`, the second round: 30 investigations at a07dad8, after both corrections,
   with `--effort high`. Committed whole, the same files (29 of 30).
-- No file of a run changes on its way into the repository. The redaction rule of `eval/BENCHMARK.md` for
-  archived runs holds: no file of the two folders carries a home-directory path. A file that carries one is
-  redacted by that rule, and the change request names the file.
+- No file of a run changes on its way into the repository, except the redaction of a home-directory prefix
+  to `<checkout>` or `<home>` by the rule of `eval/BENCHMARK.md`; the change request names each redacted
+  file. The claim surfaces, the evidence ids and the timestamps are untouched.
 - `usage-readings.md` in each folder: the readings of the usage panel that the leader stated before and
   after each round.
 - `eval/BENCHMARK.md`, one section for the two rounds:
@@ -44,27 +44,30 @@ fixtures, the scorer, the runner.
 ## Automatic checks
 
 1. Each of the two run directories covers its plan: 30 planned, 30 completed, 0 missing.
-   command: `test "$(uv run eval/bench.py --runs eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2 | grep -cE 'missing 0([^0-9]|$)')" = 2`
+   command: `test "$(uv run eval/bench.py --runs eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2 | grep -cE 'planned 30, completed 30, failed [0-9]+, missing 0([^0-9]|$)')" = 2`
 2. The committed journals of the second round reproduce its score under the scorer of main: 30 runs, none
    failed to complete, pass rate 97% (29 of 30).
    command: `uv run eval/bench.py --runs eval/runs/fable-5-2-round-2 | grep -qE '^\| all \| claude-fable-5-2 \| 30 \| 0 \| 97% '`
 3. The committed journals of the first round give 93% (28 of 30) under the scorer of main.
    command: `uv run eval/bench.py --runs eval/runs/move-fable-5-2 | grep -qE '^\| all \| claude-fable-5-2 \| 30 \| 0 \| 93% '`
-4. No file of the two folders carries a home-directory path.
+4. The scorecard of the first round stays as the runner wrote it at its commit: 16 of 30.
+   command: `grep -q 'Scenarios passed: 16/30' eval/runs/move-fable-5-2/scorecard.md`
+5. No file of the two folders carries a home-directory path.
    command: `! grep -rIqE '/Users/|/home/[a-z]' eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2`
-5. The protocol document carries the section of the two rounds, as a heading, and the section carries the
+6. The protocol document carries the section of the two rounds, as a heading, and the section carries the
    false-fail tables.
    command: `grep -qE '^#+ .*claude-fable-5-2' eval/BENCHMARK.md && grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'false-fail'`
-6. The quality checks and the contract checks pass.
+7. The section states the sleep of the computer as a limit of the second round.
+   command: `grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'sleep'`
+8. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`
 
 ## Manual checks
 
-7. The false-fail table of each round has one row for each failed run of its scorecard, and each row says
+9. The false-fail table of each round has one row for each failed run of its scorecard, and each row says
    whether the agent was wrong. who: drafted by the agent, reviewed by an agent that is not the author,
    confirmed by the leader. Not automatic: whether the agent was wrong is a reading.
-8. The two investigations of the second round that ran across a sleep of the computer count as completed
-   runs, and the section states the deviation. who: the leader. Not automatic: the protocol has no rule for
-   a sleep, so it is a decision.
-9. Each `usage-readings.md` carries the readings that the leader stated. who: the engineer records them,
-   the leader reads them. Not automatic: a person reads the usage panel.
+10. The two investigations of the second round that ran across a sleep of the computer count as completed
+    runs. who: the leader. Not automatic: the protocol has no rule for a sleep, so it is a decision.
+11. Each `usage-readings.md` carries the readings that the leader stated. who: the engineer records them,
+    the leader reads them. Not automatic: a person reads the usage panel.
