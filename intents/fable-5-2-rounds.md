@@ -11,20 +11,21 @@ document says what they are and what they do not claim.
 
 - `eval/runs/move-fable-5-2/`, the first round: 30 investigations at 8e62e4e, before the corrections of
   #90 and #110. Committed whole: the journals, the sidecars, `plan.json`, `results.jsonl`, and
-  `scorecard.md` as the runner wrote it at its commit (16 of 30). The scorer of main reads the same journals
-  as 28 of 30 since #90; the section of the protocol document states both numbers.
+  `scorecard.md` as the runner wrote it at its commit. The scorer of main reads the same journals with the
+  matchers of #90; the section of the protocol document states both scores.
 - `eval/runs/fable-5-2-round-2/`, the second round: 30 investigations at a07dad8, after both corrections,
-  with `--effort high`. Committed whole, the same files (29 of 30).
+  with `--effort high`. Committed whole, the same files.
 - No file of a run changes on its way into the repository, except the redaction of a home-directory prefix
   to `<checkout>` or `<home>` by the rule of `eval/BENCHMARK.md`; the change request names each redacted
   file. The claim surfaces, the evidence ids and the timestamps are untouched.
 - `usage-readings.md` in each folder: the readings of the usage panel that the leader stated before and
   after each round.
-- `eval/BENCHMARK.md`, one section for the two rounds:
+- `eval/BENCHMARK.md`, one section for the two rounds, the last section of the file:
   - the pins, the model, the effort level, the version of the harness, the dates;
-  - the scores of each round, under the scorer of its commit and under the scorer of main;
-  - the false-fail table of each round, one row for each failed run of its scorecard: 14 rows and 1 row.
-    Each row starts with the run id of its round, and no other line of the document starts so;
+  - the scores of each round, under the scorer of its commit and under the scorer of main, as in checks 2
+    to 4;
+  - the false-fail table of each round, one row for each failed run of its scorecard, as in check 6. Each
+    row starts with the run id of its round, and no other line of the document starts so;
   - the limits of each round. Both rounds: the sessions loaded instruction files and memory notes of the
     operator; the effort level was `high`, and bench-v2 ran at `xhigh`. The first round: the session context
     named the removed journals (#110), and no file of the round records the effort level. The second round:
@@ -57,12 +58,12 @@ fixtures, the scorer, the runner.
    command: `! grep -rIqE '/Users/|/home/[a-z]|/root/|[A-Za-z]:\\Users' eval/runs/move-fable-5-2 eval/runs/fable-5-2-round-2`
 6. The protocol document carries the section of the two rounds, as a heading, and the section carries the
    false-fail tables: 14 rows for the first round and 1 row for the second.
-   command: `grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'false-fail' && test "$(grep -cE '^\| move-fable-5-2 \| ' eval/BENCHMARK.md)" = 14 && test "$(grep -cE '^\| fable-5-2-round-2 \| ' eval/BENCHMARK.md)" = 1`
+   command: `s=$(awk '/^#+ .*claude-fable-5-2/{f=1;next} f&&/^## /{f=0} f' eval/BENCHMARK.md); echo "$s" | grep -qi 'false-fail' && test "$(grep -cE '^\| move-fable-5-2 \| ' eval/BENCHMARK.md)" = 14 && test "$(grep -cE '^\| fable-5-2-round-2 \| ' eval/BENCHMARK.md)" = 1`
 7. The section states the sleep of the computer as a limit of the second round.
-   command: `grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md | grep -qi 'sleep'`
+   command: `s=$(awk '/^#+ .*claude-fable-5-2/{f=1;next} f&&/^## /{f=0} f' eval/BENCHMARK.md); echo "$s" | grep -qi 'sleep'`
 8. The section states the limits and what the rounds do not claim: the loaded instruction files of the
    operator, the effort level against the `xhigh` of bench-v2, and the sentence of the scope.
-   command: `s=$(grep -A200 -E '^#+ .*claude-fable-5-2' eval/BENCHMARK.md); echo "$s" | grep -qi 'instruction files' && echo "$s" | grep -q 'xhigh' && echo "$s" | grep -q 'no part of the published table' && echo "$s" | grep -q 'no comparison of models'`
+   command: `s=$(awk '/^#+ .*claude-fable-5-2/{f=1;next} f&&/^## /{f=0} f' eval/BENCHMARK.md); echo "$s" | grep -qi 'instruction files' && echo "$s" | grep -q 'xhigh' && echo "$s" | grep -q 'no part of the published table' && echo "$s" | grep -q 'no comparison of models'`
 9. The quality checks and the contract checks pass.
    command: `charter-gate quality --contract charter.toml && charter-check all charter.toml`
 
