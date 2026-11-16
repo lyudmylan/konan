@@ -1,0 +1,41 @@
+{
+  "session_id": "a8474d82-6a6c-46ba-ad63-e9d3f0150f8c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 301358,
+  "duration_api_ms": 354387,
+  "total_cost_usd": 3.5573833999999995,
+  "tokens_total": 1167859,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 48,
+      "outputTokens": 32827,
+      "cacheReadInputTokens": 971827,
+      "cacheCreationInputTokens": 163157,
+      "costUSD": 3.5573833999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\"; ls skills/investigate skills/investigate/* docs journals 2>&1 | head -80"
+    }
+  ],
+  "result_tail": "ejected a code defect and a network failure.\n- **Classification:** class `infra-process`, cause `process-crashed`.\n\nThree things are not known:\n- The sender of the crash request. It was not an investigation probe.\n- The state ten minutes ago. The log starts 6.5 seconds before the crash.\n- The exit itself. The log line is the process's own announcement, and the process table is outside the permitted surface.\n\nI did not run the schema check on the report file.\n\nReport: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-down-process-crashed.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-crash-hard-down",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-15T22:46:33Z",
+  "ended_at": "2026-11-15T22:51:36Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 302,
+  "journal_source_name": "2026-11-15-shop-down-process-crashed.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

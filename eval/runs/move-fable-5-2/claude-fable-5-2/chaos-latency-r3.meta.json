@@ -1,0 +1,39 @@
+{
+  "session_id": "ada4823d-c546-4f93-9c70-00d587195cb9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 364337,
+  "duration_api_ms": 430458,
+  "total_cost_usd": 3.9942840000000004,
+  "tokens_total": 1324906,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 42395,
+      "cacheReadInputTokens": 1113720,
+      "cacheCreationInputTokens": 168741,
+      "costUSD": 3.9942840000000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "health check has no delay, so it stays green.\n- The switch was still on at 12:54:21 UTC.\n\nThe judge (a separate agent that sees only the evidence) confirmed this cause. It rejected three others: a code defect, too much load, and a slow process start.\n\nOne limit: the cause rests on timing and on the switch setting. A final proof needs the switch off, and I do not change the target.\n\nI checked the journal by hand; the automated check did not run. I did not commit it.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-bybnthqv/wt/journals/2026-11-15-shop-wide-latency.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-15T12:52:21Z",
+  "ended_at": "2026-11-15T12:58:26Z",
+  "restages": 0,
+  "wall_seconds_runner": 365,
+  "journal_source_name": "2026-11-15-shop-wide-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

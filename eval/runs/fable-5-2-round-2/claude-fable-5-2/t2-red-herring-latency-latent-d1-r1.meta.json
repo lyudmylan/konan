@@ -1,0 +1,41 @@
+{
+  "session_id": "a1c4cb53-96a5-4c48-980a-ab6923f7e587",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 431452,
+  "duration_api_ms": 486001,
+  "total_cost_usd": 4.6828943999999995,
+  "tokens_total": 1491354,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 56,
+      "outputTokens": 45833,
+      "cacheReadInputTokens": 1237762,
+      "cacheCreationInputTokens": 207703,
+      "costUSD": 4.6828943999999995
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\"; date -u +%Y-%m-%dT%H:%M:%SZ; ls skills/investigate skills/investigate/* journals 2>&1 | head -60"
+    }
+  ],
+  "result_tail": "ast.\n- **Status:** the switch was still on at my last reading, 20:19:00 UTC.\n- **Error page:** not confirmed. No user request failed after the service started at 20:14:43 UTC. No data exists before that time.\n\nI did not run the schema check on the journal (the investigation report). I checked its fields against the schema by reading only.\n\nSecond topic, one line: my own probe of product 3 returned an error (division by zero, stock is 0); no user triggered it.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-slow-chaos-latency.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 1,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-15T20:15:00Z",
+  "ended_at": "2026-11-15T20:22:12Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 432,
+  "journal_source_name": "2026-11-15-shop-slow-chaos-latency.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

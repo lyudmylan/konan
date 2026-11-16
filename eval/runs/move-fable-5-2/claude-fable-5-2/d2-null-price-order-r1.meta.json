@@ -1,0 +1,43 @@
+{
+  "session_id": "e11c8e12-041f-48ca-b56f-30c0307edf44",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 42,
+  "duration_ms": 429369,
+  "duration_api_ms": 492866,
+  "total_cost_usd": 5.1502634,
+  "tokens_total": 2046578,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 66,
+      "outputTokens": 45739,
+      "cacheReadInputTokens": 1765227,
+      "cacheCreationInputTokens": 235546,
+      "costUSD": 5.1502634
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    },
+    {
+      "tool": "Bash",
+      "command": "grep -c \"\" lab/logs/app.log; grep -o '\"ts\": \"[^\"]*\", \"level\": \"ERROR\"[^}]\\{0,220\\}' lab/logs/app.log | tail -2; grep -o 'File [^ ]*shop.py[^Z]*ZeroDivisionError[^\"]*' lab/logs/app.log | tail -1; date -u +%Y-%m-%dT%H:%M:%SZ"
+    }
+  ],
+  "result_tail": "ders for other products succeeded.\n- **Rejected:** a restart or an injected failure. The process ran without a stop.\n- **Open:** telemetry does not show if the empty price is an error in the data.\n- **Second defect, not the incident:** the page of product 3 returns HTTP 500 (division by zero). Only my probe triggered it.\n\nI checked the journal (the investigation report file) against the schema by hand. The automated check did not run. I did not commit the file.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-bybnthqv/wt/journals/2026-11-15-order-500s-null-price.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d2-null-price-order",
+  "rep": 1,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-15T13:17:20Z",
+  "ended_at": "2026-11-15T13:24:30Z",
+  "restages": 0,
+  "wall_seconds_runner": 430,
+  "journal_source_name": "2026-11-15-order-500s-null-price.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,39 @@
+{
+  "session_id": "608f9951-35b4-4660-92ea-841c27ae56ac",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 367483,
+  "duration_api_ms": 423803,
+  "total_cost_usd": 3.8574066,
+  "tokens_total": 1160218,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 46,
+      "outputTokens": 40786,
+      "cacheReadInputTokens": 953023,
+      "cacheCreationInputTokens": 166363,
+      "costUSD": 3.8574066
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\"; ls skills/investigate skills/investigate/* docs docs/adapters 2>/dev/null"
+    }
+  ],
+  "result_tail": " stays fast.\n- **Error page:** I found no evidence of it. The shop process started at 14:58:13 UTC and recorded no error after that time. No record exists from before that time.\n- **Open question:** I cannot tell if that start replaced an earlier process that stopped.\n\nAn independent judge agent confirmed the cause from the quoted evidence. I checked the report format by hand, because no script could run in this session. I made no commit.\n\nThe full report is here:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-shop-slowness-latency-switch.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-15T14:58:30Z",
+  "ended_at": "2026-11-15T15:04:38Z",
+  "restages": 0,
+  "wall_seconds_runner": 368,
+  "journal_source_name": "2026-11-15-shop-slowness-latency-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

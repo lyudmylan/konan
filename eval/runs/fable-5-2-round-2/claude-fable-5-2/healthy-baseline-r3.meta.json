@@ -1,0 +1,36 @@
+{
+  "session_id": "a5274f77-4543-424d-a210-c7fb8aedfa2b",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 31,
+  "duration_ms": 331313,
+  "duration_api_ms": 410033,
+  "total_cost_usd": 4.102995399999998,
+  "tokens_total": 1627495,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 68,
+      "outputTokens": 37687,
+      "cacheReadInputTokens": 1398637,
+      "cacheCreationInputTokens": 191103,
+      "costUSD": 4.102995399999998
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "tock value, and that value is 0. Only my test requests triggered it.\n- **Counters:** the metrics now show 2 exceptions and 2 errors. Those came from this investigation.\n- **Open point:** the process was 27 seconds old at the check. The log has no lines before that start, so I cannot tell a first start from a restart.\n\nI did not validate the report file against the schema with a tool. I checked the structure by hand only.\n\nThe report with all evidence is at `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-handover-check.md`. It is not committed.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "healthy-baseline",
+  "rep": 3,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-15T19:28:01Z",
+  "ended_at": "2026-11-15T19:33:33Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 332,
+  "journal_source_name": "2026-11-15-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

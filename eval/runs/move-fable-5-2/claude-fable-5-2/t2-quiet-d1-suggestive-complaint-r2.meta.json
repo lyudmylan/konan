@@ -1,0 +1,39 @@
+{
+  "session_id": "f12a6ea5-cd76-408b-b2c8-a45492809645",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 446223,
+  "duration_api_ms": 538660,
+  "total_cost_usd": 4.7908576,
+  "tokens_total": 1628916,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 64,
+      "outputTokens": 50340,
+      "cacheReadInputTokens": 1375188,
+      "cacheCreationInputTokens": 203324,
+      "costUSD": 4.7908576
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; printenv KONAN_ADAPTER; echo \"adapter-exit=$?\""
+    }
+  ],
+  "result_tail": "**Limit:** The server started at 14:27:58 UTC, 11 seconds before the report. No log or counter exists from before that time, so I cannot confirm the errors of this morning.\n\nThe recorded result is \"no active incident\", with the defect as a finding that matches the report. Support can settle it with the product and the time of the failed page views.\n\nI checked the journal against its format by hand only; the automated check did not run. The journal is not committed.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-product-page-500s.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-15T14:28:04Z",
+  "ended_at": "2026-11-15T14:35:31Z",
+  "restages": 0,
+  "wall_seconds_runner": 447,
+  "journal_source_name": "2026-11-15-product-page-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

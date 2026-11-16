@@ -1,0 +1,39 @@
+{
+  "session_id": "da096792-2aee-46c7-8633-31c9999344af",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 325271,
+  "duration_api_ms": 374399,
+  "total_cost_usd": 3.7605028000000003,
+  "tokens_total": 1351104,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 34350,
+      "cacheReadInputTokens": 1138574,
+      "cacheCreationInputTokens": 178130,
+      "costUSD": 3.7605028000000003
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "agrees with \"works on retry\".\n- The switch was still on at 15:13:57 UTC.\n- The telemetry shows no exception, no restart and no status 500.\n\nThe independent judge confirmed this cause and rejected a code defect and a gateway failure.\n\n**Limits:** the log starts at 15:10:18 UTC, so earlier errors are not visible. The telemetry does not show who set the switch.\n\nI did not validate the journal (the investigation report) against its schema, and I did not commit it.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-occasional-shop-errors.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-15T15:10:25Z",
+  "ended_at": "2026-11-15T15:15:51Z",
+  "restages": 0,
+  "wall_seconds_runner": 326,
+  "journal_source_name": "2026-11-15-occasional-shop-errors.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

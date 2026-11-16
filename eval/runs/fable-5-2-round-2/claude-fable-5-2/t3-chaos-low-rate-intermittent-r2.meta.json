@@ -1,0 +1,36 @@
+{
+  "session_id": "95e6bddc-30f8-4cf3-ad19-cf57547fad49",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 305134,
+  "duration_api_ms": 371634,
+  "total_cost_usd": 3.976449800000001,
+  "tokens_total": 1266438,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 34889,
+      "cacheReadInputTokens": 1038339,
+      "cacheCreationInputTokens": 193160,
+      "costUSD": 3.976449800000001
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "failed after the switch came on. Both were page reads; all 6 orders succeeded. The same request succeeds on a second try.\n\n**What I excluded.** A code defect: the log and the metrics show no exception. A process restart: the uptime rose with no reset.\n\n**Limits.** The log starts at 22:35:09 UTC, so earlier errors are not visible. The log does not show who turned the switch on.\n\nI checked the report against the report rules by hand; the automated check did not run.\n\nReport: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-occasional-503.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-15T22:35:15Z",
+  "ended_at": "2026-11-15T22:40:22Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 307,
+  "journal_source_name": "2026-11-15-shop-occasional-503.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

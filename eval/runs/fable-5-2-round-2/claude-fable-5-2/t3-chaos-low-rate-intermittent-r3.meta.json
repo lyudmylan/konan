@@ -1,0 +1,36 @@
+{
+  "session_id": "d9f5b44e-ade2-4cf8-815c-8b0f1edf525c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 35,
+  "duration_ms": 351607,
+  "duration_api_ms": 423093,
+  "total_cost_usd": 4.426903800000002,
+  "tokens_total": 1575176,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 56,
+      "outputTokens": 39010,
+      "cacheReadInputTokens": 1331009,
+      "cacheCreationInputTokens": 205101,
+      "costUSD": 4.426903800000002
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "abels the failure as injected. An independent judge confirmed this cause and rejected a code defect and a restart.\n- **Limit:** the shop process started at 22:40:24 UTC. No data exists before that time.\n- **Not checked:** who turned the switch on, and whether a retry succeeds.\n\nSecond finding, not the reported error: the page of product 3 always fails with a division by zero.\n\nI checked the report against its schema by hand; the automated check did not run.\n\nFull report: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-intermittent-503.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-15T22:40:30Z",
+  "ended_at": "2026-11-15T22:46:23Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 353,
+  "journal_source_name": "2026-11-15-shop-intermittent-503.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

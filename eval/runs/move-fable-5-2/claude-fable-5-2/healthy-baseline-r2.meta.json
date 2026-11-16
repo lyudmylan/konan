@@ -1,0 +1,34 @@
+{
+  "session_id": "e4ee1038-3df8-45b3-9b30-8a63fba6ef2a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 26,
+  "duration_ms": 202742,
+  "duration_api_ms": 270215,
+  "total_cost_usd": 2.775988,
+  "tokens_total": 1157366,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 23588,
+      "cacheReadInputTokens": 1000170,
+      "cacheCreationInputTokens": 133558,
+      "costUSD": 2.775988
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "eated two orders with success.\n\nThree triage checks ran in parallel (software defect, process, interfaces). None found a fault, so I tested no hypothesis.\n\nLimits of this result:\n- The process was 2 minutes old and served only 9 user requests.\n- Products 3 and 4 had no traffic. Product 3 has zero stock and product 4 has no price. I did not probe them.\n- I did not run the schema validator on the journal (the investigation record).\n\nThe journal is at `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-routine-handover-check.md`. It is not committed.",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-15T13:53:14Z",
+  "ended_at": "2026-11-15T13:56:38Z",
+  "restages": 0,
+  "wall_seconds_runner": 203,
+  "journal_source_name": "2026-11-15-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

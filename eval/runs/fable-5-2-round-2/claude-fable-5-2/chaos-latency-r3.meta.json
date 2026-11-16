@@ -1,0 +1,36 @@
+{
+  "session_id": "90e6d14f-faa6-4f39-89c3-19b80d4b2e9a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 25,
+  "duration_ms": 347694,
+  "duration_api_ms": 403365,
+  "total_cost_usd": 3.8504158,
+  "tokens_total": 1178214,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 48,
+      "outputTokens": 39472,
+      "cacheReadInputTokens": 969859,
+      "cacheCreationInputTokens": 168835,
+      "costUSD": 3.8504158
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "seconds, with no errors.\n- **Health checks:** The switch does not delay the health endpoint, so health stays green and fast.\n- **State:** The switch was still on at 18:35:36 UTC, my last reading.\n- **Rejected causes:** A code defect, a restart or memory growth, and too much load. An independent review agent confirmed these results.\n- **Not known:** The log does not show who turned on the switch.\n\nI did not run the schema check on the journal, and I did not commit it.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-pages-slow.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-latency",
+  "rep": 3,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-15T18:33:48Z",
+  "ended_at": "2026-11-15T18:39:37Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 349,
+  "journal_source_name": "2026-11-15-shop-pages-slow.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,36 @@
+{
+  "session_id": "6d2ed0c5-49ba-482e-a2a9-7eb3882f3f1b",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 29,
+  "duration_ms": 392209,
+  "duration_api_ms": 494233,
+  "total_cost_usd": 5.247412799999999,
+  "tokens_total": 1488182,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 64,
+      "outputTokens": 33712,
+      "cacheReadInputTokens": 1133454,
+      "cacheCreationInputTokens": 320952,
+      "costUSD": 5.247412799999999
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "State now:** the switch was still on at 22:01:41 UTC.\n- **Excluded:** a code exception, a restart, and a gateway failure. A second agent that saw only the evidence confirmed these results.\n\nLimits:\n\n- The log starts 13 seconds before the complaint, so I cannot check \"the last few minutes\".\n- No user traffic came after 21:28:12 UTC, so I cannot measure the failure rate now.\n- I checked the report format by hand only.\n\nThe full report is here:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-intermittent-503.md`\n\nI did not commit the report.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 1,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-15T21:28:12Z",
+  "ended_at": "2026-11-15T22:35:08Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 4016,
+  "journal_source_name": "2026-11-15-shop-intermittent-503.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
