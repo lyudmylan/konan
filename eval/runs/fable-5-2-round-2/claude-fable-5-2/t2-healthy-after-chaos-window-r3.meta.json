@@ -1,0 +1,41 @@
+{
+  "session_id": "86d06e0d-eaa1-40bd-9e95-1aae7cd6dd68",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 393477,
+  "duration_api_ms": 487881,
+  "total_cost_usd": 4.5538646,
+  "tokens_total": 1429524,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 56,
+      "outputTokens": 47346,
+      "cacheReadInputTokens": 1183413,
+      "cacheCreationInputTokens": 198709,
+      "costUSD": 4.5538646
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "no 503 occurred after it.\n- **One defect that no user has hit yet:** the page of product 3 fails every time with status 500. The product has zero stock, and the code divides by the stock. Only the investigation's own requests triggered it.\n- **Limit:** the log starts at the process start, 19:46:54 UTC. Noise before that time is not visible. The log also does not show who operated the switch.\n\nI did not run the schema check on the journal, and I did not commit it.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-handover-check-shop.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-15T19:47:28Z",
+  "ended_at": "2026-11-15T19:54:02Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 394,
+  "journal_source_name": "2026-11-15-handover-check-shop.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

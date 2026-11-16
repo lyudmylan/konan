@@ -1,0 +1,41 @@
+{
+  "session_id": "1e53a2fc-aece-4a87-8e76-72af12a5b73c",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 31,
+  "duration_ms": 363027,
+  "duration_api_ms": 361847,
+  "total_cost_usd": 3.5824249999999997,
+  "tokens_total": 1093107,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 36,
+      "outputTokens": 35021,
+      "cacheReadInputTokens": 910805,
+      "cacheCreationInputTokens": 147245,
+      "costUSD": 3.5824249999999997
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\"; ls docs docs/adapters skills/investigate journals 2>&1"
+    }
+  ],
+  "result_tail": ".\n- **Confidence:** An independent check agent confirmed this cause and rejected two others: injected errors and corrupt data.\n- **Limit:** The failed log lines do not name the product. The link to product 4 is a deduction, because it is the only product without a price.\n- **Not done:** I could not repeat a failed order, because the probe script is read-only. No automated check of the report format ran; I checked it by hand. I made no commit.\n\nThe full report is at `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-order-null-price-typeerror.md`.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d2-null-price-order",
+  "rep": 1,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-15T18:58:50Z",
+  "ended_at": "2026-11-15T19:04:54Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 364,
+  "journal_source_name": "2026-11-15-order-null-price-typeerror.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

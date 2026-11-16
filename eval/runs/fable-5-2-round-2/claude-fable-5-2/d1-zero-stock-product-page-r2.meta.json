@@ -1,0 +1,41 @@
+{
+  "session_id": "cf049073-d4a4-4be8-9234-d79f600c976f",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 31,
+  "duration_ms": 379177,
+  "duration_api_ms": 460367,
+  "total_cost_usd": 4.671324800000001,
+  "tokens_total": 1447464,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 52,
+      "outputTokens": 43884,
+      "cacheReadInputTokens": 1182634,
+      "cacheCreationInputTokens": 220894,
+      "costUSD": 4.671324800000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "\n- Other products, the product list and orders work.\n- An independent check of the evidence confirmed this cause. It rejected two other causes: injected errors and a process crash.\n\n**One open point:** the service process started at 18:45:48 UTC, 7 seconds before the first recorded error. The log has no earlier lines. Thus I cannot tell when the errors began, or whether a release introduced them.\n\nI did not run the schema check on the report, and I did not commit it.\n\nReport: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-product-page-500.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 2,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-15T18:46:02Z",
+  "ended_at": "2026-11-15T18:52:22Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 380,
+  "journal_source_name": "2026-11-15-product-page-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

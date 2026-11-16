@@ -1,0 +1,41 @@
+{
+  "session_id": "cb388b0d-835b-494b-ac8d-34b93453a9ad",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 33,
+  "duration_ms": 372245,
+  "duration_api_ms": 419396,
+  "total_cost_usd": 4.186787399999999,
+  "tokens_total": 1274385,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 40086,
+      "cacheReadInputTokens": 1047127,
+      "cacheCreationInputTokens": 187122,
+      "costUSD": 4.186787399999999
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\""
+    }
+  ],
+  "result_tail": "seconds, because the switch does not delay it.\n- The switch was still on at 18:23:54 UTC.\n\nAn independent judge agent confirmed this cause. It rejected three other causes: a code defect, too much load, and a process restart.\n\n**Limits:**\n- The logs do not show who turned on the switch.\n- I did not run the automated check of the journal (the investigation report file). I checked it by hand against the same checklist.\n- I did not commit the journal.\n\nThe journal is at `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-latency-chaos-switch.md`.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-latency",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-15T18:21:58Z",
+  "ended_at": "2026-11-15T18:28:11Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 373,
+  "journal_source_name": "2026-11-15-shop-latency-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

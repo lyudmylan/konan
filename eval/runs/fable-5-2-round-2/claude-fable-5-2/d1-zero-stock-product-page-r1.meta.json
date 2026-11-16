@@ -1,0 +1,45 @@
+{
+  "session_id": "cf554af5-c5a7-40b4-9a89-55676ad93542",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 354705,
+  "duration_api_ms": 428510,
+  "total_cost_usd": 4.6372546,
+  "tokens_total": 1697395,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 58,
+      "outputTokens": 39824,
+      "cacheReadInputTokens": 1434203,
+      "cacheCreationInputTokens": 223310,
+      "costUSD": 4.6372546
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "date -u +%Y-%m-%dT%H:%M:%SZ; echo $(( $(date +%s) - 1794768015 ))"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": " the same way.\n- **Not established:** the start time of the problem. The service process started at 18:39:38 UTC, 19 seconds before the report, and no older logs exist. I cannot confirm \"no deploys\".\n- **Next step for the team:** read the inventory history of product 3 and the deploy records for that start.\n\nThe full report with all evidence is here:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-product-page-500.md`\n\nI did not run the schema check on the report; this session refused the script. I checked the references and the times by hand.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 1,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-15T18:39:51Z",
+  "ended_at": "2026-11-15T18:45:47Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 356,
+  "journal_source_name": "2026-11-15-product-page-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,41 @@
+{
+  "session_id": "321d30cc-80e8-4a10-bc73-83b7bf484a5a",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 41,
+  "duration_ms": 404102,
+  "duration_api_ms": 482386,
+  "total_cost_usd": 4.4764100000000004,
+  "tokens_total": 1596330,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 60,
+      "outputTokens": 44610,
+      "cacheReadInputTokens": 1356500,
+      "cacheCreationInputTokens": 195160,
+      "costUSD": 4.4764100000000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "All 9 customer requests in the log succeeded, and none was for product 3.\n- **Limit:** the service started at 20:01:13 UTC, 12 seconds before the complaint. The log and the counters start there, so the morning is not visible.\n- **Other causes:** the judge agent rejected an error injection switch and a restart loop.\n\nI did the journal check by hand, because no script interpreter runs without approval here. The journal is not committed.\n\nJournal (the investigation report file):\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-product-page-500.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-15T20:01:19Z",
+  "ended_at": "2026-11-15T20:08:04Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 405,
+  "journal_source_name": "2026-11-15-product-page-500.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

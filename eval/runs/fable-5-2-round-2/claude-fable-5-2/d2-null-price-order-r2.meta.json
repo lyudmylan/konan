@@ -1,0 +1,36 @@
+{
+  "session_id": "5ef21496-c5c6-4e63-be91-263a365d25e7",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 373575,
+  "duration_api_ms": 421410,
+  "total_cost_usd": 4.4377098,
+  "tokens_total": 1434300,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 41862,
+      "cacheReadInputTokens": 1186489,
+      "cacheCreationInputTokens": 205899,
+      "costUSD": 4.4377098
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "duct 4 (\"Mystery Box\") is the only product with an empty price.\n- Orders for products 1 and 2 succeeded in the same seconds.\n- The process did not restart, and chaos mode is off.\n\n**Limits:**\n- The failed requests do not log a product number. Product 4 is a conclusion from the error and the product list, and I did not observe it directly.\n- The logs cannot show retries.\n- I checked the report file by hand, because no automated check ran.\n\nThe report file is not committed:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-order-500-null-price.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d2-null-price-order",
+  "rep": 2,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-15T19:05:08Z",
+  "ended_at": "2026-11-15T19:11:22Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 374,
+  "journal_source_name": "2026-11-15-order-500-null-price.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

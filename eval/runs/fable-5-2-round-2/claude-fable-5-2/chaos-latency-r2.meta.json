@@ -1,0 +1,41 @@
+{
+  "session_id": "d4be59d9-ef77-4014-af8a-914ca5f3a259",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 297808,
+  "duration_api_ms": 351795,
+  "total_cost_usd": 3.4102173999999996,
+  "tokens_total": 1121918,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 48,
+      "outputTokens": 32881,
+      "cacheReadInputTokens": 931607,
+      "cacheCreationInputTokens": 157382,
+      "costUSD": 3.4102173999999996
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "8 to 1321 ms.\n- All responses were successful, and the service counted no exceptions.\n- The health check stayed below 1 ms.\n- The switch was still on at 18:30:18 UTC.\n\nAn independent review agent confirmed this cause. It rejected two other causes: a code defect and too much user load.\n\n**Not known:** who turned on the switch. I also did not see the service with the switch off again.\n\nI did not run the schema check on the report, and I did not commit it.\n\nFull report: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-latency-chaos-switch.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-latency",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-latency.yaml",
+  "started_at": "2026-11-15T18:28:30Z",
+  "ended_at": "2026-11-15T18:33:29Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 299,
+  "journal_source_name": "2026-11-15-shop-latency-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

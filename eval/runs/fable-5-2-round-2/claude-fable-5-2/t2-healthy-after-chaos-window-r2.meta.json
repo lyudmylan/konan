@@ -1,0 +1,36 @@
+{
+  "session_id": "ee189e1e-65a8-4418-91a7-57a7d29c4fce",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 400464,
+  "duration_api_ms": 500784,
+  "total_cost_usd": 4.6232508,
+  "tokens_total": 1463007,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 58,
+      "outputTokens": 48091,
+      "cacheReadInputTokens": 1213514,
+      "cacheCreationInputTokens": 201344,
+      "costUSD": 4.6232508
+    }
+  },
+  "permission_denials": [],
+  "result_tail": " hit yet.** `GET /products/3` returns HTTP 500 on every request. Product 3 has zero stock, and the code divides by the stock. Only my own probes triggered it.\n\n**Limits.**\n- The logs start at 19:39:37 UTC, the process start. Earlier noise is not visible.\n- The telemetry does not say who turned the switch on.\n- No interpreter was available for the automated schema check. I checked the report by hand against the same list.\n\nThe full report is in `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-handover-check-chaos-window.md`. I did not commit it.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 2,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-15T19:40:11Z",
+  "ended_at": "2026-11-15T19:46:52Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 401,
+  "journal_source_name": "2026-11-15-handover-check-chaos-window.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

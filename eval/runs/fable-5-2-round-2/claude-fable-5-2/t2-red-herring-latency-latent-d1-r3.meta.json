@@ -1,0 +1,45 @@
+{
+  "session_id": "f4ca547a-15a4-452e-a55a-875b4a8da0c4",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 28,
+  "duration_ms": 533665,
+  "duration_api_ms": 591666,
+  "total_cost_usd": 4.1701996,
+  "tokens_total": 1394784,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 60,
+      "outputTokens": 41343,
+      "cacheReadInputTokens": 1161538,
+      "cacheCreationInputTokens": 191843,
+      "costUSD": 4.1701996
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\"; ls; ls skills/investigate skills/investigate/lenses 2>/dev/null; ls journals 2>/dev/null | tail -5"
+    },
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": "r it.\n- **Health checks:** The switch does not delay the health check, so the health check stays fast.\n- **State:** The switch was still on at 20:32:44 UTC.\n- **Error page:** I found no cause. The shop process recorded no error, but it started only 20 seconds before the complaint, and nothing earlier is readable.\n\nThe journal (the investigation report) is here:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-slow-latency-switch.md`\n\nI did not run a mechanical check of the journal, because the session refused the write of the check script.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-red-herring-latency-latent-d1",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-red-herring-latency-latent-d1.yaml",
+  "started_at": "2026-11-15T20:30:58Z",
+  "ended_at": "2026-11-15T21:28:04Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 3427,
+  "journal_source_name": "2026-11-15-shop-slow-latency-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

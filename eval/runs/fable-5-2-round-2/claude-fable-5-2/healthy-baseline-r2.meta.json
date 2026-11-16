@@ -1,0 +1,41 @@
+{
+  "session_id": "ee907506-ebd9-430f-b692-897591eefe14",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 290440,
+  "duration_api_ms": 354373,
+  "total_cost_usd": 3.3969942,
+  "tokens_total": 1228049,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 54,
+      "outputTokens": 32449,
+      "cacheReadInputTokens": 1039081,
+      "cacheCreationInputTokens": 156465,
+      "costUSD": 3.3969942
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    }
+  ],
+  "result_tail": "ides by the stock. Only my own probe triggered it. A user who opens product 3 gets the same error.\n- **Limits:** the process was only 120 seconds old, and the log has no earlier history. I cannot exclude a crash before 19:22:50 UTC.\n- **Not checked:** product 4 has no price. Orders are outside my read-only access, so I did not test an order for product 4.\n\nI did not run the schema check on the journal (the investigation report); I checked its fields by hand.\n\nThe journal is at `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-handover-check.md`.",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "healthy-baseline",
+  "rep": 2,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-15T19:22:59Z",
+  "ended_at": "2026-11-15T19:27:50Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 291,
+  "journal_source_name": "2026-11-15-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

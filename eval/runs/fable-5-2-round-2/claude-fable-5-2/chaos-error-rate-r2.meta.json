@@ -1,0 +1,41 @@
+{
+  "session_id": "1a3c54cd-b9e9-46ce-b3b0-066905a71b92",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 39,
+  "duration_ms": 356762,
+  "duration_api_ms": 427228,
+  "total_cost_usd": 4.154276,
+  "tokens_total": 1546729,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 58,
+      "outputTokens": 41041,
+      "cacheReadInputTokens": 1321950,
+      "cacheCreationInputTokens": 183680,
+      "costUSD": 4.154276
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\"; ls; ls docs docs/adapters .claude/skills/investigate journals 2>&1 | head -80"
+    }
+  ],
+  "result_tail": " No failure occurred before the switch. After it, 5 of 10 user requests failed, on product pages and on order creation.\n- The health endpoint returned success on all 10 checks, so the health dashboard stays green.\n- The switch was still on at 18:13:17 UTC.\n\n**Not known:** who turned the switch on. The log shows only a local address.\n\nI checked the journal (the investigation report file) by hand, because no automated check could run in this session.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-intermittent-503-chaos-switch.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-15T18:09:03Z",
+  "ended_at": "2026-11-15T18:15:00Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 357,
+  "journal_source_name": "2026-11-15-shop-intermittent-503-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

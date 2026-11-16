@@ -1,0 +1,41 @@
+{
+  "session_id": "b33c7107-a602-49bd-bc80-8cc928d4fa0e",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 31,
+  "duration_ms": 286484,
+  "duration_api_ms": 285228,
+  "total_cost_usd": 2.454758,
+  "tokens_total": 942656,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 34,
+      "outputTokens": 26073,
+      "cacheReadInputTokens": 822440,
+      "cacheCreationInputTokens": 94109,
+      "costUSD": 2.454758
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"adapter-exit=$?\"; date -u +%Y-%m-%dT%H:%M:%SZ"
+    }
+  ],
+  "result_tail": "idence:** high. A second agent that saw only the evidence confirmed this cause and rejected two others (a hung process, a code defect).\n- **Not checked:** who sent the crash request, and the metrics, because the process does not answer.\n- **Complaint detail:** \"fine ten minutes ago\" has no support. The log starts 16 seconds before the complaint.\n\nI checked the report against its format rules by hand; the automated check did not run. The report is not committed.\n\nReport: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-shop-down-process-exit.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-crash-hard-down",
+  "rep": 2,
+  "fixture": "eval/scenarios/t3-crash-hard-down.yaml",
+  "started_at": "2026-11-15T22:51:45Z",
+  "ended_at": "2026-11-15T22:56:32Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 287,
+  "journal_source_name": "2026-11-15-shop-down-process-exit.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

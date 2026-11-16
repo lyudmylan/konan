@@ -1,0 +1,36 @@
+{
+  "session_id": "1b3aa25f-8409-4272-a123-858769087537",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 36,
+  "duration_ms": 447106,
+  "duration_api_ms": 504948,
+  "total_cost_usd": 5.0110044,
+  "tokens_total": 1528275,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 52,
+      "outputTokens": 49532,
+      "cacheReadInputTokens": 1261592,
+      "cacheCreationInputTokens": 217099,
+      "costUSD": 5.0110044
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "ard.\n- **State now:** the switch was still on at 18:06:44 UTC. One of my read-only requests got an injected 503.\n- **Not known:** the telemetry does not show who turned the switch on.\n- **Checks:** an independent review agent confirmed this cause and rejected three others. The automated format check of the journal did not run; I checked the journal by hand.\n\nSecond finding, not the incident: the page of product 3 fails each time with a division by zero.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-qrp2hcji/wt/journals/2026-11-15-intermittent-503-chaos-switch.md`",
+  "run_id": "fable-5-2-round-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-15T18:01:14Z",
+  "ended_at": "2026-11-15T18:08:42Z",
+  "restages": 0,
+  "effort": "high",
+  "harness_version": "2.1.325 (Claude Code)",
+  "wall_seconds_runner": 448,
+  "journal_source_name": "2026-11-15-intermittent-503-chaos-switch.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
