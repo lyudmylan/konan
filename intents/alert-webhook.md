@@ -18,7 +18,9 @@ each line as it does today.
   lost (the channels reference of the harness, read on 2026-11-16).
 - `scripts/receive.py`, the address. It listens for `POST /alerts` on `127.0.0.1:9911`.
   `KONAN_RECEIVER_HOST` and `KONAN_RECEIVER_PORT` change the address; the default accepts calls from the
-  same computer only. A port that is taken ends the script with a message and a non-zero exit.
+  same computer only. A host other than loopback sends the token in clear text; the Alertmanager line of
+  `docs/triggers.md` states that limit. A port that is taken ends the script with a message and a
+  non-zero exit.
 - `scripts/receive.py`, the origin. The token is the content of the file `alerts/receiver-token`
   (`alerts/` is ignored by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names. Without a token
   file, or with an empty one, the script does not listen. A call carries `Authorization: Bearer <token>`,
@@ -35,8 +37,10 @@ each line as it does today.
   complaint contract keeps its single-alert shape. The key of an alert is the pair of `fingerprint` and
   `startsAt`, because Alertmanager derives the fingerprint from the labels, and the same alert that fires
   again later carries the same fingerprint with a new `startsAt`. A call that repeats a pair already in
-  the inbox adds no line. An alert with the status `resolved` adds no line. Both get 200. The number of
-  investigations for one incident follows from the routing and the inhibition rules of the stack.
+  the inbox adds no line. The inbox is the only memory of the pairs: the script reads them from the inbox
+  when it starts, and skips a line that does not parse. An alert with the status `resolved` adds no line.
+  Both get 200. The number of investigations for one incident follows from the routing and the inhibition
+  rules of the stack.
 - `scripts/receive.py`, the log: one line per call with the time, the answer code and the three counts
   (new, known, resolved). The token and the body of a call are never logged.
 - `skills/oncall/SKILL.md`. When the token file exists, the shift starts the receiver as a background
@@ -51,10 +55,13 @@ each line as it does today.
 - `scripts/tests.py`: the pins of the checks below, each against a receiver on a free port of the loopback
   interface with a temporary inbox. `charter.toml`: `python3 scripts/tests.py` joins `checks.quality`.
 - `docs/triggers.md`: the adapter paragraph says what the receiver is (one script that runs while a shift
-  or the operator runs it, no deployed service); the group sentence states the rule above; the profile
-  "Alertmanager" shows the receiver configuration with the address and `credentials_file`, and states the
-  limit: a call that finds no receiver is not stored by konan, and Alertmanager sends a firing alert again
-  after its repeat interval. `docs/architecture.md`: the receiver in the system picture and in the
+  or the operator runs it, no deployed service); the group sentence states the rule above; rule 5 states
+  that the receiver drops a repeat of a pair already in the inbox, and that konan keeps no other queue
+  machinery; under "native stacks", the Alertmanager line is replaced by the receiver configuration with
+  the address and `credentials_file`, its sentence on sender-side templating is removed because the
+  receiver takes the native payload, and the line states two limits: a call that finds no receiver is not
+  stored by konan, and Alertmanager sends a firing alert again after its repeat interval; a host other
+  than loopback sends the token in clear text. `docs/architecture.md`: the receiver in the system picture and in the
   on-call trigger path. `docs/product.md`: the roadmap line on alert-webhook triggers. `AGENTS.md`: the
   command in "Commands", and the new allow entries in the sentence on unattended shift writes.
   `skills/README.md`: the line on `oncall`.
@@ -78,8 +85,9 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
    `generatorURL` equal to the values of the call. An annotation that holds a line break stays inside its
    one line.
    test: `scripts/tests.py::test_firing_group_becomes_one_line_per_alert`
-3. The same call a second time gets 200 and adds no line. A call with the same fingerprint and a later
-   `startsAt` adds one line.
+3. The same call a second time gets 200 and adds no line, also after the receiver restarts on the same
+   inbox, and also when the inbox holds a line that does not parse. A call with the same fingerprint and
+   a later `startsAt` adds one line.
    test: `scripts/tests.py::test_repeat_adds_no_line_and_a_new_start_adds_one`
 4. A call with the status `resolved` gets 200 and adds no line. A call that holds one firing alert and
    one resolved alert adds one line.
@@ -99,17 +107,24 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
 9. The allow list of `.claude/settings.json` holds the two exact entries and no entry for the receiver
    with an argument form.
    test: `scripts/tests.py::test_settings_allow_the_receiver_without_arguments`
-10. The shift skill names the receiver and the pair, and the trigger contract names the receiver and the
-    limit.
+10. A write to the inbox that fails gets 500 and adds no line. With the port taken, the script exits with
+    a non-zero code. The sync to disk before the answer has no check: a test cannot observe it without a
+    fault in the file system, and the code review reads it.
+    test: `scripts/tests.py::test_write_failure_is_500_and_taken_port_exits`
+11. A document check, of words and not of behavior: the shift skill names the receiver and the pair, and
+    the trigger contract names the receiver and the token file setting. Manual check 13 covers the
+    behavior of the shift.
     command: `grep -q 'scripts/receive.py' skills/oncall/SKILL.md && grep -q 'startsAt' skills/oncall/SKILL.md && grep -q 'scripts/receive.py' docs/triggers.md && grep -q 'credentials_file' docs/triggers.md`
-11. The quality checks, with `python3 scripts/tests.py` among them, and the contract checks pass.
+12. The quality checks, with `python3 scripts/tests.py` among them, and the contract checks pass.
     command: `grep -q 'python3 scripts/tests.py' charter.toml && charter-gate quality --contract charter.toml && charter-check all charter.toml`
 
 ## Manual checks
 
-12. With an Alertmanager on the operator's computer that names the address and the token file, and an
+13. With an Alertmanager on the operator's computer that names the address and the token file, and an
     on-call shift on the lab: a firing alert leads to a committed journal whose complaint block holds the
     fingerprint and the `startsAt` of the alert, the shift started the receiver without a permission
-    prompt, and a repeated call of the same alert leads to no second journal. The change request records
-    the receiver log lines and the journal name. who: the engineer runs it, the leader reads the record.
+    prompt, and a repeated call of the same alert leads to no second journal. Two more shift starts:
+    with the token file and the port taken, the shift report records that the receiver did not start, and
+    the shift watches the inbox; with no token file, the shift starts no receiver and watches the inbox.
+    The change request records the receiver log lines, the journal name and the two shift reports. who: the engineer runs it, the leader reads the record.
     Not automatic: it needs a running Alertmanager and the lab, and the investigation calls the model.
