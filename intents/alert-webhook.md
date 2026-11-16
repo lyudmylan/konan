@@ -22,7 +22,8 @@ each line as it does today.
   `docs/triggers.md` states that limit. A port that is taken ends the script with a message and a
   non-zero exit.
 - `scripts/receive.py`, the origin. The token is the content of the file `alerts/receiver-token`
-  (`alerts/` is ignored by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names. Without a token
+  (`alerts/` is ignored by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names, with the
+  whitespace at both ends removed; a file that is empty after that counts as empty. Without a token
   file, or with an empty one, the script does not listen. A call carries `Authorization: Bearer <token>`,
   which Alertmanager sends from `http_config.authorization`. The comparison takes constant time. A call
   without the token gets 401 and writes nothing.
@@ -45,10 +46,13 @@ each line as it does today.
   stays. The receiver is the adapter for the HTTP transport, written once. It takes the group form of the
   shape that the complaint contract adopted, and it holds no mapping for a stack. The decision record of
   the trigger epic (#4) says that Grafana Alerting emits the same alert fields. A stack with another
-  payload delivers this shape through its profile, as `docs/triggers.md` says today, and adds no code
-  here. The two documents say so where they state the stance.
+  payload is out of this work item: its profile delivers the group form of the contract, or a later work
+  item decides on its mapping. The Sentry line of `docs/triggers.md`, which today says that the adapter
+  executes a mapping, is changed to say so. The two documents name the receiver where they state the
+  stance.
 - `scripts/receive.py`, one call at a time. The script answers calls one after the other, in one thread,
-  so the test of a pair and the append of its line are one step.
+  so the test of a pair and the append of its line are one step. A read that takes more than 10 seconds
+  is closed with no line written, so a connection that sends nothing does not hold the next call.
 - `scripts/receive.py`, the log: one line per call with the time, the answer code and the three counts
   (new, known, resolved). The token and the body of a call are never logged.
 - `skills/oncall/SKILL.md`. When the token file exists, the shift starts the receiver as a background
@@ -87,7 +91,8 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
 
 ## Automatic checks
 
-1. A call without the header, and a call with a wrong token, get 401, and the inbox does not change.
+1. A call without the header, and a call with a wrong token, get 401, and the inbox does not change. With
+   a token file that ends with a line break, a call with the token is accepted.
    test: `scripts/tests.py::test_call_without_the_token_is_refused`. command: `python3 scripts/tests.py`
 2. A call with a group of two firing alerts gets 200 and adds two lines. Each line is one JSON object with
    `source` equal to `alert` and with `fingerprint`, `labels`, `annotations`, `startsAt` and
@@ -104,7 +109,8 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
 5. A body that is not JSON, a payload without the list `alerts`, an alert without `fingerprint`, an alert without `startsAt`, and a
    body over the size limit each get an answer in the 400 range, and the inbox does not change, also for
    the valid alerts of the same call. A path other than `/alerts` and a method other than POST write
-   nothing.
+   nothing. A connection that sends no body does not block the next call: the test runs with a short
+   read limit.
    test: `scripts/tests.py::test_malformed_call_writes_nothing`
 6. Without a token file, and with an empty one, the script exits with a non-zero code and opens no port.
    test: `scripts/tests.py::test_no_token_no_listener`
