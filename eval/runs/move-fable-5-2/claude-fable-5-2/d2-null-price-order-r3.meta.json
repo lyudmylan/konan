@@ -1,0 +1,34 @@
+{
+  "session_id": "4a939dc8-b807-4cc4-9153-ae0d9c31c936",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 356213,
+  "duration_api_ms": 413899,
+  "total_cost_usd": 4.413874000000001,
+  "tokens_total": 1577057,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 58,
+      "outputTokens": 39064,
+      "cacheReadInputTokens": 1328770,
+      "cacheCreationInputTokens": 209165,
+      "costUSD": 4.413874000000001
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "s for products 1 and 2 succeeded.\n\n**Limits:**\n- The failed log lines do not record the product. Product 4 is an inference from the error text and the product list.\n- I could not repeat the failure, because the investigation is read-only.\n- I checked the report file by hand. No automated check ran.\n\nAn independent reviewer agent confirmed this cause and rejected the two other explanations (a process fault, a fault at a system boundary).\n\nThe report file is not committed:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-order-500s-null-price.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d2-null-price-order",
+  "rep": 3,
+  "fixture": "eval/scenarios/d2-null-price-order.yaml",
+  "started_at": "2026-11-15T13:41:10Z",
+  "ended_at": "2026-11-15T13:47:09Z",
+  "restages": 0,
+  "wall_seconds_runner": 358,
+  "journal_source_name": "2026-11-15-order-500s-null-price.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

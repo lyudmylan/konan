@@ -1,0 +1,43 @@
+{
+  "session_id": "a7dd2f67-4497-440a-93fb-6e071b285cd5",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 30,
+  "duration_ms": 343618,
+  "duration_api_ms": 417718,
+  "total_cost_usd": 4.418345800000001,
+  "tokens_total": 1641300,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 66,
+      "outputTokens": 39091,
+      "cacheReadInputTokens": 1396969,
+      "cacheCreationInputTokens": 205174,
+      "costUSD": 4.418345800000001
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    },
+    {
+      "tool": "Bash",
+      "command": "grep '\"event\": \"request\"' lab/logs/app.log | grep -o '\"message\": \"[^\"]*\", \"request_id\": \"[^\"]*\"' | sed 's/\"request_id\": \"konan-[^\"]*\"/investigator/; s/\"request_id\": \"[^\"]*\"/other-client/' | sort | uniq -c"
+    }
+  ],
+  "result_tail": "duct 3 has a stock of 0. No user has requested product 3 yet.\n- **Counters:** The 4 errors now in the metrics and the log come from the investigation probes, not from users.\n- **Limits:** The process was 32 seconds old at the first check. No older logs exist.\n\nAn independent judge reviewed the evidence and agreed with both results. I checked the journal (the investigation report) against the schema by hand; no automated check ran. I did not commit the journal.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-routine-handover-check.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "healthy-baseline",
+  "rep": 1,
+  "fixture": "eval/scenarios/healthy-baseline.yaml",
+  "started_at": "2026-11-15T13:47:19Z",
+  "ended_at": "2026-11-15T13:53:04Z",
+  "restages": 0,
+  "wall_seconds_runner": 345,
+  "journal_source_name": "2026-11-15-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,43 @@
+{
+  "session_id": "9cc2b62e-1602-4c28-813f-7a832f9d0d53",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 32,
+  "duration_ms": 344653,
+  "duration_api_ms": 418561,
+  "total_cost_usd": 4.3523174000000004,
+  "tokens_total": 1253075,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 48,
+      "outputTokens": 39494,
+      "cacheReadInputTokens": 1008987,
+      "cacheCreationInputTokens": 204546,
+      "costUSD": 4.3523174000000004
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    },
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": ". One of them was an order, and that order was not created.\n- **Other causes:** The checks excluded a code defect and a process restart.\n- **Limit:** The telemetry starts at 15:15:51 UTC. I cannot confirm or exclude errors before that time.\n- **Not known:** The telemetry does not show who turned the switch on, or why.\n\nI checked the report file by hand only. A script check needed a permission that this session does not have. I did not commit the file.\n\nThe report is at:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-occasional-shop-errors.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t3-chaos-low-rate-intermittent",
+  "rep": 3,
+  "fixture": "eval/scenarios/t3-chaos-low-rate-intermittent.yaml",
+  "started_at": "2026-11-15T15:15:58Z",
+  "ended_at": "2026-11-15T15:21:43Z",
+  "restages": 0,
+  "wall_seconds_runner": 345,
+  "journal_source_name": "2026-11-15-occasional-shop-errors.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

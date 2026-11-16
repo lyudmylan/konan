@@ -1,0 +1,43 @@
+{
+  "session_id": "7507f1aa-9834-4a81-878d-994e4b7dbbe0",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 39,
+  "duration_ms": 427522,
+  "duration_api_ms": 489598,
+  "total_cost_usd": 4.5164474,
+  "tokens_total": 1521529,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 54,
+      "outputTokens": 48672,
+      "cacheReadInputTokens": 1287307,
+      "cacheCreationInputTokens": 185496,
+      "costUSD": 4.5164474
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\""
+    },
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": "urned 200 in all five samples, so the dashboard is green.\n- **Now:** the switch was still on at 12:30:00 UTC.\n\nThree points stay open:\n- The log shows no failed order creation. Only the order list failed.\n- The log does not say who turned the switch on.\n- No telemetry exists before 12:25:28 UTC, when the process started.\n\nThe automated shape check of the report file did not run, because the session refused the script. I checked the file by hand. I did not commit it.\n\nReport: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-bybnthqv/wt/journals/2026-11-15-intermittent-503s.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-error-rate",
+  "rep": 2,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-15T12:25:47Z",
+  "ended_at": "2026-11-15T12:32:56Z",
+  "restages": 0,
+  "wall_seconds_runner": 428,
+  "journal_source_name": "2026-11-15-intermittent-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

@@ -1,0 +1,39 @@
+{
+  "session_id": "4345f403-d8d3-4d75-a0ad-05c6b2236601",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 38,
+  "duration_ms": 411450,
+  "duration_api_ms": 468158,
+  "total_cost_usd": 4.3864448000000005,
+  "tokens_total": 1488649,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 54,
+      "outputTokens": 45518,
+      "cacheReadInputTokens": 1257784,
+      "cacheCreationInputTokens": 185293,
+      "costUSD": 4.3864448000000005
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "for p in /products /products/2 /orders /products /orders/1 /products; do scripts/probe.sh \"$p\" | tail -1; done"
+    }
+  ],
+  "result_tail": "t 3 returns status 500 with a division by zero, because its stock is 0. Only my two test requests triggered it. No user request touched that page since the service started.\n- **Limit:** the service started at 14:15:14 UTC. I cannot see noise before that time.\n\nThree independent reviewers and one judge confirmed these findings. I checked the journal against its format rules by hand; the automated check did not run. I did not commit the journal.\n\nDetail is in the journal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-routine-handover-check.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-healthy-after-chaos-window",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-healthy-after-chaos-window.yaml",
+  "started_at": "2026-11-15T14:15:48Z",
+  "ended_at": "2026-11-15T14:22:41Z",
+  "restages": 0,
+  "wall_seconds_runner": 412,
+  "journal_source_name": "2026-11-15-routine-handover-check.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

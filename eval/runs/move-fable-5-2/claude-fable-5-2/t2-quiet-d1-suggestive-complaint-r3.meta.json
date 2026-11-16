@@ -1,0 +1,34 @@
+{
+  "session_id": "19e967f3-4cb4-40e9-a3a3-948a7d62f2d9",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 13,
+  "duration_ms": 363302,
+  "duration_api_ms": 555780,
+  "total_cost_usd": 5.158838200000001,
+  "tokens_total": 1780856,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 70,
+      "outputTokens": 51605,
+      "cacheReadInputTokens": 1503661,
+      "cacheCreationInputTokens": 225520,
+      "costUSD": 5.158838200000001
+    }
+  },
+  "permission_denials": [],
+  "result_tail": "her the process crashed earlier.\n- **Limit:** The service started at 14:35:33 UTC, and no earlier logs exist. No customer request to product 3 is in the logs; all five failures are my own test requests. The link to the customers' reports rests on the matching symptom only.\n\nA second agent that saw only the evidence confirmed the cause and marked that link as not proven.\n\nI checked the report by hand; the automated check did not run. The report is not committed.\n\nFull report: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-noww8gx1/wt/journals/2026-11-15-product-page-500s.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "t2-quiet-d1-suggestive-complaint",
+  "rep": 3,
+  "fixture": "eval/scenarios/t2-quiet-d1-suggestive-complaint.yaml",
+  "started_at": "2026-11-15T14:35:39Z",
+  "ended_at": "2026-11-15T14:43:24Z",
+  "restages": 0,
+  "wall_seconds_runner": 465,
+  "journal_source_name": "2026-11-15-product-page-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

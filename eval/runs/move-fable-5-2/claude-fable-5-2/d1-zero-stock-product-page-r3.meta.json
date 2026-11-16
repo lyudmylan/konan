@@ -1,0 +1,39 @@
+{
+  "session_id": "7b830259-3895-4032-9870-129912f823d6",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 34,
+  "duration_ms": 332919,
+  "duration_api_ms": 359397,
+  "total_cost_usd": 3.7019868000000007,
+  "tokens_total": 1611829,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 52,
+      "outputTokens": 32980,
+      "cacheReadInputTokens": 1411234,
+      "cacheCreationInputTokens": 167563,
+      "costUSD": 3.7019868000000007
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Bash",
+      "command": "printenv KONAN_ADAPTER; echo \"exit=$?\"; ls; ls skills/investigate docs docs/adapters 2>/dev/null"
+    }
+  ],
+  "result_tail": "th, the product list and orders are normal.\n\n**Open point.** The process started at 13:11:19 UTC, 7 seconds before the first error. No records exist from before that start. I cannot tell if that start introduced the fault or when the errors began.\n\n**Checks.** An independent review agent confirmed the root cause and rejected error injection as a cause. I checked the journal against the schema by hand; the automated check did not run. The journal is not committed.\n\nJournal: `/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-bybnthqv/wt/journals/2026-11-15-product-3-page-500s.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "d1-zero-stock-product-page",
+  "rep": 3,
+  "fixture": "eval/scenarios/d1-zero-stock-product-page.yaml",
+  "started_at": "2026-11-15T13:11:32Z",
+  "ended_at": "2026-11-15T13:17:06Z",
+  "restages": 0,
+  "wall_seconds_runner": 334,
+  "journal_source_name": "2026-11-15-product-3-page-500s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}

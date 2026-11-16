@@ -1,0 +1,39 @@
+{
+  "session_id": "7338730a-91c5-4bdc-96a8-f4b961528ded",
+  "is_error": false,
+  "subtype": "success",
+  "num_turns": 27,
+  "duration_ms": 366371,
+  "duration_api_ms": 431048,
+  "total_cost_usd": 4.465547,
+  "tokens_total": 1302649,
+  "model_usage": {
+    "claude-fable-5-2": {
+      "inputTokens": 50,
+      "outputTokens": 42987,
+      "cacheReadInputTokens": 1058165,
+      "cacheCreationInputTokens": 201447,
+      "costUSD": 4.465547
+    }
+  },
+  "permission_denials": [
+    {
+      "tool": "Write",
+      "command": null
+    }
+  ],
+  "result_tail": "ed at 200, so the dashboard stayed green.\n\n**Rejected causes:** a code defect, a restart loop, and a failing dependency. A separate judge agent agreed with all four results.\n\n**Limits:** The log starts at 12:19:00 UTC. The telemetry does not show who turned the switch on. I did not turn the switch off, because the investigation is read-only.\n\nI checked the report by hand, because the permission to write the check script was refused. The report is not committed.\n\nFull report:\n`/private/var/folders/bv/fb37qhn11dx2d94rhtw__8vh0000gn/T/konan-wt-bybnthqv/wt/journals/2026-11-15-intermittent-503s.md`",
+  "run_id": "move-fable-5-2",
+  "model": "claude-fable-5-2",
+  "scenario": "chaos-error-rate",
+  "rep": 1,
+  "fixture": "eval/scenarios/chaos-error-rate.yaml",
+  "started_at": "2026-11-15T12:19:19Z",
+  "ended_at": "2026-11-15T12:25:26Z",
+  "restages": 0,
+  "wall_seconds_runner": 367,
+  "journal_source_name": "2026-11-15-intermittent-503s.md",
+  "tokens_stamped": true,
+  "status": "ok",
+  "quota_error": false
+}
