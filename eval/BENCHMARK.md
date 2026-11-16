@@ -476,3 +476,106 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   (approval-gated unattended; journal validation), one grep whose pattern named the operator
   surface (the boundary hook matches content), and shell arithmetic the harness does not run
   unattended.
+
+## Rounds on claude-fable-5-2 (2026-11-15)
+
+Two rounds of 30 investigations, the ten fixtures with three repetitions each, on one model. They ran
+before and after two corrections of the benchmark, and their files are committed whole under `eval/runs/`.
+The two rounds are no part of the published table (`eval/BENCHMARK-results.md`, the README).
+They ran once each on one model at one effort level, so they support no comparison of models.
+
+- **The first round**, run id `move-fable-5-2`: at 8e62e4e, before the widened matchers (#90) and before
+  the corrected working copy of a run (#110). 2026-11-15, 12:19 to 15:35 UTC, three batches of ten. The
+  effort level was `high`, set by the operator outside the runner; no file of the round records it, and
+  the session records of the operator show it in 30 of 30 sessions. The same records show version 2.1.325
+  of the harness.
+- **The second round**, run id `fable-5-2-round-2`: at a07dad8, after both corrections. 2026-11-15, 18:01
+  to 23:01 UTC, one batch of thirty, `--effort high`. `plan.json` and each sidecar record the level and
+  the version of the harness, 2.1.325.
+
+| Round | Passed, scorer of its commit | Passed, scorer of main | False attributions | Tokens (median) | Harness s (median) | Cost $ (median) | Denials (sum) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| First round | 16 of 30 | 28 of 30 | 2 | 1475618 | 359 | 4.15 | 22 |
+| Second round | 29 of 30 | 29 of 30 | 1 | 1434843 | 361 | 4.20 | 24 |
+
+The `scorecard.md` of the first round is the one the runner wrote at its commit. Its 12 fails on a matcher
+are the wordings that #90 names; the scorer of main passes the same 12 journals. `eval/bench.py` over each
+directory reproduces the column of main.
+
+### False-fail tables
+
+One row for each failed run of the scorecard of its round; the date is the start of the run in the sidecar
+(UTC). "No" in the fifth column means that the report was right and the fail is the corpus's. The standard
+for "No" is the one of bench-v2: verdict, class, cause id and citations right, no false attribution. The
+rows were drafted by the agent that ran the rounds and read by two agents that are not the author, one
+without the draft and one against it; both agreed with every row. The leader confirms them with the merge
+of the change request that adds this section.
+
+| Run id | Date | Scenario | What failed | Was the agent wrong | The fix |
+| --- | --- | --- | --- | --- | --- |
+| move-fable-5-2 | 2026-11-15 | chaos-error-rate, rep 1 | `must_claim switch-flipped` and `spread`; the statement: "The chaos switch inside the service was turned on ... injects 503 responses at random into business requests" | No | #90, merged: `switch-flipped` takes "turned on", `spread` takes "random" |
+| move-fable-5-2 | 2026-11-15 | chaos-error-rate, rep 2 | `switch-flipped`; "An operational switch inside the target (chaos mode) was turned on" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | chaos-error-rate, rep 3 | `switch-flipped` and `spread`; "was turned on ... injects HTTP 503 into a random fraction of requests" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | chaos-latency, rep 1 | `switch-flipped`; "The chaos switch inside the target was turned on at 12:39:26.668Z with failure_rate 0.0 and extra_latency_ms 1500" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | chaos-latency, rep 2 | `switch-flipped`; "was turned on ... every business request (products, orders) gets an added delay" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | chaos-latency, rep 3 | `switch-flipped`; "The service's internal chaos switch was turned on" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | t2-quiet-d1-suggestive-complaint, rep 1 | Verdict `root-cause-identified`, want `no-active-incident`; the cause `unhandled-exception` counts as a false attribution | Yes: its own gaps say that every 500 response on record came from its own probes, and it still named the latent defect the cause of the complaint; no `latent_findings` entry | None in the corpus; the fixture is the trap it is meant to be |
+| move-fable-5-2 | 2026-11-15 | t2-quiet-d1-suggestive-complaint, rep 3 | The same | Yes: its own judge held the link to the customers "inconclusive", and it still wrote `root-cause-identified` | None in the corpus |
+| move-fable-5-2 | 2026-11-15 | t2-red-herring-latency-latent-d1, rep 1 | `switch-flipped`; "was turned on ... delays every request on the shop routes and leaves /health fast" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | t2-red-herring-latency-latent-d1, rep 2 | `switch-flipped`; "An operational switch inside the target (chaos mode) was turned on" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | t2-red-herring-latency-latent-d1, rep 3 | `switch-flipped`; "was turned on ... adds a variable delay of up to about 1.5 s to every shop route" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | t3-chaos-low-rate-intermittent, rep 1 | `switch-flipped`; "was turned on ... injects 503 responses on a fraction of requests independent of input" | No | #90 |
+| move-fable-5-2 | 2026-11-15 | t3-chaos-low-rate-intermittent, rep 2 | `switch-flipped` and `rare-but-real`; "was turned on ... injects HTTP 503 into a random share of requests" | No | #90, merged: `rare-but-real` takes "a random share of requests" |
+| move-fable-5-2 | 2026-11-15 | t3-chaos-low-rate-intermittent, rep 3 | `switch-flipped` and `rare-but-real`; "was turned on ... rejects a random share of requests on every route with HTTP 503" | No | #90 |
+| fable-5-2-round-2 | 2026-11-15 | t2-quiet-d1-suggestive-complaint, rep 1 | Verdict `root-cause-identified`, want `no-active-incident`; the cause `unhandled-exception` counts as a false attribution | Yes: its gaps say "all four failed requests for /products/3 carry investigator request ids", its judge answered "User impact: not proven", and it still wrote `root-cause-identified`; no `latent_findings` entry | None in the corpus |
+
+Over the two rounds the suggestive complaint passed in 3 of 6 runs. The known confound of that fixture
+holds here too: the lab starts seconds before the complaint, and the complaint says "this morning".
+
+### Limits
+
+Both rounds:
+- Every session and every subagent loaded instruction files and memory notes of the operator from outside
+  the working copy: the personal instruction file, and the index of the memory notes for this repository. The
+  session records show it in 142 of 142 contexts of the first round and in 147 of 147 of the second.
+  Sessions then opened memory notes: 22 of 30 in the first round, 14 of 30 in the second. No read was
+  refused. The notes that were opened hold procedure (how to check a journal, and a redaction rule); the
+  reviewers found no fixture, no cause and no expected verdict in them. They changed the output: 16 and 17
+  of 30 journals carry the `<checkout>` mark, a rule that is in no file of the pinned commits. One note
+  names the working copies of a benchmark, so a session can learn that it is a benchmark run. A session of
+  the first round edited one note, so the notes pass text from one round to a later one; no session of
+  the second round wrote there. The runner does not isolate a run from these files, and #110 left that
+  decision open.
+- The effort level was `high`. bench-v2 ran at `xhigh`. The personal instruction file carries a language
+  rule that is newer than bench-v2. A difference to bench-v2 is therefore not a difference of the model.
+
+The first round:
+- No file of the round records the effort level; the level is known from the session records of the
+  operator only.
+- The session context named the eleven removed journals in 30 of 30 sessions (#110). Two names describe a
+  condition that the fixtures stage. One session read an earlier journal through the history
+  (`chaos-latency`, rep 3, `git show HEAD:journals/...`), and one listed the commit subjects of the
+  journals (`chaos-latency`, rep 1). The second round has neither: no journal name and no commit subject in
+  any of its 147 contexts, and one `git` command in all, `git status --short`.
+
+The second round:
+- The computer of the operator went to sleep at 20:33 UTC and slept, with short wake periods, for about
+  two hours. Two investigations ran across the sleep: `t2-red-herring-latency-latent-d1`, rep 3 (3427 s by
+  the clock of the runner, 534 s of harness time) and `t3-chaos-low-rate-intermittent`, rep 1 (4016 s, 392
+  s). The harness added turns to both sessions ("Your response above was cut off mid-stream. Resume
+  directly from where it stops"), two and three, against item 4 of the protocol, and one subagent resumed
+  after a sleep error. The other 28 runs differ by 2 s at most between the two clocks.
+- The limit of 30 minutes did not stop the two runs: the runner's timeout did not count the sleep. The
+  protocol has no rule for a sleep. The leader decided on 2026-11-16 that both count as completed runs:
+  the evidence of both was gathered before the first sleep, each quote matches a tool result in the
+  session record, and the lab kept its state. Read strictly, as two timeouts, the round is 27 of 30.
+- The wall clock values of these two runs are not usable. The scorecard sums the journals' own clocks,
+  1286 s and 2118 s for these two, and about 3000 s of that sum is sleep; the clock of the runner holds
+  about 6500 s of sleep for the two. The journal of `t3-chaos-low-rate-intermittent`, rep 1, saw the jump
+  of the clock and reported it as a gap.
+- `t2-red-herring-latency-latent-d1`, rep 3, made no probe of the page with the latent defect. Its pass
+  holds on the cause, and it shows nothing on the attribution of a latent defect.
+- Two passes carry the latent defect as a validated hypothesis beside the `latent_findings` entry:
+  `healthy-baseline`, rep 2, and `t2-healthy-after-chaos-window`, rep 2. The scorer does not count this on
+  a `no-active-incident` verdict; #92 holds the question. The passes of the first round were not read for
+  it.
