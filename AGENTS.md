@@ -56,7 +56,8 @@ this repo on top of them.
   git-commit them on the current branch — those two forms are narrowly allowlisted in
   settings so an unattended investigation never blocks on a prompt. The shift may also
   start the alert receiver: `scripts/receive.py` is allowlisted in its exact form, with
-  no argument. Pushing stays human. Widening any of these entries is SPEC-grade, like
+  no argument, and the token file `alerts/receiver-token` is on the deny list for
+  reads. Pushing stays human. Widening any of these entries is SPEC-grade, like
   the probe allowlist.
 - Quality gates: `uv run eval/tests.py` (scorer + runner pins),
   `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) and

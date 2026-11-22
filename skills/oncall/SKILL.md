@@ -17,7 +17,8 @@ starting the shift.
    The watch starts first, so that no line that arrives during the next two steps is
    missed.
 2. **Receiver.** List `alerts/` and look for the token file `alerts/receiver-token`.
-   Never open that file: its content is a secret, and the shift does not need it.
+   Never open that file: its content is a secret, the shift does not need it, and
+   the settings deny the read.
    When the file exists, start the receiver of the Alertmanager webhook as a
    background command, in exactly this form: `scripts/receive.py`. It verifies the
    token of each call and appends one line per new firing alert to the inbox

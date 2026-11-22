@@ -89,7 +89,9 @@ the receiver does not listen. An on-call shift starts the receiver when
 `alerts/receiver-token` exists. The shift looks for that file only, so a token file
 in another place is for a start by hand. The operator can start the receiver by hand
 with `scripts/receive.py`, and then a line waits in the inbox for the next shift. One
-receiver runs per inbox: a second one exits.
+receiver runs per inbox: a second one exits. The settings of the repository deny a
+session the read of `alerts/receiver-token`; a token file in another place has no
+such rule.
 
 ```yaml
 receivers:

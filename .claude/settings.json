@@ -25,6 +25,8 @@
       "mcp__grafana__check_datasources_health"
     ],
     "deny": [
+      "Read(./alerts/receiver-token)",
+      "Read(/alerts/receiver-token)",
       "Bash(curl:*)",
       "Bash(wget:*)",
       "Bash(http:*)",

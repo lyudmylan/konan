@@ -355,6 +355,10 @@ def test_settings_allow_the_receiver_without_arguments():
     settings = json.loads((HERE.parent / ".claude" / "settings.json").read_text(encoding="utf-8"))
     entries = [e for e in settings["permissions"]["allow"] if "receive.py" in e]
     assert sorted(entries) == ["Bash(./scripts/receive.py)", "Bash(scripts/receive.py)"], entries
+    # Added after the code review: the token file is denied to the file tools, in the
+    # form relative to the session directory and in the form relative to the project.
+    deny = settings["permissions"]["deny"]
+    assert "Read(./alerts/receiver-token)" in deny and "Read(/alerts/receiver-token)" in deny
     with contextlib.redirect_stderr(io.StringIO()):
         assert receive.main(argv=["--port", "1"]) == 2    # the script takes no argument
 

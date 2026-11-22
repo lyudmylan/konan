@@ -115,6 +115,13 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
   is ignored. A length that is not a number of ASCII digits gets 411. The answers of the library (a bad
   request line, a method with no handler) get a log line, and the log line is written before the answer.
 - `docs/triggers.md`: a third limit, a refused call is not sent again.
+- Two additions to the intent, accepted by the leader in the conversation on 2026-11-22. The deny list
+  of `.claude/settings.json` gets `Read(./alerts/receiver-token)` and `Read(/alerts/receiver-token)`, so
+  that the secrecy of the token does not rest on a sentence of the skill. The rule covers the file tools
+  and the file commands that the harness recognizes in a Bash command; a script that reads the file is
+  not covered (the permissions page of the harness, read on 2026-11-22). `scripts/receive.py` joins
+  `tiers.high.paths` of `charter.toml`, as `scripts/probe.sh` is, because a shift runs it without a
+  prompt.
 
 ## Files
 
