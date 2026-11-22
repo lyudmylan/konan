@@ -83,12 +83,12 @@ sequenceDiagram
   participant T as target telemetry
   participant O as shift owner
 
-  Note over S: shift start — catch-up: any line no journal cites
+  S->>I: shift start: Monitor tail — event-driven
   S->>R: start the receiver (when the token file exists)
+  Note over S: catch-up: any line no journal cites
   A->>R: webhook call with the token (stack)
   R->>I: append one complaint line per new firing alert
   A->>I: or append the line with scripts/alert.sh (eval-side)
-  S->>I: Monitor tail — event-driven
   I-->>S: new line delivered
   S->>T: probes, logs, metrics — read-only
   S->>S: investigate: lenses, deep-dives, judge

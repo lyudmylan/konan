@@ -99,6 +99,23 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
     quality check. `intents/**`, `charter.toml`, `AGENTS.md` and `.claude/settings.json` are in the high
     tier, so the leader merges.
 
+## Changes after the code review
+
+- The on-call skill: the watch starts first, then the receiver, then the catch-up. In the order of step
+  7, a line that the receiver wrote before the watch started was never delivered, and its pair was
+  known to the receiver from then on.
+- The shift looks only for `alerts/receiver-token`. It cannot read `KONAN_RECEIVER_TOKEN_FILE` without a
+  permission prompt, so that variable is for a start by hand; step 7 named both.
+- `scripts/receive.py` reads the pairs again when the inbox was changed from outside, so that a pair is
+  known only while its line is in the inbox.
+- `scripts/receive.py` holds a lock file, `alerts/receiver.lock`, for the life of the process. On macOS a
+  receiver on the loopback address and one on all addresses can bind the same port, so the taken port
+  alone did not stop a second receiver.
+- The token is compared as bytes, so a token outside ASCII matches; a byte order mark in the token file
+  is ignored. A length that is not a number of ASCII digits gets 411. The answers of the library (a bad
+  request line, a method with no handler) get a log line, and the log line is written before the answer.
+- `docs/triggers.md`: a third limit, a refused call is not sent again.
+
 ## Files
 
 New: `scripts/receive.py`, `scripts/tests.py`, this plan. Changed: `charter.toml`,
@@ -108,5 +125,6 @@ New: `scripts/receive.py`, `scripts/tests.py`, this plan. Changed: `charter.toml
 
 ## What I will not do
 
-No thread per call, no queue, no retry, no state file: the inbox is the only memory. No option on the
+No thread per call, no queue, no retry, no state file: the inbox is the only memory, and the lock file
+holds no content. No option on the
 command line: the allow entries are exact. No change to the complaint object.

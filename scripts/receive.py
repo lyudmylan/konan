@@ -16,17 +16,22 @@ inbox that the on-call shift watches. It starts no investigation itself and send
             before anything is written.
   repeat    the key of an alert is the pair (fingerprint, startsAt). A pair already in
             the inbox adds no line; a resolved alert adds no line. The inbox is the only
-            memory: the pairs are read from it at start.
+            memory: the pairs are read from it at start, and again when the file was
+            changed from outside (emptied, replaced, appended).
+  one       a lock file next to the inbox, held for the life of the process: a second
+            receiver on the same inbox exits, also when it could bind its address.
   answers   200 with the counts; 401 token; 404 path; 405 method; 411 or 413 length;
             400 payload; 500 when the write fails, so that the sender retries.
   log       one line per call on standard output: time, answer code, the three counts.
-            Never the token, never the body.
+            Never the token, never the body. A read that passed its limit is logged as
+            408 and gets no answer.
 
 One call at a time, in one thread, so the test of a pair and the append of its line are
 one step. The read of one call has a limit of READ_SECONDS in total. Standard library
 only. No option on the command line: the permission entries of the shift are exact.
 Intent: intents/alert-webhook.md. Pins: `python3 scripts/tests.py`.
 """
+import fcntl
 import hmac
 import io
 import json
@@ -55,7 +60,7 @@ def read_token(path) -> str | None:
     """The token of the file, with the whitespace at both ends removed; None for a
     missing, unreadable or empty file."""
     try:
-        token = Path(path).read_text(encoding="utf-8").strip()
+        token = Path(path).read_text(encoding="utf-8-sig").strip()
     except (OSError, UnicodeDecodeError):
         return None
     return token or None
@@ -133,12 +138,34 @@ class Receiver:
         self.inbox = Path(inbox)
         self.token = token
         self.log = log if log is not None else sys.stdout
+        self._seen = self._signature()
         self.pairs = known_pairs(self.inbox)
 
+    def _signature(self):
+        """What tells that the inbox changed: its file, its size, its last write."""
+        try:
+            st = os.stat(self.inbox)
+        except OSError:
+            return None
+        return st.st_ino, st.st_size, st.st_mtime_ns
+
+    def _refresh(self) -> None:
+        """Read the pairs again when the inbox was changed from outside, so that a
+        pair counts as known only while its line is in the inbox."""
+        signature = self._signature()
+        if signature != self._seen:
+            self.pairs = known_pairs(self.inbox)
+            self._seen = signature
+
     def authorized(self, header: str | None) -> bool:
+        """http.server decodes a header as ISO-8859-1, so the bytes of the credentials
+        are compared with the bytes of the token."""
         scheme, _, credentials = (header or "").partition(" ")
-        return scheme.lower() == "bearer" and hmac.compare_digest(
-            credentials.strip().encode("utf-8"), self.token.encode("utf-8"))
+        try:
+            sent = credentials.strip(" \t").encode("latin-1")
+        except UnicodeEncodeError:
+            return False
+        return scheme.lower() == "bearer" and hmac.compare_digest(sent, self.token.encode("utf-8"))
 
     def accept(self, body: bytes) -> tuple[int, dict]:
         """Decide one authorized call: (answer code, counts)."""
@@ -148,6 +175,7 @@ class Receiver:
             return 400, dict(NO_COUNTS)
         counts = {"new": 0, "known": 0, "resolved": resolved}
         try:
+            self._refresh()
             for obj in firing:
                 pair = (obj["fingerprint"], obj["startsAt"])
                 if pair in self.pairs:
@@ -173,11 +201,12 @@ class Receiver:
             f.write(line.encode("utf-8"))
             f.flush()
             os.fsync(f.fileno())
+        self._seen = self._signature()
 
     def note(self, code: int, counts: dict | None = None) -> None:
         c = counts or NO_COUNTS
         stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        print(f"{stamp} {code} new={c['new']} known={c['known']} resolved={c['resolved']}",
+        print(f"{stamp} {int(code)} new={c['new']} known={c['known']} resolved={c['resolved']}",
               file=self.log, flush=True)
 
 
@@ -218,18 +247,26 @@ def make_server(host: str, port: int, receiver: Receiver,
             if format.startswith("Request timed out"):
                 receiver.note(408)
 
+        def send_error(self, code, message=None, explain=None):
+            """The answers of the library (a bad request line, a method with no
+            handler) take the same route as ours, so each call has its log line."""
+            self._answer(405 if int(code) == 501 else int(code))
+
         def _answer(self, code: int, counts: dict | None = None):
+            receiver.note(code, counts)           # before the write: a sender that left is logged too
             body = json.dumps(counts if code == 200 else {"code": code}).encode("utf-8")
-            self.connection.settimeout(read_seconds)
             self.close_connection = True
-            self.send_response(code)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("Connection", "close")
-            self.end_headers()
-            if self.command != "HEAD":
-                self.wfile.write(body)
-            receiver.note(code, counts)
+            try:
+                self.connection.settimeout(read_seconds)
+                self.send_response(code)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Connection", "close")
+                self.end_headers()
+                if self.command != "HEAD":
+                    self.wfile.write(body)
+            except OSError:
+                return
             self._linger()
 
         def _linger(self):
@@ -260,9 +297,9 @@ def make_server(host: str, port: int, receiver: Receiver,
             if not receiver.authorized(self.headers.get("Authorization")):
                 return self._answer(401)
             length = self.headers.get("Content-Length", "")
-            if not length.isdigit():
+            if not (length.isascii() and length.isdigit()):
                 return self._answer(411)
-            if int(length) > MAX_BODY:
+            if len(length) > 7 or int(length) > MAX_BODY:
                 return self._answer(413)
             try:
                 body = self.rfile.read(int(length))
@@ -275,6 +312,20 @@ def make_server(host: str, port: int, receiver: Receiver,
             self._answer(*receiver.accept(body))
 
     return HTTPServer((host, port), Handler)
+
+
+def hold_inbox(inbox):
+    """Take the lock of one inbox for the life of the process. Returns the open lock
+    file, or None when another receiver holds it. Two receivers can bind the same port
+    on some systems (one on the loopback address, one on all addresses), and each would
+    keep its own memory of the pairs."""
+    lock = open(Path(inbox).with_name("receiver.lock"), "a")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        lock.close()
+        return None
+    return lock
 
 
 def main(argv=None, env=None) -> int:
@@ -293,13 +344,19 @@ def main(argv=None, env=None) -> int:
     except ValueError as e:
         print(f"receiver: bad address: {e}", file=sys.stderr)
         return 2
-    receiver = Receiver(INBOX, token)
     try:
+        receiver = Receiver(INBOX, token)
         server = make_server(host, port, receiver)
     except OSError as e:
         print(f"receiver: cannot listen on {host}:{port}: {e}", file=sys.stderr)
         return 1
     INBOX.parent.mkdir(parents=True, exist_ok=True)
+    lock = hold_inbox(INBOX)
+    if lock is None:
+        server.server_close()
+        print(f"receiver: another receiver holds {INBOX.parent.name}/{INBOX.name}; not listening",
+              file=sys.stderr)
+        return 1
     print(f"receiver: listening on http://{host}:{port}{ALERTS_PATH}", flush=True)
     try:
         server.serve_forever()
@@ -307,6 +364,7 @@ def main(argv=None, env=None) -> int:
         pass
     finally:
         server.server_close()
+        lock.close()
     return 0
 
 

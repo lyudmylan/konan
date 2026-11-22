@@ -137,6 +137,15 @@ def test_call_without_the_token_is_refused():
         with _Lab(token=receive.read_token(token_file)) as lab:
             assert lab.call(_group(_alert()))[0] == 200
             assert len(lab.lines()) == 1
+        # A token outside ASCII, in a file with a byte order mark: the sender puts the
+        # UTF-8 bytes into the header, and they match.
+        token_file.write_bytes(b"\xef\xbb\xbf" + "t\u00f6ken-\u00df7".encode("utf-8") + b"\n")
+        token = receive.read_token(token_file)
+        assert token == "t\u00f6ken-\u00df7"
+        with _Lab(token=token) as lab:
+            as_sent = ("Bearer " + token).encode("utf-8").decode("latin-1")
+            assert lab.call(_group(_alert()), auth=as_sent)[0] == 200
+            assert lab.call(_group(_alert()), auth="Bearer t\u00f6ken-\u00df8")[0] == 401
 
 
 def test_firing_group_becomes_one_line_per_alert():
@@ -199,6 +208,14 @@ def test_repeat_adds_no_line_and_a_new_start_adds_one():
         assert len(lines) == 5
         assert json.loads(lines[2])["fingerprint"] == "lab-1"    # the open line got its end
         assert json.loads(lines[4])["startsAt"] == "2026-11-16T14:00:00Z"
+        # The inbox is the only memory: a pair whose line was removed is new again, and
+        # a pair that another writer appended is known.
+        lab.inbox.write_bytes(b"")
+        assert lab.call(_group(later))[1] == {"new": 1, "known": 0, "resolved": 0}
+        with open(lab.inbox, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"source": "alert", "fingerprint": "f-outside", "startsAt": "t9"}) + "\n")
+        assert lab.call(_group(_alert("f-outside", starts="t9")))[1]["known"] == 1
+        assert len(lab.lines()) == 2
 
 
 def test_resolved_alert_adds_no_line():
@@ -251,9 +268,20 @@ def test_malformed_call_writes_nothing():
             assert lab.call(big)[0] == 413
         except OSError:
             pass                                  # the receiver may close while the body is sent
-        # No length.
-        answer = lab.raw(b"POST /alerts HTTP/1.1\r\n" + auth + b"\r\n")
-        assert answer.startswith(b"HTTP/1.0 411"), answer[:40]
+        # No length, and a length that is not a number of ASCII digits.
+        for length in (b"", b"Content-Length: \xb2\r\n", b"Content-Length: -5\r\n",
+                       b"Content-Length: 1e3\r\n"):
+            answer = lab.raw(b"POST /alerts HTTP/1.1\r\n" + auth + length + b"\r\n")
+            assert answer.startswith(b"HTTP/1.0 411"), answer[:40]
+        answer = lab.raw(b"POST /alerts HTTP/1.1\r\n" + auth
+                         + b"Content-Length: " + b"9" * 5000 + b"\r\n\r\n")
+        assert answer.startswith(b"HTTP/1.0 413"), answer[:40]
+        # A method with no handler and a broken request line get an answer and a log line.
+        before = len(lab.log.getvalue().splitlines())
+        assert lab.raw(b"TRACE /alerts HTTP/1.1\r\n\r\n").startswith(b"HTTP/1.0 405")
+        # (a line with no HTTP version is answered in the old form: the body, no status line)
+        assert b'"code": 400' in lab.raw(b"this is no request line at all\r\n\r\n")
+        assert [l.split()[1] for l in lab.log.getvalue().splitlines()[before:]] == ["405", "400"]
         # A wrong path, and a method other than POST.
         assert lab.call(_group(good), path="/")[0] == 404
         assert lab.call(_group(good), path="/alerts/")[0] == 404
@@ -353,6 +381,14 @@ def test_write_failure_is_500_and_taken_port_exits():
                             "KONAN_RECEIVER_PORT": str(holder.getsockname()[1])})
         assert done.returncode == 1, done
         assert "cannot listen" in done.stderr and TOKEN not in done.stderr
+        # A second receiver on the same inbox gets no lock, also on a free port.
+        inbox = Path(tmp) / "inbox.jsonl"
+        first = receive.hold_inbox(inbox)
+        assert first is not None and receive.hold_inbox(inbox) is None
+        first.close()
+        again = receive.hold_inbox(inbox)
+        assert again is not None
+        again.close()
 
 
 if __name__ == "__main__":

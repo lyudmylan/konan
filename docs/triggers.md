@@ -86,8 +86,10 @@ The receiver listens for `POST /alerts` on `127.0.0.1:9911`. The token is the
 content of `alerts/receiver-token` in the konan checkout (the directory is ignored
 by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names. Without a token file
 the receiver does not listen. An on-call shift starts the receiver when
-`alerts/receiver-token` exists; the operator can also start it by hand with
-`scripts/receive.py`, and then a line waits in the inbox for the next shift.
+`alerts/receiver-token` exists. The shift looks for that file only, so a token file
+in another place is for a start by hand. The operator can start the receiver by hand
+with `scripts/receive.py`, and then a line waits in the inbox for the next shift. One
+receiver runs per inbox: a second one exits.
 
 ```yaml
 receivers:
@@ -101,7 +103,7 @@ receivers:
             credentials_file: /path/to/the/token/file
 ```
 
-Two limits:
+Three limits:
 
 - A call that finds no receiver is not stored by konan. Alertmanager retries the
   call, and it sends a firing alert again after its repeat interval, so an alert
@@ -110,3 +112,7 @@ Two limits:
 - `KONAN_RECEIVER_HOST` and `KONAN_RECEIVER_PORT` change the address. The default
   accepts calls from the same computer only. With a host other than loopback the
   token crosses the network in clear text, because the receiver has no TLS.
+- A call that the receiver refuses is not sent again. The receiver answers in the 400
+  range for a body over 1 MiB and for a group with one faulty alert, and it writes
+  nothing of that call. Alertmanager retries only an answer in the 500 range. The
+  setting `max_alerts` of the webhook configuration limits the size of a group.
