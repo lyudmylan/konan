@@ -10,7 +10,10 @@ Everything downstream is trigger-agnostic. Decision record: epic #4.
   webhook sender (or a human noticing). konan contains no detection.
 - **Adapter** — ours, and there is exactly one design: receive a delivery on a
   transport, verify its origin, normalize to the complaint object below, enter the
-  investigate skill. Markdown and configuration, never a service.
+  investigate skill. Markdown and configuration, plus one receiver script for the
+  HTTP transport, `scripts/receive.py`. The script runs while an on-call shift or
+  the operator runs it, and it holds no mapping for a stack. konan has no deployed
+  service.
 - **Profile** — per-stack configuration: whatever makes stack X deliver
   contract-shaped complaints to the transport. Adding a stack costs a profile,
   never an adapter.
@@ -36,8 +39,13 @@ The contract adopts it verbatim, plus one konan field, `source`:
 - A human report is synthesized into the same shape by the `/konan` adapter:
   `alertname: human-report`, text verbatim into `annotations.summary`,
   `startsAt` = now, generated fingerprint.
-- One Alertmanager webhook can carry a *group* of alerts; whether a group becomes
-  one investigation or several is the receiving adapter's decision (#35).
+- One Alertmanager webhook call can carry a *group* of alerts. One alert is one
+  inbox line and one investigation: the receiver writes each firing alert of the
+  group as its own complaint object. The key of an alert is the pair of
+  `fingerprint` and `startsAt`. Alertmanager derives the fingerprint from the
+  labels, so the same alert that fires again later has the same fingerprint and a
+  new `startsAt`. A resolved alert starts nothing. The number of investigations for
+  one incident follows from the routing and the inhibition rules of the stack.
 
 ## Rules
 
@@ -54,7 +62,9 @@ The contract adopts it verbatim, plus one konan field, `source`:
    vs start makes trigger latency visible, including off-shift gaps. Text in
    journal v1; fields in contract v2 (#24).
 5. **Delivery guarantees belong to the detector's stack** — retry, grouping,
-   dedup, silences. konan ships no queue machinery.
+   dedup, silences. The receiver drops a repeat of a pair (`fingerprint`,
+   `startsAt`) that is already in the inbox, because Alertmanager sends a firing
+   alert again after its repeat interval. konan keeps no other queue machinery.
 
 ## Profiles
 
@@ -63,8 +73,40 @@ The contract adopts it verbatim, plus one konan field, `source`:
 - **lab** — `scripts/alert.sh` appends contract-shaped lines to `alerts/inbox.jsonl`;
   the `/oncall` shift (`skills/oncall`) catches up on waiting lines, then watches via
   Monitor and investigates each alert. The lab stand-in for a webhook.
-- **native stacks** — Alertmanager: `webhook_config` + outbound payload
-  templating (v0.32+) emits the contract shape sender-side. Grafana: contact
-  point + custom payload (12.x). Sentry: the sender is not shapeable — the
-  profile declares a mapping and the adapter executes it. Verified facts and
-  caveats: #35.
+- **native stacks** — Alertmanager: a webhook receiver in its configuration that
+  names the address of `scripts/receive.py` and the token file (the example below).
+  The receiver takes the native payload, so the sender needs no template. Grafana:
+  contact point + custom payload (12.x). Sentry: its payload is not the group form
+  of the contract. Its profile delivers that form, or a later work item decides on
+  a mapping; the receiver holds none. Verified facts and caveats: #35.
+
+## The Alertmanager profile
+
+The receiver listens for `POST /alerts` on `127.0.0.1:9911`. The token is the
+content of `alerts/receiver-token` in the konan checkout (the directory is ignored
+by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names. Without a token file
+the receiver does not listen. An on-call shift starts the receiver when
+`alerts/receiver-token` exists; the operator can also start it by hand with
+`scripts/receive.py`, and then a line waits in the inbox for the next shift.
+
+```yaml
+receivers:
+  - name: konan
+    webhook_configs:
+      - url: http://127.0.0.1:9911/alerts
+        send_resolved: false
+        http_config:
+          authorization:
+            type: Bearer
+            credentials_file: /path/to/the/token/file
+```
+
+Two limits:
+
+- A call that finds no receiver is not stored by konan. Alertmanager retries the
+  call, and it sends a firing alert again after its repeat interval, so an alert
+  that still fires reaches the next shift. An alert that fired and was resolved
+  while no receiver ran starts no investigation.
+- `KONAN_RECEIVER_HOST` and `KONAN_RECEIVER_PORT` change the address. The default
+  accepts calls from the same computer only. With a host other than loopback the
+  token crosses the network in clear text, because the receiver has no TLS.

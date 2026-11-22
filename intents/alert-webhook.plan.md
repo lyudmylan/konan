@@ -1,6 +1,7 @@
 # Plan: the receiver of the Alertmanager webhook (#114)
 
-Intent: `intents/alert-webhook.md`. Written 2026-11-16. Not yet accepted.
+Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader in the conversation on
+2026-11-22.
 
 ## Steps
 

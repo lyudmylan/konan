@@ -54,10 +54,13 @@ this repo on top of them.
   source file goes this way, also a small one: the contract locks it.
 - Unattended shift writes: an on-call session (`/oncall`) may write `journals/` and
   git-commit them on the current branch — those two forms are narrowly allowlisted in
-  settings so an unattended investigation never blocks on a prompt. Pushing stays
-  human. Widening either entry is SPEC-grade, like the probe allowlist.
-- Quality gates: `uv run eval/tests.py` (scorer + runner pins) and
-  `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) must pass
+  settings so an unattended investigation never blocks on a prompt. The shift may also
+  start the alert receiver: `scripts/receive.py` is allowlisted in its exact form, with
+  no argument. Pushing stays human. Widening any of these entries is SPEC-grade, like
+  the probe allowlist.
+- Quality gates: `uv run eval/tests.py` (scorer + runner pins),
+  `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) and
+  `python3 scripts/tests.py` (alert receiver pins) must pass
   (they are `checks.quality` of the contract), the built-in `/code-review` before
   merge, and docs ship with the change. Skill changes are
   validated by re-running scenarios with the eval runner (`eval/README.md` → Running
@@ -82,6 +85,11 @@ this repo on top of them.
   runner: staged, blinded, headless investigations per fixture; journals + sidecars under
   `eval/runs/<id>/`, scored into `eval/runs/<id>/scorecard.md`. Operator side; it draws
   from the same subscription pool as everything else — batch with `--max-runs`.
+- `scripts/receive.py` — the receiver of the Alertmanager webhook (`docs/triggers.md`):
+  listens for `POST /alerts` on `127.0.0.1:9911`, verifies the token of
+  `alerts/receiver-token`, and appends one complaint line per new firing alert to
+  `alerts/inbox.jsonl`. No arguments; the on-call shift starts it when the token file
+  exists. Pins: `python3 scripts/tests.py`.
 - `scripts/alert.sh "<summary>" [alertname] [severity]` — eval-side alert emitter:
   appends one contract-shaped complaint line to `alerts/inbox.jsonl` (the lab trigger
   profile, `docs/triggers.md`); prompts by design, like every operator action.

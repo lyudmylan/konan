@@ -9,7 +9,9 @@ investigation's output follows; finished journals land in `journals/`. `konan` �
 manual trigger adapter (`/konan <complaint text>`): synthesizes the complaint object
 per the trigger contract (`docs/triggers.md`) and starts the investigate loop.
 `oncall` — the shift (`/oncall`): watches `alerts/inbox.jsonl`, catch-up first then
-Monitor, investigates every alert serially, commits each journal, pages the owner.
+Monitor, investigates every alert serially, commits each journal, pages the owner;
+with a token file it starts `scripts/receive.py`, the receiver of the Alertmanager
+webhook.
 `setup` — agent-run onboarding (`/setup`): prerequisite checks, lab wiring, a first
 scored investigation, and the hand-over map; the operator's manual steps are only
 install / clone / trust / operator prompts. `adapter` — bring your own target (`/adapter`):

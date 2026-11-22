@@ -16,7 +16,9 @@ blinded from investigations by contract.
 ```mermaid
 flowchart LR
   human[Human reporter] --> konancmd
-  stack[Observability stack] -->|alert| inbox[alerts inbox]
+  stack[Observability stack] -->|webhook call, token| recv["receiver, scripts/receive.py"]
+  recv -->|one line per new firing alert| inbox[alerts inbox]
+  evalside[Operator, eval-side] -->|scripts/alert.sh| inbox
   stack -.->|webhook, planned #35| fire
 
   subgraph adapters[Trigger adapters — one design]
@@ -68,18 +70,24 @@ flowchart TD
 
 The inbox line is durable: an alert raised while nobody watches waits, and the
 latency stamp shows the wait honestly. Between events the shift is idle at zero
-model cost — delivery is push or event, never poll.
+model cost — delivery is push or event, never poll. A webhook call reaches the inbox
+through the receiver, which runs while a shift or the operator runs it. A call that
+finds no receiver is not stored; the stack sends a firing alert again.
 
 ```mermaid
 sequenceDiagram
   participant A as Alerter (stack / eval-side)
+  participant R as scripts/receive.py
   participant I as alerts/inbox.jsonl
   participant S as /oncall shift session
   participant T as target telemetry
   participant O as shift owner
 
-  A->>I: append complaint line (fingerprint, startsAt)
   Note over S: shift start — catch-up: any line no journal cites
+  S->>R: start the receiver (when the token file exists)
+  A->>R: webhook call with the token (stack)
+  R->>I: append one complaint line per new firing alert
+  A->>I: or append the line with scripts/alert.sh (eval-side)
   S->>I: Monitor tail — event-driven
   I-->>S: new line delivered
   S->>T: probes, logs, metrics — read-only

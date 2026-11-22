@@ -4,6 +4,8 @@
       "Bash(scripts/probe.sh:*)",
       "Bash(./scripts/probe.sh:*)",
       "Bash(printenv KONAN_ADAPTER)",
+      "Bash(scripts/receive.py)",
+      "Bash(./scripts/receive.py)",
       "Bash(git add journals/:*)",
       "Bash(git commit -m:*)",
       "mcp__grafana__query_prometheus",

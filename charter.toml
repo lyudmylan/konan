@@ -58,7 +58,7 @@ file = "AGENTS.md"
 
 # Commands that must pass before a push. They run on the code of the change.
 [checks]
-quality = ["uv run eval/tests.py", "python3 hooks/tests.py"]
+quality = ["uv run eval/tests.py", "python3 hooks/tests.py", "python3 scripts/tests.py"]
 
 # The lifecycle map: the six phases of the AI-native SDLC playbook. In each: what does the work, which
 # skill of Charter helps, and which built-in abilities of Claude Code the phase uses.
