@@ -74,7 +74,7 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
    receiver drops a repeat of a pair already in the inbox, and konan keeps no other queue machinery. The
    profile bullet "lab" stays. Under "native stacks", the Alertmanager line becomes the receiver
    configuration (a `webhook_configs` entry with the address, `send_resolved: false`, and
-   `http_config.authorization` with `credentials_file`) and the two limits of the intent. The Sentry
+   `http_config.authorization` with `credentials_file`) and the three limits of the intent. The Sentry
    line: its payload is not the group form; its profile delivers that form, or a later work item decides
    on a mapping. The Grafana line keeps its content.
 9. `docs/architecture.md`: in the system picture, a solid edge from the stack through the receiver to the
