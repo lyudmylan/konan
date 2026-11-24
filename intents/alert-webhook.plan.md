@@ -123,9 +123,19 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
   `tiers.high.paths` of `charter.toml`, as `scripts/probe.sh` is, because a shift runs it without a
   prompt.
 
+## Changes after the live run
+
+The live run of check 13 on 2026-11-24 led to two changes.
+
+- `skills/oncall/SKILL.md`, the catch-up step: the search for the pair is named as plain commands, one
+  value per call. In three of three shift starts the shift wrote one command with a loop and a shell
+  variable, and that command needed a permission. With the new sentence a fourth start asked for none.
+- `docs/triggers.md`: the lock file stays after the receiver ends and blocks nothing. Two shifts of the
+  run took the file for a lock that nobody holds.
+
 ## Files
 
-New: `scripts/receive.py`, `scripts/tests.py`, this plan. Changed: `charter.toml`,
+New: `scripts/receive.py`, `scripts/tests.py`, this plan, the journal of the live run. Changed: `charter.toml`,
 `.claude/settings.json`, `skills/oncall/SKILL.md`, `skills/README.md`, `docs/triggers.md`,
 `docs/architecture.md`, `docs/product.md`, `AGENTS.md`. Not changed: `hooks/boundary.py`,
 `hooks/tests.py`, `scripts/alert.sh`, the investigate skill, the README.

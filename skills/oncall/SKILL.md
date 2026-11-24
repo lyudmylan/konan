@@ -29,7 +29,11 @@ starting the shift.
 3. **Catch-up.** For each line that is in the inbox now, take its `fingerprint` and
    its `startsAt` and search `journals/` for them; a line is handled when one journal
    holds both. The pair is the key because an alert of Alertmanager that fires again
-   later carries the same fingerprint with a new `startsAt`. A line no journal cites
+   later carries the same fingerprint with a new `startsAt`. Search with plain
+   commands, one value per call: `grep -rlF <fingerprint> journals/`, then
+   `grep -lF <startsAt>` on the files that the first call named. A loop, a pipe or a
+   shell variable makes a command that needs a permission, and an unattended shift
+   gets a refusal for it. A line no journal cites
    is unhandled — investigate it (step 4), oldest first. A line that the watch also
    delivers is the same alert: investigate a pair once. An alert that waited (machine
    asleep, shift over) is late, never lost; the latency stamp shows the wait honestly.
