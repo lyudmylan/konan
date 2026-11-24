@@ -66,7 +66,8 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
    exists, or the file that `KONAN_RECEIVER_TOKEN_FILE` names, start `scripts/receive.py` as a background
    command, exactly in that form; when it exits at once (no token, port taken), record that in the shift
    report and go on; without a token file start nothing. The boundaries paragraph names the receiver
-   among the pre-approved actions. The description line of the skill names the webhook.
+   among the pre-approved actions. The description line of the skill names the webhook. Superseded in
+   part: see "Changes after the code review" for the order and for the token file.
 8. `docs/triggers.md`. The adapter bullet: for the HTTP transport the adapter includes one receiver
    script, `scripts/receive.py`, which runs while a shift or the operator runs it; konan has no deployed
    service. The group sentence: one alert, one investigation, with the pair as the key. Rule 5: the
@@ -103,9 +104,12 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
 
 - The on-call skill: the watch starts first, then the receiver, then the catch-up. In the order of step
   7, a line that the receiver wrote before the watch started was never delivered, and its pair was
-  known to the receiver from then on.
+  known to the receiver from then on. This replaces the order in the intent
+  (`intents/alert-webhook.md`, the scope line on `skills/oncall/SKILL.md`), which this change request
+  changes to match.
 - The shift looks only for `alerts/receiver-token`. It cannot read `KONAN_RECEIVER_TOKEN_FILE` without a
-  permission prompt, so that variable is for a start by hand; step 7 named both.
+  permission prompt, so that variable is for a start by hand; step 7 named both. The scope line of the
+  intent now says so.
 - `scripts/receive.py` reads the pairs again when the inbox was changed from outside, so that a pair is
   known only while its line is in the inbox.
 - `scripts/receive.py` holds a lock file, `alerts/receiver.lock`, for the life of the process. On macOS a
@@ -115,6 +119,13 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
   is ignored. A length that is not a number of ASCII digits gets 411. The answers of the library (a bad
   request line, a method with no handler) get a log line, and the log line is written before the answer.
 - `docs/triggers.md`: a third limit, a refused call is not sent again.
+- The pins for these, all in `scripts/tests.py`, each inside a test that the intent names. The pairs
+  read again: `test_repeat_adds_no_line_and_a_new_start_adds_one` (an emptied inbox makes a pair new, a
+  line from another writer makes a pair known). The lock file:
+  `test_write_failure_is_500_and_taken_port_exits` (a second hold of the same inbox gets none). The
+  token as bytes and the byte order mark: `test_call_without_the_token_is_refused`. The 411 and the log
+  lines for the answers of the library: `test_malformed_call_writes_nothing`. The order of the log line
+  and the answer has no pin: a test cannot see it without a fault in the connection.
 - Two additions to the intent, accepted by the leader in the conversation on 2026-11-22. The deny list
   of `.claude/settings.json` gets `Read(./alerts/receiver-token)` and `Read(/alerts/receiver-token)`, so
   that the secrecy of the token does not rest on a sentence of the skill. The rule covers the file tools

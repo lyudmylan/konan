@@ -39,7 +39,7 @@ each line as it does today.
   `startsAt`, because Alertmanager derives the fingerprint from the labels, and the same alert that fires
   again later carries the same fingerprint with a new `startsAt`. A call that repeats a pair already in
   the inbox adds no line. The inbox is the only memory of the pairs: the script reads them from the inbox
-  when it starts, and skips a line that does not parse. An alert with the status `resolved` adds no line.
+  when it starts, and again when another writer changed the inbox, and skips a line that does not parse. An alert with the status `resolved` adds no line.
   Both get 200. The number of investigations for one incident follows from the routing and the inhibition
   rules of the stack.
 - The stance "adding a stack costs a profile, never code" of `docs/product.md` and `docs/triggers.md`
@@ -55,8 +55,10 @@ each line as it does today.
   is closed with no line written, so a connection that sends nothing does not hold the next call.
 - `scripts/receive.py`, the log: one line per call with the time, the answer code and the three counts
   (new, known, resolved). The token and the body of a call are never logged.
-- `skills/oncall/SKILL.md`. When the token file exists, the shift starts the receiver as a background
-  command before it watches the inbox; without the file the shift is the lab profile of today. A receiver
+- `skills/oncall/SKILL.md`. When the token file `alerts/receiver-token` exists, the shift starts the
+  receiver as a background command after the watch of the inbox has started; without the file the shift
+  is the lab profile of today. The shift looks for that file only: a file that
+  `KONAN_RECEIVER_TOKEN_FILE` names is for a start by hand. A receiver
   that does not start is recorded in the shift report, and the shift watches the inbox. The catch-up step
   treats a line as handled when one journal holds its `fingerprint` and its `startsAt`.
 - `.claude/settings.json`: two entries in the allow list, `Bash(scripts/receive.py)` and
