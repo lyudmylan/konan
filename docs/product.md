@@ -35,7 +35,9 @@ is the point.
 - **Triggers are detector / adapter / profile** — detection lives in the observability
   stack (or a human); one adapter normalizes every delivery to the complaint contract
   (`docs/triggers.md`); adding a stack costs a configuration profile, never code.
-  Delivery is push or event, never poll.
+  The HTTP transport has one receiver script, `scripts/receive.py`, which is trigger
+  plumbing: it is written once and holds no mapping for a stack. Delivery is push or
+  event, never poll.
 - **Code is allowed only for**: trigger plumbing, the read-only permission boundary
   (allowlists/hooks — a security boundary is never a prompt), the eval scorer, and the
   investigation report/journal contract.
@@ -158,7 +160,9 @@ team-designated safe checks.
 - **Model-comparison content engine**: benchmark v1 lands in v0.2; re-run it on each
   model release; publish the scorecard.
 - **Real-stack integrations**: the first target adapter proof (Grafana Cloud via MCP) lands in v0.2;
-  team-designated checks, change-context sources, and alert-webhook triggers follow.
+  the alert-webhook trigger on the operator's computer exists (the receiver of the
+  Alertmanager webhook, `docs/triggers.md`); team-designated checks, change-context
+  sources, and the alert-webhook trigger of the cloud routine follow.
 - **Enterprise distribution**: the plugin lands in v0.2 (methodology + boundary hook,
   scoped to a konan workspace; the target adapter stays per-target). Team/Enterprise seats (verified:
   full parity for skills, plugins, hooks, routines; org-managed policies make guardrails

@@ -4,6 +4,8 @@
       "Bash(scripts/probe.sh:*)",
       "Bash(./scripts/probe.sh:*)",
       "Bash(printenv KONAN_ADAPTER)",
+      "Bash(scripts/receive.py)",
+      "Bash(./scripts/receive.py)",
       "Bash(git add journals/:*)",
       "Bash(git commit -m:*)",
       "mcp__grafana__query_prometheus",
@@ -23,6 +25,8 @@
       "mcp__grafana__check_datasources_health"
     ],
     "deny": [
+      "Read(./alerts/receiver-token)",
+      "Read(/alerts/receiver-token)",
       "Bash(curl:*)",
       "Bash(wget:*)",
       "Bash(http:*)",
