@@ -20,7 +20,8 @@ each line as it does today.
   `KONAN_RECEIVER_HOST` and `KONAN_RECEIVER_PORT` change the address; the default accepts calls from the
   same computer only. A host other than loopback sends the token in clear text; the Alertmanager line of
   `docs/triggers.md` states that limit. A port that is taken ends the script with a message and a
-  non-zero exit.
+  non-zero exit. A second receiver on the same inbox ends the script in the same way; the lock file
+  `alerts/receiver.lock` holds no content.
 - `scripts/receive.py`, the origin. The token is the content of the file `alerts/receiver-token`
   (`alerts/` is ignored by git), or of the file that `KONAN_RECEIVER_TOKEN_FILE` names, with the
   whitespace at both ends removed; a file that is empty after that counts as empty. Without a token
@@ -63,19 +64,22 @@ each line as it does today.
   treats a line as handled when one journal holds its `fingerprint` and its `startsAt`.
 - `.claude/settings.json`: two entries in the allow list, `Bash(scripts/receive.py)` and
   `Bash(./scripts/receive.py)`, exact, with no argument form, so that an unattended shift starts the
-  receiver without a prompt. The rationale for the change request: the script takes no argument, reads its
+  receiver without a prompt; and two entries in the deny list, `Read(./alerts/receiver-token)` and
+  `Read(/alerts/receiver-token)`, so that the secrecy of the token does not rest on a sentence of the
+  skill. The rationale for the allow entries, for the change request: the script takes no argument, reads its
   configuration from the environment and one file, opens one listening port, and sends nothing. The
   boundary hook and its allow shapes do not change.
 - `scripts/tests.py`: the pins of the checks below, each against a receiver on a free port of the loopback
-  interface with a temporary inbox. `charter.toml`: `python3 scripts/tests.py` joins `checks.quality`.
+  interface with a temporary inbox. `charter.toml`: `python3 scripts/tests.py` joins `checks.quality`. `scripts/receive.py` joins
+  `tiers.high.paths`, as `scripts/probe.sh` is, because a shift runs it without a prompt.
 - `docs/triggers.md`: the adapter paragraph says what the receiver is (one script that runs while a shift
   or the operator runs it, no deployed service); the group sentence states the rule above; rule 5 states
   that the receiver drops a repeat of a pair already in the inbox, and that konan keeps no other queue
   machinery; under "native stacks", the Alertmanager line is replaced by the receiver configuration with
   the address and `credentials_file`, its sentence on sender-side templating is removed because the
-  receiver takes the native payload, and the line states two limits: a call that finds no receiver is not
+  receiver takes the native payload, and the line states three limits: a call that finds no receiver is not
   stored by konan, and Alertmanager sends a firing alert again after its repeat interval; a host other
-  than loopback sends the token in clear text. `docs/architecture.md`: the receiver in the system picture
+  than loopback sends the token in clear text; a refused call is not sent again. `docs/architecture.md`: the receiver in the system picture
   and in the on-call trigger path. `docs/product.md`: the roadmap line on alert-webhook triggers, and the
   stance line on triggers, which names the receiver as the trigger plumbing of the HTTP transport.
   `AGENTS.md`: the command in "Commands", and the new allow entries in the sentence on unattended shift
@@ -104,6 +108,7 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
 3. The same call a second time gets 200 and adds no line, also after the receiver restarts on the same
    inbox, and also when the inbox holds a line that does not parse. Two identical calls that are sent at
    the same time add one line. A call with the same fingerprint and a later `startsAt` adds one line.
+   A line that another writer appends to the inbox makes its pair known; an emptied inbox makes it new.
    test: `scripts/tests.py::test_repeat_adds_no_line_and_a_new_start_adds_one`
 4. A call with the status `resolved` gets 200 and adds no line. A call that holds one firing alert and
    one resolved alert adds one line.
@@ -122,10 +127,10 @@ severity (#29). Profiles for other stacks. The boundary hook, its pins and its a
    text of the alert.
    test: `scripts/tests.py::test_log_holds_no_token_and_no_body`
 9. The allow list of `.claude/settings.json` holds the two exact entries and no entry for the receiver
-   with an argument form.
+   with an argument form, and the deny list holds the two read entries of the token file.
    test: `scripts/tests.py::test_settings_allow_the_receiver_without_arguments`
 10. A write to the inbox that fails gets 500 and adds no line. With the port taken, the script exits with
-    a non-zero code. The sync to disk before the answer has no check: a test cannot observe it without a
+    a non-zero code. A second hold of the lock of one inbox gets none. The sync to disk before the answer has no check: a test cannot observe it without a
     fault in the file system, and the code review reads it.
     test: `scripts/tests.py::test_write_failure_is_500_and_taken_port_exits`
 11. A document check, of words and not of behavior: the shift skill names the receiver and the pair, and

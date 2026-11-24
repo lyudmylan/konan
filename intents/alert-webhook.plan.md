@@ -132,7 +132,7 @@ Intent: `intents/alert-webhook.md`. Written 2026-11-16. Accepted by the leader i
   and the file commands that the harness recognizes in a Bash command; a script that reads the file is
   not covered (the permissions page of the harness, read on 2026-11-22). `scripts/receive.py` joins
   `tiers.high.paths` of `charter.toml`, as `scripts/probe.sh` is, because a shift runs it without a
-  prompt.
+  prompt. The intent holds both since review round 2 of this change request.
 
 ## Changes after the live run
 
