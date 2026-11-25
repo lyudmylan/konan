@@ -135,16 +135,17 @@ the one difference that it names.
 7. The five workflows and the two templates are equal to the output of `charter-setup`, run into an empty
    folder with the values of the contract and the two steps of the toolchain. The arguments of
    `charter-setup` below must be equal to the values of `charter.toml`; a change of the contract changes
-   them. The three `diff` commands run one by one. After the second change request each prints nothing.
-   On the first, the `diff -r` prints one difference, `tests.yml`, and the two other commands print
-   nothing.
+   them. The commands are chained with `&&`, so the block fails on the first difference or error. After
+   the second change request the block passes. On the first, it fails by design at the comparison of the
+   workflows, on the one difference `tests.yml`; the two comparisons of the templates, run by hand
+   there, print nothing.
    command:
    ```
-   D=$(mktemp -d) && mkdir "$D/out"
-   printf '%s\n' '- uses: astral-sh/setup-uv@v5     # the quality checks of this repo run with uv' '- name: Fill the package cache of the eval tests, inside the folder of the repo' '  run: uv sync --script eval/tests.py --cache-dir .uv-cache' > "$D/toolchain.yml"
-   charter-setup --target "$D/out" --repo konan --source https://github.com/lyudmylan/charter-org --source-version v2 --leader lyudmylan --code-path 'skills/**' --code-path 'hooks/**' --code-path 'scripts/**' --high-path 'hooks/**' --high-path '.claude/settings.json' --high-path 'scripts/probe.sh' --high-path 'scripts/receive.py' --quality 'uv run --offline --cache-dir .uv-cache eval/tests.py' --quality 'python3 hooks/tests.py' --quality 'python3 scripts/tests.py' --toolchain "$D/toolchain.yml" < /dev/null
-   diff -r .github/workflows "$D/out/.github/workflows"
-   diff intents/_template.md "$D/out/intents/_template.md"
+   D=$(mktemp -d) && mkdir "$D/out" &&
+   printf '%s\n' '- uses: astral-sh/setup-uv@v5     # the quality checks of this repo run with uv' '- name: Fill the package cache of the eval tests, inside the folder of the repo' '  run: uv sync --script eval/tests.py --cache-dir .uv-cache' > "$D/toolchain.yml" &&
+   charter-setup --target "$D/out" --repo konan --source https://github.com/lyudmylan/charter-org --source-version v2 --leader lyudmylan --code-path 'skills/**' --code-path 'hooks/**' --code-path 'scripts/**' --high-path 'hooks/**' --high-path '.claude/settings.json' --high-path 'scripts/probe.sh' --high-path 'scripts/receive.py' --quality 'uv run --offline --cache-dir .uv-cache eval/tests.py' --quality 'python3 hooks/tests.py' --quality 'python3 scripts/tests.py' --toolchain "$D/toolchain.yml" < /dev/null &&
+   diff -r .github/workflows "$D/out/.github/workflows" &&
+   diff intents/_template.md "$D/out/intents/_template.md" &&
    diff plans/_template.md "$D/out/plans/_template.md"
    ```
 8. On the first change request, the contract checks of 0.3.1 pass, so the verdict of the main branch can

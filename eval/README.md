@@ -142,8 +142,10 @@ uv run eval/score.py --pair eval/scenarios/<id>.yaml journals/<id>.md [--pair ..
   journal is citation-compliant (contract schema + referential integrity: references
   resolve, the root cause names a validated hypothesis, wall clock matches the
   timestamps).
-- The scorer's semantics are pinned by `uv run eval/tests.py` — run it after any
-  change to the scorer, either schema, or the semantics in this README.
+- The scorer's semantics are pinned by `uv run --offline --cache-dir .uv-cache eval/tests.py` — run
+  it after any change to the scorer, either schema, or the semantics in this README. The command reads
+  its packages from the cache `.uv-cache` and never fetches; `uv sync --script eval/tests.py
+  --cache-dir .uv-cache` fills the cache once.
 
 **Running the corpus with the runner:**
 

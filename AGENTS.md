@@ -59,13 +59,28 @@ this repo on top of them.
   no argument, and the token file `alerts/receiver-token` is on the deny list for
   reads. Pushing stays human. Widening any of these entries is SPEC-grade, like
   the probe allowlist.
-- Quality gates: `uv run eval/tests.py` (scorer + runner pins),
+- Quality gates: `uv run --offline --cache-dir .uv-cache eval/tests.py` (scorer + runner pins),
   `python3 hooks/tests.py` (boundary decision pins, incl. eval-blind rows) and
   `python3 scripts/tests.py` (alert receiver pins) must pass
   (they are `checks.quality` of the contract), the built-in `/code-review` before
-  merge, and docs ship with the change. Skill changes are
+  merge, and docs ship with the change. The first command never fetches: it reads the
+  two packages of the tests from the cache `.uv-cache` in the folder of the repo, which
+  git ignores. Fill the cache once on a computer, and again after a change of the
+  package header of `eval/tests.py`: `uv sync --script eval/tests.py --cache-dir .uv-cache`. Skill changes are
   validated by re-running scenarios with the eval runner (`eval/README.md` → Running
   the corpus with the runner); wiring that into CI is still open (#34).
+- A run of an agent: the label `charter-run` on an issue whose intent is on the main
+  branch starts the workflow `run`. An agent builds the work item on a machine of the
+  code host with no person present, and a script opens the change request from the
+  branch `run/<number>`. The shell of a run has no network and writes only in the folder
+  of the repo and in the temp folder, so the quality commands must pass under those two
+  limits. The boundary hook governs a run as it governs each session in a checkout: a
+  command that names a raw network client or an operator surface is denied, also as the
+  pattern of a search, and the second denial freezes the run. A frozen run ends as
+  blocked, with the reason on the issue. A run starts no investigation and touches no
+  target. The paths that a run never changes are `boundary.no_write` of the contract;
+  a work item that needs one of them, a change of the hook among them, is the work of a
+  person.
 - Public-eventually: everything committed here — files, issue bodies, commit
   messages — must be publishable at the v0.1 flip.
 - Branch safety: platform branch protection is plan-gated while the repo is private, so
@@ -86,6 +101,9 @@ this repo on top of them.
   runner: staged, blinded, headless investigations per fixture; journals + sidecars under
   `eval/runs/<id>/`, scored into `eval/runs/<id>/scorecard.md`. Operator side; it draws
   from the same subscription pool as everything else — batch with `--max-runs`.
+- `uv sync --script eval/tests.py --cache-dir .uv-cache`: fills the package cache of the
+  eval tests in the folder of the repo. Run it once on a computer, before the first
+  quality command; that command reads the cache and never fetches.
 - `scripts/receive.py` — the receiver of the Alertmanager webhook (`docs/triggers.md`):
   listens for `POST /alerts` on `127.0.0.1:9911`, verifies the token of
   `alerts/receiver-token`, and appends one complaint line per new firing alert to
@@ -113,6 +131,9 @@ enabled.
 - The contract, this file, the intents, and the workflows are in the high risk tier: a deep review, and
   the leader approves. [tiers.high.paths]
 - A person approves each change to a contract. [change.person_approves_contract]
+- A run of an agent without a person does not change the files that the contract closes to it. A person
+  makes such a change, in its own change request. [boundary.no_write]
+- A run never reads a file that the contract closes to it. [boundary.no_read]
 - On GitHub, the workflows `tests` and `verdict` run on each change request, `review-intents` on a change
   of `intents/` or `plans/`, and `review-code` on a change of another file. A red check "verdict" blocks
   the merge; its reasons are in the check and in the job log. [checks.quality]
@@ -142,6 +163,11 @@ When a file under a declared code path changes, `docs/product.md` changes too, o
 has one line in this exact form: `No document change: <reason>`. [documents.code_paths]
 A false failure of a gate: `False failure: <gate>: <reason>`. A finding of the intent reviewer that the
 author drops: `Dropped finding: <reason>`. One that the leader marks as wrong: `False finding: <reason>`. [checks.quality]
+A choice of the architecture and its reason go into `docs/architecture.md`, with the part that it
+concerns. No separate file holds one decision; a choice that must always hold becomes a check.
+[documents.absent]
+The repo has no product test, a command that starts the product and tests it from the outside. The
+contract holds the reason. [checks.no_product_reason]
 
 ### Text of commits, change requests, and issues
 
@@ -158,3 +184,9 @@ rounds, or refusals in sequence. [limits.acceptance_loop] [limits.review_loop] [
 The intent reviewer gives each finding a severity. A finding at the threshold or above keeps the
 author-reviewer loop open; below it, or at the limit, the loop ends and a person decides. The author side
 is the skill `review-loop`. [review.threshold] [limits.review_loop]
+The reviewer of the code, the workflow `review-code`, reviews each change of a file outside `intents/` and
+`plans/` with the skill `change-review`, under the same loop; while the contract leaves the flag false,
+its findings block nothing. [review.code_blocks]
+On the change request of a run, the factory starts the agent that answers the findings of the reviewers,
+inside the limit of the rounds. While that loop is open, a session answers no finding on a branch
+`run/<number>` and pushes nothing there. [run.answer_start]
