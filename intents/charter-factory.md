@@ -135,7 +135,8 @@ the one difference that it names.
 7. The five workflows and the two templates are equal to the output of `charter-setup`, run into an empty
    folder with the values of the contract and the two steps of the toolchain. The arguments of
    `charter-setup` below must be equal to the values of `charter.toml`; a change of the contract changes
-   them. The three `diff` commands run one by one. After the second change request each prints nothing.
+   them. The three `diff` commands run one by one, and the check reads what they print, not the exit
+   status of the block. After the second change request each prints nothing.
    On the first, the `diff -r` prints one difference, `tests.yml`, and the two other commands print
    nothing.
    command:
