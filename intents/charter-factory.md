@@ -48,9 +48,11 @@ merge.
 
   These stay open to a run, each for its reason. A person merges each change request of a run, and the
   reviewer of the code reads it first.
-  - `eval/*.py`, the scorer, the runner and the table script: they are code with pins in `eval/tests.py`,
-    and the work items on them have automatic checks. A change of the measure shows in the pins and in
-    the diff. The first run that is planned builds such a work item.
+  - `eval/*.py`, the scorer, the runner, the table script and their pins in `eval/tests.py`: the work
+    items on them have automatic checks, and such a work item adds its pin to `eval/tests.py`, so that
+    file stays open too. The first run that is planned builds such a work item. A run can so change the
+    scorer and its pins in one diff. A change of the measure then shows only in the diff, and the
+    reviewer of the code and the person who merges read it.
   - `eval/BENCHMARK-results.md` and `eval/scorecard.md`: scripts generate them from the records, and a
     work item on the table script generates them again.
   - `skills/**`: a run can change the text of a skill, and it cannot show that an investigation follows
@@ -114,7 +116,8 @@ merge.
 ## Automatic checks
 
 The commands `charter-check`, `charter-gate` and `charter-setup` below are those of Charter 0.3.19. Checks 1
-to 7 hold after the second change request.
+to 6 hold after the second change request. Check 7 holds in full after the second, and on the first with
+the one difference that it names.
 
 1. The contract names 0.3.19 and the source `v2`.
    command: `grep -A1 '^\[charter\]' charter.toml | grep -q '^version = "0.3.19"' && grep -A3 '^\[source\]' charter.toml | grep -q '^version = "v2"'`
@@ -130,14 +133,19 @@ to 7 hold after the second change request.
    plan.
    command: `printf 'hooks/boundary.py\n' > /tmp/changed-1 && ! charter-gate boundary --contract charter.toml --changed /tmp/changed-1 && printf 'skills/oncall/SKILL.md\nplans/x.md\n' > /tmp/changed-2 && charter-gate boundary --contract charter.toml --changed /tmp/changed-2`
 7. The five workflows and the two templates are equal to the output of `charter-setup`, run into an empty
-   folder with the values of the contract and the two steps of the toolchain. On the first change request
-   the last line prints one difference, `tests.yml`, and no other.
+   folder with the values of the contract and the two steps of the toolchain. The arguments of
+   `charter-setup` below must be equal to the values of `charter.toml`; a change of the contract changes
+   them. The three `diff` commands run one by one. After the second change request each prints nothing.
+   On the first, the `diff -r` prints one difference, `tests.yml`, and the two other commands print
+   nothing.
    command:
    ```
    D=$(mktemp -d) && mkdir "$D/out"
    printf '%s\n' '- uses: astral-sh/setup-uv@v5     # the quality checks of this repo run with uv' '- name: Fill the package cache of the eval tests, inside the folder of the repo' '  run: uv sync --script eval/tests.py --cache-dir .uv-cache' > "$D/toolchain.yml"
    charter-setup --target "$D/out" --repo konan --source https://github.com/lyudmylan/charter-org --source-version v2 --leader lyudmylan --code-path 'skills/**' --code-path 'hooks/**' --code-path 'scripts/**' --high-path 'hooks/**' --high-path '.claude/settings.json' --high-path 'scripts/probe.sh' --high-path 'scripts/receive.py' --quality 'uv run --offline --cache-dir .uv-cache eval/tests.py' --quality 'python3 hooks/tests.py' --quality 'python3 scripts/tests.py' --toolchain "$D/toolchain.yml" < /dev/null
-   diff -r .github/workflows "$D/out/.github/workflows" && diff intents/_template.md "$D/out/intents/_template.md" && diff plans/_template.md "$D/out/plans/_template.md"
+   diff -r .github/workflows "$D/out/.github/workflows"
+   diff intents/_template.md "$D/out/intents/_template.md"
+   diff plans/_template.md "$D/out/plans/_template.md"
    ```
 8. On the first change request, the contract checks of 0.3.1 pass, so the verdict of the main branch can
    be ready.
