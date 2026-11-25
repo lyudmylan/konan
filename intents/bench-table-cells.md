@@ -18,8 +18,8 @@ limit that exists today.
     scorer. The other lines of the message do not enter the table. The command `eval/score.py` over the
     journal prints the whole message.
   - Each status is one line in the table "Every run". A `|` in a status is written as `\|` in that table,
-    so that a status never adds a cell. The escape belongs to the markdown table only; the `--json` output
-    carries the status without it.
+    so that a status never adds a cell. The escape belongs to the markdown table only: the `--json` output
+    carries the same one-line status, with `|` not escaped.
 - `eval/bench.py`, the quota section:
   - The title is "Quota: runs between quota stops (per model)".
   - The text says these things and no more: a quota stop is a stop of the runner at a limit of the
@@ -47,8 +47,9 @@ limit that exists today.
     copies two parts from that output into the committed table: the row of the run that the scorer refuses,
     and the quota section. These two parts do not depend on the version of the scorer.
 - `eval/BENCHMARK.md`:
-  - Section "What is measured", point "Quota share", measure (a): the same words as the quota section of
-    the generator, without the window.
+  - Section "What is measured", point "Quota share", measure (a): one sentence that names the section
+    "Quota" of `eval/bench.py` and says that a stop is a stop at a weekly meter. It does not repeat the
+    text of that section, so the rules of the section stand in one place, and the window is gone.
   - Section "Results - bench-v2", point "Table": one sentence that says that since #93 the committed table
     carries two repairs of its form (the status on one line, the words of the quota section) and that no
     number changed.
