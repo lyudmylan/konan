@@ -13,7 +13,7 @@ version = "v1"
 
 # The version of Charter that this repo uses. The workflows fetch Charter at the tag charter--v<version>.
 [charter]
-version = "0.3.1"
+version = "0.3.19"
 
 [tools]
 issue_tracker = "github-issues"
@@ -44,7 +44,7 @@ approvals = 1
 [review]
 threshold = "medium"
 
-# The Build phase: each work item has its plan, intents/<part>.plan.md, before the code.
+# The Build phase: each work item has its plan, plans/<part>.md, before the code.
 [build]
 plan_before_code = true
 
