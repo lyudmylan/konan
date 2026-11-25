@@ -16,8 +16,9 @@ merge.
   contract of the first one, and they refuse a field that they do not know. The first change request holds
   no new field. After its merge the main branch names 0.3.19, and the scripts of 0.3.19 check the second.
   - The first: `charter.version = "0.3.19"`; the workflows `verdict`, `review-intents`, `review-code` and
-    `run`; the two templates; `.gitignore`; the two rules of `AGENTS.md` that cite no new field (who
-    merges, and the place of a plan); this intent and its plan. Its text links the issue with `Part of`.
+    `run`; the two templates; `.gitignore`; the rules of `AGENTS.md` that cite no new field (who merges,
+    the place of a plan, and which workflow runs on which change request); this intent and its plan. Its
+    text links the issue with `Part of`.
   - The second: the new fields of `charter.toml` and the source `v2`; the quality command; `tests.yml`;
     the other rules of `AGENTS.md`. Its text closes the issue.
   - Between the two merges the contract checks of 0.3.19 fail on the main branch, because the contract
@@ -45,9 +46,19 @@ merge.
   A run never reads a file under `no_read`: the four patterns of the setup step for `.env` files, and
   `alerts/receiver-token`.
 
-  These stay open to a run: `skills/**`, `scripts/**` apart from the two scripts above, `eval/*.py`,
-  the generated tables `eval/BENCHMARK-results.md` and `eval/scorecard.md`, `docs/**`, `README.md`,
-  `plans/**`.
+  These stay open to a run, each for its reason. A person merges each change request of a run, and the
+  reviewer of the code reads it first.
+  - `eval/*.py`, the scorer, the runner and the table script: they are code with pins in `eval/tests.py`,
+    and the work items on them have automatic checks. A change of the measure shows in the pins and in
+    the diff. The first run that is planned builds such a work item.
+  - `eval/BENCHMARK-results.md` and `eval/scorecard.md`: scripts generate them from the records, and a
+    work item on the table script generates them again.
+  - `skills/**`: a run can change the text of a skill, and it cannot show that an investigation follows
+    it. That check stays a round of the eval runner, started by the operator.
+  - `scripts/**` apart from the two scripts above: the lab scripts and the alert emitter are the side of
+    the operator. The shell of a run has no network and no lab, so a run can start none of them against
+    a target; a change of one goes through the review and the merge.
+  - `docs/**`, `README.md`, `plans/**`: a work item changes its documents and writes its plan.
 - `charter.toml`, the other new fields: `review.code_blocks = false`, so the reviewer of the code reports
   and blocks nothing; `documents.absent` with the four patterns of the setup step, and the repo holds no
   such file; `checks.no_product_reason` with this text: "konan is a set of skills that a Claude Code
@@ -63,6 +74,13 @@ merge.
   the loopback address for the tests of the receiver.
 - The toolchain block of `tests.yml` (both jobs) and of `run.yml`: the step that installs `uv`, then the
   step that fills the cache.
+- `tests.yml`, the job `product`: the setup step writes it into each repo. It runs the gate `product`.
+  With a reason and no command in the contract, the gate passes, prints the reason, and runs no test. The
+  verdict of 0.3.19 reads the check `product` beside the check `tests`.
+- `verdict.yml`, the step "Merge, for a tier whose approver is agent": the setup step writes it into each
+  repo. It merges only when three settings of a person hold: a tier with the approver `agent`, the flag
+  `review.code_blocks`, and the secret `CHARTER_MERGE_TOKEN`. This repo sets none of the three, so the
+  step merges nothing.
 - The five workflows: as the setup step of 0.3.19 writes them from the values of the contract and the two
   steps of the toolchain. No line is changed by hand.
 - `intents/_template.md` and the new `plans/_template.md`: as the setup step writes them. The plan of a
@@ -84,7 +102,7 @@ merge.
   before.
 - The first run. It belongs to the work item of the issue that it builds.
 - A change of the boundary hook for a run, for example no freeze in a run. It changes a safety behaviour,
-  so it is a work item of its own with its own intent.
+  so it is a work item of its own with its own intent. The issue #125 holds the risk and the facts.
 - The tier whose approver is `agent`, and the end of the shadow period of the reviewer of the code. A
   person merges each change request.
 - A product test.
@@ -112,13 +130,21 @@ to 7 hold after the second change request.
    plan.
    command: `printf 'hooks/boundary.py\n' > /tmp/changed-1 && ! charter-gate boundary --contract charter.toml --changed /tmp/changed-1 && printf 'skills/oncall/SKILL.md\nplans/x.md\n' > /tmp/changed-2 && charter-gate boundary --contract charter.toml --changed /tmp/changed-2`
 7. The five workflows and the two templates are equal to the output of `charter-setup`, run into an empty
-   folder with the values of the contract and the two steps of the toolchain.
-   command: `diff -r` of `.github/workflows`, `intents/_template.md` and `plans/_template.md` against that folder prints nothing.
+   folder with the values of the contract and the two steps of the toolchain. On the first change request
+   the last line prints one difference, `tests.yml`, and no other.
+   command:
+   ```
+   D=$(mktemp -d) && mkdir "$D/out"
+   printf '%s\n' '- uses: astral-sh/setup-uv@v5     # the quality checks of this repo run with uv' '- name: Fill the package cache of the eval tests, inside the folder of the repo' '  run: uv sync --script eval/tests.py --cache-dir .uv-cache' > "$D/toolchain.yml"
+   charter-setup --target "$D/out" --repo konan --source https://github.com/lyudmylan/charter-org --source-version v2 --leader lyudmylan --code-path 'skills/**' --code-path 'hooks/**' --code-path 'scripts/**' --high-path 'hooks/**' --high-path '.claude/settings.json' --high-path 'scripts/probe.sh' --high-path 'scripts/receive.py' --quality 'uv run --offline --cache-dir .uv-cache eval/tests.py' --quality 'python3 hooks/tests.py' --quality 'python3 scripts/tests.py' --toolchain "$D/toolchain.yml" < /dev/null
+   diff -r .github/workflows "$D/out/.github/workflows" && diff intents/_template.md "$D/out/intents/_template.md" && diff plans/_template.md "$D/out/plans/_template.md"
+   ```
 8. On the first change request, the contract checks of 0.3.1 pass, so the verdict of the main branch can
    be ready.
    command: `charter-check all charter.toml` with the scripts of the tag `charter--v0.3.1`
-9. On the second change request, the checks `tests` and `product` of the code host pass.
-   command: the two check runs of the change request, read with `gh pr checks`.
+9. On the second change request, the check `tests` passes, and the check `product` passes by the reason
+   in `checks.no_product_reason`, with no product test run.
+   command: `gh pr checks <number>` shows both as pass.
 
 ## Manual checks
 

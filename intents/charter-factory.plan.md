@@ -15,8 +15,8 @@ The first change request, on a branch from the main branch:
    templates.
 3. `charter.toml`: the version 0.3.19, and the comment of `[build]` names `plans/<part>.md`.
 4. `.gitignore`: `.uv-cache/` and `.venv/`.
-5. `AGENTS.md`, section "Charter": the rule on who merges with the two forms of the link, and the place
-   of a plan with the sentence on the plans that exist.
+5. `AGENTS.md`, section "Charter": the rule on who merges with the two forms of the link, the place of a
+   plan with the sentence on the plans that exist, and which workflow runs on which change request.
 6. Check 8 with the scripts of the tag `charter--v0.3.1`; the quality gate of 0.3.19 with `--repo-only`,
    as the workflow `tests` runs it.
 7. The review loop on the change request, then the merge on the leader's word.
@@ -29,16 +29,12 @@ The second change request, on a branch from the main branch after the first merg
 10. `AGENTS.md`: the other rules of the section "Charter", the paragraph on a run in this repo, the
     quality command and the step that fills the cache in the sections "Workflow" and "Commands".
 11. Checks 1 to 7 and 11 on the branch; checks 9 and 10 on the change request.
-12. One issue for the risk that the intent leaves open: the boundary hook freezes a run after two
-    denials.
+12. The issue that the intent names under "Out of scope" holds the risk that stays open: the boundary
+    hook freezes a run after two denials.
 
 ## Files
 
-First: `charter.toml`, `.github/workflows/verdict.yml`, `.github/workflows/review-intents.yml`,
-`.github/workflows/review-code.yml`, `.github/workflows/run.yml`, `intents/_template.md`,
-`plans/_template.md`, `.gitignore`, `AGENTS.md`, `intents/charter-factory.md`, and this file.
-
-Second: `charter.toml`, `.github/workflows/tests.yml`, `AGENTS.md`.
+The lists of the intent, under "The order": the first and the second change request.
 
 ## Tests
 
