@@ -3,7 +3,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["pyyaml>=6", "jsonschema>=4.21"]
 # ///
-"""Semantics pins for the eval scorer. Plain asserts: `uv run eval/tests.py`.
+"""Semantics pins for the eval scorer. Plain asserts: `uv run --offline --cache-dir .uv-cache eval/tests.py`.
 
 Each test pins one rule from eval/README.md or the report contract's scorer
 layer, so a future edit that drifts the semantics fails loudly here."""
