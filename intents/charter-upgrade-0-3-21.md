@@ -4,16 +4,16 @@ Work item: #127. Approval: a person merges the change request that adds this fil
 
 ## Goal
 
-The contract names Charter 0.3.21, and the two reviewer workflows are the ones of that version. A
-reviewer in CI then has a closed list of tools and no command that writes to the code host, and a later
-version of Charter reaches this repo with one command.
+The repo follows Charter 0.3.21, and its two reviewers run with a closed list of tools and no command that
+writes to the code host.
 
 ## In scope
 
 - Why: a test of Charter on the code host showed that a reviewer with the tools of 0.3.19 could read each
   file of its machine and write a file at any path. Charter 0.3.20 closes the list: the read tools take
   three folders, the shell has five commands that read, and a step of the workflow posts the report of the
-  reviewer. Charter 0.3.21 adds the command `charter-update`, which makes the change of an upgrade.
+  reviewer. Charter 0.3.21 adds the command `charter-update`, which makes the change of an upgrade, so that
+  a later version reaches this repo with one command.
 - `charter.toml`: the version 0.3.21. The contract gets no new field.
 - `.github/workflows/review-intents.yml` and `.github/workflows/review-code.yml`: the files that
   `charter-update` of 0.3.21 writes.
@@ -37,7 +37,10 @@ Each command is the one of Charter 0.3.21.
    command: `charter-gate quality --contract charter.toml`
 3. The contract names the version 0.3.21.
    command: `grep -q '^version = "0\.3\.21"$' charter.toml`
-4. Each reviewer workflow holds the closed list and the step that posts the report.
+4. Each reviewer workflow is the file that `charter-update` of 0.3.21 writes, with the closed list and the
+   step that posts the report: the check form of the command names both files as the same.
+   command: `sh -c 'charter-update --check | grep -q "^same: .github/workflows/review-intents.yml$"'`
+   command: `sh -c 'charter-update --check | grep -q "^same: .github/workflows/review-code.yml$"'`
    command: `grep -q -- '--permission-mode dontAsk' .github/workflows/review-intents.yml`
    command: `grep -q -- '--permission-mode dontAsk' .github/workflows/review-code.yml`
    command: `grep -q 'name: Post the report of the reviewer' .github/workflows/review-intents.yml`
@@ -49,4 +52,5 @@ Each command is the one of Charter 0.3.21.
 
 6. The two reviewers post their reports on the change request of this work item, which runs them with the
    new workflows.
-   who: the leader reads that both reports are there. Not automatic: the reviewers run with the model.
+   who: the leader reads that both reports are there, each posted by the step "Post the report of the
+   reviewer"; the log of that step shows it. Not automatic: the reviewers run with the model.
