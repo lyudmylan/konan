@@ -101,6 +101,9 @@ this repo on top of them.
   runner: staged, blinded, headless investigations per fixture; journals + sidecars under
   `eval/runs/<id>/`, scored into `eval/runs/<id>/scorecard.md`. Operator side; it draws
   from the same subscription pool as everything else — batch with `--max-runs`.
+- `uv sync --script eval/tests.py --cache-dir .uv-cache`: fills the package cache of the
+  eval tests in the folder of the repo. Run it once on a computer, before the first
+  quality command; that command reads the cache and never fetches.
 - `scripts/receive.py` — the receiver of the Alertmanager webhook (`docs/triggers.md`):
   listens for `POST /alerts` on `127.0.0.1:9911`, verifies the token of
   `alerts/receiver-token`, and appends one complaint line per new firing alert to
