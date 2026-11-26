@@ -32,9 +32,9 @@ Planned = the pre-registered plan of the run (`plan.json`: fixtures × repetitio
 | all | claude-opus-5 | 30 | 1 | 63% | 63% | 67% | 2 | 97% | 2205017 | 610 | 4.57 | 0.0 |
 | all | claude-sonnet-5 | 30 | 0 | 73% | 73% | 86% | 4 | 100% | 3379018 | 576 | 2.00 | 3.0 |
 
-## Quota: investigations completed between quota stops (per model)
+## Quota: runs between quota stops (per model)
 
-A proxy for investigations per 5-hour window on the subscription; exact only when a batch starts near an empty window with nothing else on the pool. Segments = runs before each stop; the last number is the open segment.
+A quota stop is a stop of the runner at a limit of the subscription; the limits are the weekly meters. A segment is the count of runs before one stop, and the last number is the count of runs after the last stop. A line with no segment shows that no stop happened, and it measures no limit. The share of a weekly meter for one investigation comes from the usage readings of the operator (the protocol, measure (b) of "Quota share").
 
 - claude-fable-5: — + open 30
 - claude-opus-5: — + open 30
@@ -92,14 +92,7 @@ A proxy for investigations per 5-hour window on the subscription; exact only whe
 | bench-v2 | claude-fable-5 | t2-healthy-after-chaos-window | 2 | 1 | ok | root-cause-identified | no-active-incident | ✗ | — | 1 | ✓ | 1470732 | 388 | 5.34 | 0 |
 | bench-v2 | claude-fable-5 | t2-healthy-after-chaos-window | 2 | 2 | ok | root-cause-identified | no-active-incident | ✗ | — | 1 | ✓ | 1205295 | 513 | 5.14 | 0 |
 | bench-v2 | claude-fable-5 | t2-healthy-after-chaos-window | 2 | 3 | ok | root-cause-identified | no-active-incident | ✗ | — | 1 | ✓ | 1876049 | 429 | 7.30 | 0 |
-| bench-v2 | claude-opus-5 | t2-healthy-after-chaos-window | 2 | 1 | unscorable: journal eval/runs/bench-v2/claude-opus-5/t2-healthy-after-chaos-window-r1.md: frontmatter is not YAML (while parsing a block mapping
-  in "<unicode string>", line 138, column 5:
-      - id: E15
-        ^
-expected <block end>, but found '<block mapping start>'
-  in "<unicode string>", line 144, column 7:
-          ZeroDivisionError: division by zero
-          ^) | — | no-active-incident | ✗ | — | 0 | ✗ | 2551187 | 1046 | 5.62 | 0 |
+| bench-v2 | claude-opus-5 | t2-healthy-after-chaos-window | 2 | 1 | unscorable: journal eval/runs/bench-v2/claude-opus-5/t2-healthy-after-chaos-window-r1.md: frontmatter is not YAML (while parsing a block mapping | — | no-active-incident | ✗ | — | 0 | ✗ | 2551187 | 1046 | 5.62 | 0 |
 | bench-v2 | claude-opus-5 | t2-healthy-after-chaos-window | 2 | 2 | ok | no-active-incident | no-active-incident | ✓ | — | 0 | ✓ | 2288064 | 813 | 4.56 | 0 |
 | bench-v2 | claude-opus-5 | t2-healthy-after-chaos-window | 2 | 3 | ok | no-active-incident | no-active-incident | ✓ | — | 0 | ✓ | 2225723 | 796 | 4.70 | 1 |
 | bench-v2 | claude-sonnet-5 | t2-healthy-after-chaos-window | 2 | 1 | ok | root-cause-identified | no-active-incident | ✗ | — | 1 | ✓ | 3161057 | 176 | 1.82 | 0 |
