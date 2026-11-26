@@ -37,8 +37,7 @@ Per investigation (one fixture, one model, one repetition), the scorer semantics
 - **Quota share** — two measures, both on the subscription (the only meter konan is
   designed for; benchmarks never move to API credits): (a) investigations completed
   between consecutive quota stops per model, from the run sidecars (`eval/bench.py`,
-  "Quota" section — a proxy for investigations per 5-hour window; exact only when a batch
-  starts near an empty window with nothing else on the pool); (b) `/usage` read by the
+  "Quota" section; a stop is a stop at a weekly meter); (b) `/usage` read by the
   operator right before and right after a single-model batch — the per-model weekly
   percentage delta ÷ runs = the exact quota cost of one investigation on the plan.
   Recorded in the results section with the plan tier.
@@ -278,7 +277,9 @@ uv run eval/bench.py --runs eval/runs/bench-v2 -o eval/BENCHMARK-results.md
   The committed table is the pre-registered scoring and reproduces only at the commit that
   published it (`33c3abb`). Since #90 the live fixtures carry the widened matchers of the
   false-fail table below, and `eval/bench.py` over the same journals gives the rates by
-  content: Fable 87%, Opus 87%, Sonnet 83%.
+  content: Fable 87%, Opus 87%, Sonnet 83%. Since #93 the committed table carries two
+  repairs of its form (the status on one line, the words of the quota section); no number
+  changed.
 - **Coverage:** Fable and Sonnet: planned 30, completed 30, failed 0, missing 0. Opus:
   planned 30, completed 29, failed 1, missing 0. The failed one finished and wrote a journal;
   the scorer refuses it (below).

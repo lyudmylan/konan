@@ -64,7 +64,7 @@ def collect(run_dirs, fixtures, jv):
                 meta = json.loads(meta_path.read_text())
                 if meta.get("quota_error"):
                     continue  # a quota stop is not a run (protocol): retried, or resumed later;
-                              # it feeds quota_windows via metas/quota-stops.jsonl, never the table
+                              # it feeds quota_segments via metas/quota-stops.jsonl, never the table
                 sid, rep = meta.get("scenario"), meta.get("rep")
                 fx = fixtures.get(sid)
                 row = {"run": rd.name, "model": meta.get("model", model_dir.name), "scenario": sid,
@@ -87,7 +87,8 @@ def collect(run_dirs, fixtures, jv):
                                     "false_attr": len(r["false_attributions"]),
                                     "citations_ok": r["citations_ok"], "verdict_got": r["verdict_got"]})
                     except score.InputError as e:
-                        row["status"] = f"unscorable: {e}"
+                        first = (str(e).splitlines() or [""])[0]   # one line; score.py prints the whole message
+                        row["status"] = f"unscorable: {first}"
                 elif not fx:
                     row["status"] = f"unknown scenario {sid!r}"
                 rows.append(row)
@@ -176,10 +177,9 @@ def render_coverage(cov):
     return head, lines
 
 
-def quota_windows(run_dirs):
-    """Per model: how many investigations completed between consecutive quota stops —
-    a proxy for 'investigations per 5-hour window' on the subscription (exact only when
-    the batch starts near an empty window and nothing else uses the pool)."""
+def quota_segments(run_dirs):
+    """Per model: how many runs came before each quota stop (a stop of the runner at a limit
+    of the subscription), and how many after the last stop."""
     events = {}
     for rd in run_dirs:
         for meta_path in Path(rd).glob("*/*.meta.json"):
@@ -206,6 +206,11 @@ def quota_windows(run_dirs):
                 count += 1
         out[model] = {"segments": segments, "open_segment": count}
     return out
+
+
+def _cell(text):
+    """A value in a markdown table cell: a `|` would add a cell."""
+    return str(text).replace("|", "\\|")
 
 
 def _med(vals):
@@ -267,18 +272,20 @@ def render(rows, table, run_names, cov=None):
                    f"{_pct(t['pass_rate_class_agnostic'])} | {_pct(t['rc_accuracy'])} | {t['false_attributions']} | {_pct(t['citation_rate'])} | "
                    f"{_num(t['tokens_median'])} | {_num(t['duration_median_s'])} | "
                    f"{_num(t['cost_median_usd'], '{:.2f}')} | {_num(t['denials_median'], '{:.1f}')} |")
-    qw = quota_windows(RUN_DIRS)
-    out += ["", "## Quota: investigations completed between quota stops (per model)", "",
-            "A proxy for investigations per 5-hour window on the subscription; exact only when a batch starts "
-            "near an empty window with nothing else on the pool. Segments = runs before each stop; the last "
-            "number is the open segment.", ""]
+    qw = quota_segments(RUN_DIRS)
+    out += ["", "## Quota: runs between quota stops (per model)", "",
+            "A quota stop is a stop of the runner at a limit of the subscription; the limits are the weekly "
+            "meters. A segment is the count of runs before one stop, and the last number is the count of runs "
+            "after the last stop. A line with no segment shows that no stop happened, and it measures no limit. "
+            "The share of a weekly meter for one investigation comes from the usage readings of the operator "
+            "(the protocol, measure (b) of \"Quota share\").", ""]
     for model, q in sorted(qw.items()):
         out.append(f"- {model}: {q['segments'] or '—'} + open {q['open_segment']}")
     out += ["", "## Every run", "",
             "| Run | Model | Scenario | Tier | Rep | Status | Verdict | Expected | Passed | RC | False attr | Citations | Tokens | Wall s | Cost $ | Denials |",
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for r in sorted(rows, key=lambda r: (r["tier"], r["scenario"] or "", r["model"], r["rep"] or 0)):
-        out.append(f"| {r['run']} | {r['model']} | {r['scenario']} | {r['tier']} | {r['rep']} | {r['status']} | "
+        out.append(f"| {r['run']} | {r['model']} | {r['scenario']} | {r['tier']} | {r['rep']} | {_cell(r['status'])} | "
                    f"{r['verdict_got'] or '—'} | {r['verdict_expected'] or '—'} | {'✓' if r['passed'] else '✗'} | "
                    f"{'—' if r['rc_hit'] is None else ('✓' if r['rc_hit'] else '✗')} | {r['false_attr']} | "
                    f"{'✓' if r['citations_ok'] else '✗'} | {_num(r['tokens'])} | {_num(r['duration_s'])} | "

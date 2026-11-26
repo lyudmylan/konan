@@ -856,6 +856,35 @@ def test_bench_coverage_plan_is_pre_registered():
         assert not (Path(tmp) / "bench-dry" / "plan.json").exists()   # a preview registers nothing
 
 
+def test_bench_table_status_is_one_line():
+    # #93 check 1: a journal the scorer refuses is one row of 16 cells, status `unscorable: `.
+    with tempfile.TemporaryDirectory() as tmp:
+        run_dir, _ = _coverage_dir(Path(tmp), present=0)
+        sid = SCENARIO_IDS[0]
+        (run_dir / "test-model" / f"{sid}-r1.meta.json").write_text(json.dumps(
+            {"model": "test-model", "scenario": sid, "rep": 1, "status": "ok", "quota_error": False}))
+        (run_dir / "test-model" / f"{sid}-r1.md").write_text(
+            "---\nkonan_journal: 1\nitems:\n  - id: E1\n    x: |\n  bad: [\n---\nbody\n")
+        md = _render(run_dir)
+    lines = md.split("## Every run", 1)[1].splitlines()
+    rows = [l for l in lines if l.strip() and not l.startswith("| ---")][1:]
+    assert len(rows) == 1, md
+    assert re.search(r"\| unscorable: ", rows[0]), rows[0]
+    assert len(re.split(r"(?<!\\)\|", rows[0].strip())) - 2 == 16, rows[0]
+    assert all(l.strip() == "" or l.startswith("|") for l in lines[1:]), md
+    assert bench._cell("a|b") == "a\\|b"
+
+
+def test_bench_table_quota_section():
+    # #93 check 2: the new title; the text holds neither "window" nor "5-hour".
+    with tempfile.TemporaryDirectory() as tmp:
+        run_dir, _ = _coverage_dir(Path(tmp))
+        md = _render(run_dir)
+    assert "## Quota: runs between quota stops (per model)" in md, md
+    sec = md.split("## Quota:", 1)[1].split("## Every run", 1)[0].lower()
+    assert "window" not in sec and "5-hour" not in sec, sec
+
+
 if __name__ == "__main__":
     run()
     for t in (test_runner_envelope_meta_sums_whole_run_tokens,
@@ -871,6 +900,7 @@ if __name__ == "__main__":
     print("OK: 9 runner pins hold")
     for t in (test_bench_coverage_short_plan, test_bench_coverage_complete_plan,
               test_bench_coverage_quota_stops, test_bench_coverage_plan_source,
-              test_bench_coverage_plan_is_pre_registered):
+              test_bench_coverage_plan_is_pre_registered,
+              test_bench_table_status_is_one_line, test_bench_table_quota_section):
         t()
-    print("OK: 5 coverage pins hold")
+    print("OK: 7 coverage pins hold")
